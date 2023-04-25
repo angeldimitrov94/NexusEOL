@@ -2,9 +2,14 @@
 
 ## Architecture 
 - cloud (potentially can offer custom on-premises hosting service for data-sensitive applications)
-  - web service front-end
-  - used by superadmins for account creation/administration, user creation/administration
-  - used by admins for user creation/administration, product creation/administration
+  - Kubernetes web services cluster :
+    - front-end client
+      - used by superadmins for account creation/administration, user creation/administration
+      - used by admins for user creation/administration, product creation/administration
+    - web API
+      - receiving data from remote nodes
+      - serving data to front-end
+      - persisting received data to storage
   - cloud nosql database
     - stores real-time data and state
     - functions as a data lake for 'relatively recent' data (exact definition of 'relatively recent', TBD)
