@@ -1,123 +1,84 @@
 <template>
-    <div class="container mb-3">
-        <form action="">
-            <div class="mb-3">
-                <label for="" class="form-label">
-                    Page Title
-                </label>
-                <input 
-                type="text" 
-                class="form-control" 
-                v-model="pageTitle"/>
-            </div>
-            <div class="mb-3">
-                <label for="" class="form-label">
-                    Content
-                </label>
-                <textarea 
-                type="text" 
-                class="form-control" 
-                rows="5"
-                v-model="content"></textarea>
-            </div>
-            <div class="mb-3">
-                <label for="" class="form-label">
-                    Link Text
-                </label>
-                <input 
-                type="text" 
-                class="form-control" 
-                v-model="linkText"/>
-            </div>
-            <div class="mb-3">
-                <label for="" class="form-label">
-                    Link URL
-                </label>
-                <input 
-                type="text" 
-                class="form-control" 
-                v-model="linkUrl"/>
-            </div>
-            <div class="mb-3">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" v-model="published">
-                    <label class="form-check-label" for="gridCheck1">Published</label>
+    <div class="m-3">
+        <h1>Create a new product</h1>
+        <div class="container mb-3">
+            <form action="">
+                <div class="mb-3">
+                    <label for="" class="form-label">
+                        Product name
+                    </label>
+                    <input type="text" class="form-control" v-model="this.name" />
                 </div>
-            </div>
-            <div class="mb-3">
-                <button 
-                class="btn btn-primary" 
-                @click.prevent="submitForm"
-                :disabled="this.isFormInvalid"
-                >Create Page</button>
-            </div>
-        </form>
+                <div class="mb-3">
+                    <label for="" class="form-label">
+                        Description
+                    </label>
+                    <textarea type="text" class="form-control" rows="5" v-model="this.description"></textarea>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" v-model="this.active">
+                        <label class="form-check-label" for="gridCheck1">Is Active</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-primary" @click.prevent="this.submitForm" :disabled="this.isFormInvalid">Create
+                        Page</button>
+                </div>
+            </form>
+        </div>
     </div>
 </template>
 
 <script>
+import { Product } from '../models/product';
+
 export default {
+    inject: ['$products', '$bus'],
     props: {
         pageCreated: { type: Function }
     },
     computed: {
         isFormInvalid() {
-            return !this.pageTitle || !this.content || !this.linkText || !this.linkUrl;
+            return !this.name || !this.description;
         }
     },
     data() {
         return {
-            pageTitle: '',
-            content: '',
-            linkText: '',
-            linkUrl: '',
-            published: true
+            name: '',
+            description: '',
+            active: true
         }
     },
     methods: {
         submitForm() {
-            if(!this.pageTitle || !this.content || !this.linkText || !this.linkUrl) {
+            if (!this.name || !this.description) {
                 alert('Missing data!');
                 return;
             }
 
-            this.$emit('pageCreated', {
-                pageTitle: this.pageTitle,
-                content: this.content,
-                link: {
-                    text: this.linkText,
-                    url: this.linkUrl
-                },
-                published: this.published
-            });
+            try {
+                const product = new Product(this.name, this.description, [], this.active);
+                const success = this.$products.createNewProductForCurrentUser(product);
 
-            this.pageTitle = '';
-            this.content = '';
-            this.linkText = '';
-            this.linkUrl = '';
-            this.published = true;
-        }
-    },
-    watch: {
-        pageTitle(newTitle, oldTitle) {
-            if (this.linkText === oldTitle) {
-                this.linkText = newTitle;
-                this.linkUrl = newTitle.toLowerCase().replace(/\s/g, '');
-            }
-        }
-    },
-    emits: {
-        pageCreated({pageTitle, content, link, published}) {
-            if(!pageTitle || !content)
-            {
-                return false;
+                if(success === true) {
+                    this.$bus.$emit('product-created', {
+                        id: product.id,
+                    });
+
+                    alert(`New product created!\r\n${JSON.stringify(product)}`);
+                }
+                else {
+                    alert(`Failed to create new product!`);
+                }
+            } catch (error) {
+                alert(`Failed to create new product! - ${error}`);
+                console.error(error);
             }
 
-            if(!link || !link.text || !link.url) {
-                return false;
-            }
-
-            return true;
+            this.name = '';
+            this.description = '';
+            this.active = true;
         }
     }
 }

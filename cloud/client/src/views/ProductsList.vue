@@ -1,47 +1,44 @@
 <template>
-    <h4>Products</h4>
-    <div class="text-end">
-        <router-link to="/products/create" class="btn btn-primary btn-sm">New Product</router-link>
+    <div class="m-3">
+        <h4>Products</h4>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>ID</th>
+                    <th>Description</th>
+                    <th>Active</th>
+                    <th>Edit Product</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="{ name, id, description, active, tests } in this.allProducts" :key="id">
+                    <td>{{ name }}</td>
+                    <td>{{ id }}</td>
+                    <td>{{ description }}</td>
+                    <td>{{ active ? 'yes' : 'no' }}</td>
+                    <td><router-link class="btn btn-primary btn-sm" :to="{ name: 'ProductEdit', params: { id: id } }">Edit
+                            Product</router-link></td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            <router-link to="/products/manage/create" class="btn btn-primary btn-sm">+ Add new product +</router-link>
+        </div>
     </div>
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>ID</th>
-                <th>Description</th>
-                <th>Active</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr 
-            v-for="{name, id, description, active} in this.allProducts" 
-            :key="id"
-            @click="goToPage(id)">
-                <td>{{ name }}</td>
-                <td>{{ id }}</td>
-                <td>{{ description }}</td>
-                <td>{{ active ? 'yes' : 'no'}}</td>
-            </tr>
-        </tbody>
-    </table>
 </template>
 
 <script>
 export default {
-    inject: ['$users','$router','$bus'],
+    inject: ['$bus', '$products'],
     data() {
         return {
-            allProducts: this.$users.getCurrentUserAllProducts()
-        }
-    },
-    methods: {
-        goToPage(id) {
-            this.$router.push({path: `products/${id}/edit`});
+            allProducts: this.$products.getCurrentUserAllProducts()
         }
     },
     created() {
         this.$bus.$on('user-change', () => {
-            this.allProducts = this.$users.getCurrentUserAllProducts();
+            this.allProducts = this.$products.getCurrentUserAllProducts();
         })
     }
 }

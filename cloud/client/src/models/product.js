@@ -1,17 +1,20 @@
 export class Product {
+    static NOT_STARTED = "Tests not started";
+    static RUNNING = "Tests running";
+    static COMPLETE_FAIL = "Complete - test failed";
+    static COMPLETE_SUCCESS = "Complete - all tests successful";
+
     name = "";
-    id = '-1';
+    id = -1;
     description = "";
     tests = [];
     active = false;
+    currentTestId = -1;
+    state = Product.NOT_STARTED;
 
-    constructor(name, id, description, tests, active = false) {
+    constructor(name, description, tests, active = false) {
         if (name === '' || name === undefined || name === null) {
             throw new Error('Invalid product name');
-        }
-
-        if (id  === '' || id === undefined || id === null) {
-            throw new Error('Invalid product id');
         }
 
         if (description === ''|| description === undefined || description === null) {
@@ -23,7 +26,7 @@ export class Product {
         }
 
         this.name = name;
-        this.id = id;
+        this.id = btoa(name.concat('%',Date.now()));
         this.description = description;
         this.tests = tests;
         this.active = active;

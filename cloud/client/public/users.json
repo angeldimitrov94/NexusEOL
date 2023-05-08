@@ -3,19 +3,26 @@
         "name": "Angel",
         "level": "superadmin",
         "password": "password",
+        "id": "QW5nZWxzdXBlcmFkbWluVGhpbmdzIFIgVXMgSW5j",
+        "active": true,
         "account": {
             "name": "Things R Us Inc",
+            "id": "VGhpbmdzIFIgVXMgSW5jMTY4MzQ5OTU4NTk2Mg==",
             "products": [
                 {
                     "name": "Product 1",
-                    "id": "1",
+                    "id": "UHJvZHVjdCAxMTY4MzQ5OTcyMTMzNw==",
                     "description": "Product number one",
                     "active": true,
+                    "currentTestId": 3,
+                    "state": "Tests running",
                     "tests": [
                         {
                             "name": "Test 1",
-                            "id": "1",
+                            "id": "VGVzdCAxMTY4MzQ5OTYzMDgxNA==",
                             "description": "Test number one",
+                            "state": "Complete - success",
+                            "active": true,
                             "messages": [
                                 {
                                     "dateTime": "2023-05-03T02:20:06.329Z",
@@ -35,8 +42,10 @@
                         },
                         {
                             "name": "Test 2",
-                            "id": "2",
+                            "id": "VGVzdCAyMTY4MzQ5OTY1MzY4Ng==",
                             "description": "Test number two",
+                            "state": "Complete - success",
+                            "active": true,
                             "messages": [
                                 {
                                     "dateTime": "2023-05-03T03:20:06.329Z",
@@ -62,8 +71,10 @@
                         },
                         {
                             "name": "Test 3",
-                            "id": "3",
+                            "id": "VGVzdCAzMTY4MzQ5OTY3ODEyMQ==",
                             "description": "Test number three",
+                            "state": "Running",
+                            "active": true,
                             "messages": [
                                 {
                                     "dateTime": "2023-05-03T03:24:06.329Z",
@@ -91,14 +102,18 @@
                 },
                 {
                     "name": "Product 2",
-                    "id": "2",
+                    "id": "UHJvZHVjdCAyMTY4MzQ5OTczNzMyNQ==",
                     "description": "Product number two",
                     "active": true,
+                    "currentTestId": 2,
+                    "state": "Complete - test failed",
                     "tests": [
                         {
                             "name": "Test 1",
-                            "id": "1",
+                            "id": "VGVzdCAxMTY4MzUwMDAzOTAyNw==",
                             "description": "Test number one",
+                            "state": "Complete - success",
+                            "active": true,
                             "messages": [
                                 {
                                     "dateTime": "2023-05-03T03:28:06.329Z",
@@ -124,8 +139,10 @@
                         },
                         {
                             "name": "Test 2",
-                            "id": "2",
+                            "id": "VGVzdCAyMTY4MzUwMDAzOTAyNw==",
                             "description": "Test number two",
+                            "state": "Complete - fail",
+                            "active": true,
                             "messages": [
                                 {
                                     "dateTime": "2023-05-03T03:32:06.329Z",
@@ -151,8 +168,10 @@
                         },
                         {
                             "name": "Test 3",
-                            "id": "3",
+                            "id": "VGVzdCAzMTY4MzUwMDAzOTAyNw==",
                             "description": "Test number three",
+                            "state": "Not started",
+                            "active": true,
                             "messages": [
                                 {
                                     "dateTime": "2023-05-03T03:35:06.329Z",
@@ -180,14 +199,18 @@
                 },
                 {
                     "name": "Product 3",
-                    "id": "3",
+                    "id": "UHJvZHVjdCAzMTY4MzUwMDE1Mzk1NA==",
                     "description": "Product number three",
                     "active": true,
+                    "currentTestId": 1,
+                    "state":"Tests running",
                     "tests": [
                         {
                             "name": "Test 1",
-                            "id": "1",
+                            "id": "VGVzdCAxMTY4MzUwMDE1Mzk1NA==",
                             "description": "Test number one",
+                            "state": "Running",
+                            "active": true,
                             "messages": [
                                 {
                                     "dateTime": "2023-05-03T03:40:06.329Z",
@@ -213,8 +236,10 @@
                         },
                         {
                             "name": "Test 2",
-                            "id": "2",
+                            "id": "VGVzdCAyMTY4MzUwMDE1Mzk1NA==",
                             "description": "Test number two",
+                            "state": "Not started",
+                            "active": true,
                             "messages": [
                                 {
                                     "dateTime": "2023-05-03T03:44:06.329Z",
@@ -240,8 +265,10 @@
                         },
                         {
                             "name": "Test 3",
-                            "id": "3",
+                            "id": "VGVzdCAzMTY4MzUwMDE1Mzk1NA==",
                             "description": "Test number three",
+                            "state": "Not started",
+                            "active": true,
                             "messages": [
                                 {
                                     "dateTime": "2023-05-03T03:48:06.329Z",
@@ -264,164 +291,6 @@
                                     "text" : "Test complete"
                                 }
                             ]
-                        }
-                    ]
-                }
-            ]
-        }
-    },
-    {
-        "name": "Joe Manager",
-        "level": "admin",
-        "password": "password",
-        "account": {
-            "name": "StuffMakers LLC",
-            "products": [
-                {
-                    "name": "Product 3",
-                    "id": "3",
-                    "description": "Product number one",
-                    "active": true,
-                    "tests": [
-                        {
-                            "name": "Test 4",
-                            "id": "4",
-                            "description": "Test number one"
-                        },
-                        {
-                            "name": "Test 5",
-                            "id": "5",
-                            "description": "Test number two"
-                        },
-                        {
-                            "name": "Test 7",
-                            "id": "6",
-                            "description": "Test number three"
-                        }
-                    ]
-                },
-                {
-                    "name": "Product 5",
-                    "id": "5",
-                    "description": "Product number two",
-                    "active": true,
-                    "tests": [
-                        {
-                            "name": "Test 4",
-                            "id": "4",
-                            "description": "Test number one"
-                        },
-                        {
-                            "name": "Test 5",
-                            "id": "5",
-                            "description": "Test number two"
-                        },
-                        {
-                            "name": "Test 7",
-                            "id": "6",
-                            "description": "Test number three"
-                        }
-                    ]
-                },
-                {
-                    "name": "Product 6",
-                    "id": "6",
-                    "description": "Product number three",
-                    "active": true,
-                    "tests": [
-                        {
-                            "name": "Test 4",
-                            "id": "4",
-                            "description": "Test number one"
-                        },
-                        {
-                            "name": "Test 5",
-                            "id": "5",
-                            "description": "Test number two"
-                        },
-                        {
-                            "name": "Test 7",
-                            "id": "6",
-                            "description": "Test number three"
-                        }
-                    ]
-                }
-            ]
-        }
-    },
-    {
-        "name": "Arash H",
-        "level": "technician",
-        "password": "password",
-        "account": {
-            "name": "StuffMakers LLC",
-            "products": [
-                {
-                    "name": "Product 3",
-                    "id": "3",
-                    "description": "Product number one",
-                    "active": true,
-                    "tests": [
-                        {
-                            "name": "Test 4",
-                            "id": "4",
-                            "description": "Test number one"
-                        },
-                        {
-                            "name": "Test 5",
-                            "id": "5",
-                            "description": "Test number two"
-                        },
-                        {
-                            "name": "Test 7",
-                            "id": "6",
-                            "description": "Test number three"
-                        }
-                    ]
-                },
-                {
-                    "name": "Product 5",
-                    "id": "5",
-                    "description": "Product number two",
-                    "active": true,
-                    "tests": [
-                        {
-                            "name": "Test 4",
-                            "id": "4",
-                            "description": "Test number one"
-                        },
-                        {
-                            "name": "Test 5",
-                            "id": "5",
-                            "description": "Test number two"
-                        },
-                        {
-                            "name": "Test 7",
-                            "id": "6",
-                            "description": "Test number three"
-                        }
-                    ]
-                },
-                {
-                    "name": "Product 6",
-                    "id": "6",
-                    "description": "Product number three",
-                    "active": true,
-                    "tests": [
-                        {
-                            "name": "Test 4",
-                            "id": "4",
-                            "description": "Test number one"
-                        },
-                        {
-                            "name": "Test 5",
-                            "id": "5",
-                            "description": "Test number two"
-                        },
-                        {
-                            "name": "Test 7",
-                            "id": "6",
-                            "description": "Test number three"
                         }
                     ]
                 }

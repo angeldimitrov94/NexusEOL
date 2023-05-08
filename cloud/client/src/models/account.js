@@ -1,6 +1,8 @@
 export class Account {
     name = "";
     products = [];
+    id = "";
+    active = true;
 
     constructor(name, products = [])
     {
@@ -9,5 +11,6 @@ export class Account {
         }
 
         this.products = products;
+        this.id = btoa(name.concat('%',Date.now()));
     }
 }
