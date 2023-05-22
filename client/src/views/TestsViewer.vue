@@ -12,38 +12,51 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="{ name, id: testId, description, active } in this.product?.tests" :key="testId">
+                <tr v-for="{ name, id: testId, description, active } in product?.tests" :key="testId">
                     <td>{{ name }}</td>
                     <td>{{ testId }}</td>
                     <td>{{ description }}</td>
                     <td>{{ active ? 'yes' : 'no' }}</td>
                     <td><router-link class="btn btn-primary btn-sm"
-                            :to="{ name: 'TestEdit', params: { productId: this.id, testId: testId } }">Edit Test</router-link>
+                            :to="{ name: 'TestEdit', params: { productId: id, testId: testId } }">Edit Test</router-link>
                     </td>
                 </tr>
             </tbody>
         </table>
         <div>
-            <router-link :to="{ name: 'CreateTest', params: { id: this.id } }" class="btn btn-primary btn-sm">+ New test +</router-link>
+            <router-link :to="{ name: 'CreateTest', params: { id: id } }" class="btn btn-primary btn-sm">+ New test +</router-link>
         </div>
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Product } from '@/models/product';
+import { getAllInjectedUtils } from '@/utils/injector-utils';
+import { ProductUtil } from '@/utils/productutils';
+
 export default {
-    inject: ['$products'],
-    props: ['id'],
+    props: { 
+        id: { type: String, default: "" },
+    },
     data() {
         return {
-            product: null
+            product: new Product(),
+            $products: new ProductUtil()
         }
     },
     created() {
-        this.product = this.$products.getCurrentUserProductById(this.id);
-    },
-    methods: {
-        edit(test) {
+        const { $products } = getAllInjectedUtils();
 
+        this.$data.$products = $products;
+
+        const productWithId = this.$data.$products.getCurrentUserProductById(this.id);
+
+        if(productWithId === undefined) {
+            this.product = new Product();
+        }
+        else
+        {
+            this.product = productWithId;
         }
     }
 }

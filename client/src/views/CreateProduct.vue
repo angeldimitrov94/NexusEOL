@@ -7,22 +7,22 @@
                     <label for="" class="form-label">
                         Product name
                     </label>
-                    <input type="text" class="form-control" v-model="this.name" />
+                    <input type="text" class="form-control" v-model="name" />
                 </div>
                 <div class="mb-3">
                     <label for="" class="form-label">
                         Description
                     </label>
-                    <textarea type="text" class="form-control" rows="5" v-model="this.description"></textarea>
+                    <textarea type="text" class="form-control" rows="5" v-model="description"></textarea>
                 </div>
                 <div class="mb-3">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" v-model="this.active">
+                        <input class="form-check-input" type="checkbox" v-model="active">
                         <label class="form-check-label" for="gridCheck1">Is Active</label>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <button class="btn btn-primary" @click.prevent="this.submitForm" :disabled="this.isFormInvalid">Create
+                    <button class="btn btn-primary" @click.prevent="submitForm" :disabled="isFormInvalid">Create
                         Page</button>
                 </div>
             </form>
@@ -30,13 +30,18 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { ProductUtil } from '@/utils/productutils';
 import { Product } from '../models/product';
+import { EventBus } from '@/utils/eventbus';
+import { getAllInjectedUtils } from '@/utils/injector-utils';
 
 export default {
-    inject: ['$products', '$bus'],
     props: {
         pageCreated: { type: Function }
+    },
+    mounted() {
+        this.pageCreated
     },
     computed: {
         isFormInvalid() {
@@ -47,8 +52,16 @@ export default {
         return {
             name: '',
             description: '',
-            active: true
+            active: true,
+            $products: new ProductUtil(),
+            $bus: new EventBus()
         }
+    },
+    created() {
+        const { $products, $bus } = getAllInjectedUtils();
+
+        this.$data.$products = $products;
+        this.$data.$bus = $bus
     },
     methods: {
         submitForm() {
@@ -58,11 +71,14 @@ export default {
             }
 
             try {
-                const product = new Product(this.name, this.description, [], this.active);
-                const success = this.$products.createNewProductForCurrentUser(product);
+                const product = new Product();
+                product.name = this.name
+                product.description = this.description, 
+                product.active = this.active;
+                const success = this.$data.$products.createNewProductForCurrentUser(product);
 
                 if(success === true) {
-                    this.$bus.$emit('product-created', {
+                    this.$data.$bus.$emit('product-created', {
                         id: product.id,
                     });
 

@@ -1,21 +1,13 @@
+import { Test } from '@/models/test';
 import { Product } from '../models/product';
-import { User } from '../models/user'
 import { UserUtil } from './userutils';
 
 export class ProductUtil {
-    userUtil;
+    userUtil: UserUtil = new UserUtil();
     currentProductId = "";
     currentTestId = "";
 
-    constructor(userUtil) {
-        if(!userUtil) {
-            throw new Error("Invalid userUtil object passed in");
-        }
-
-        this.userUtil = userUtil;
-    }
-
-    updateCurrentUserProducts(modifiedProducts) {
+    updateCurrentUserProducts(modifiedProducts: Array<Product>) {
         if(modifiedProducts === null || modifiedProducts === undefined || !Array.isArray(modifiedProducts)) {
             console.error('Invalid modified products passed in. Not modifying products.');
             return;
@@ -34,7 +26,7 @@ export class ProductUtil {
         return true;
     }
 
-    updateCurrentUserProductWithId(productId, modifiedProduct) {
+    updateCurrentUserProductWithId(productId: string, modifiedProduct: Product) {
         if(modifiedProduct === null || modifiedProduct === undefined) {
             console.error('Invalid modified product passed in. Not modifying product.');
             return;
@@ -61,7 +53,7 @@ export class ProductUtil {
         return true;
     }
 
-    updateCurrentUserTestWithId(productId, testId, modifiedTest) {
+    updateCurrentUserTestWithId(productId: string, testId: string, modifiedTest: Test) {
         if(modifiedTest === null || modifiedTest === undefined) {
             console.error('Invalid modified test passed in. Not modifying test.');
             return;
@@ -92,7 +84,7 @@ export class ProductUtil {
         return true;
     }
 
-    createNewProductForCurrentUser(newProduct) {
+    createNewProductForCurrentUser(newProduct: Product) {
         if(newProduct === null || newProduct === undefined) {
             console.error('Invalid new product passed in. Not creating product.');
             return;
@@ -117,7 +109,7 @@ export class ProductUtil {
         return true;
     }
 
-    createNewTestForCurrentUser(productId, newTest) {
+    createNewTestForCurrentUser(productId: string, newTest: Test) {
         if(newTest === null || newTest === undefined) {
             console.error('Invalid new test passed in. Not creating test.');
             return;
@@ -148,51 +140,16 @@ export class ProductUtil {
         return true;
     }
 
-    getCurrentUserAllProducts() {
-        const currentUser = this.userUtil.getCurrentUser();
-
-        if(currentUser === null) {
-            console.error('Current user is null. Not returning any products.');
-            return null;
-        }
-
-        return currentUser.account?.products;
+    getCurrentUserAllProducts(): Product[] {
+        return this.userUtil.getCurrentUser()?.account?.products;
     }
 
-    getCurrentUserProductById(productId) {
+    getCurrentUserProductById(productId: string): Product | undefined {
         const currentUser = this.userUtil.getCurrentUser();
-
-        if(currentUser === null) {
-            console.error('Current user is null. Not returning any products.');
-            return null;
-        }
-
-        const productWithId = currentUser.account?.products?.find(product => product?.id === productId);
-        return productWithId === undefined ? 
-        null : 
-        productWithId;
+        return currentUser.account?.products?.find(product => product?.id === productId);
     }
 
-    getTestFromCurrentUser(productId, testId) {
-        const currentUser = this.userUtil.getCurrentUser();
-
-        if(currentUser === null) {
-            console.error('Current user is null. Returning null.');
-            return null;
-        }
-
-        const product = this.getCurrentUserProductById(productId);
-        if(product === null) {
-            console.error(`Product with id ${productId} is null. Returning null.`);
-            return null;
-        }
-
-        const test = product.tests.find(test => test.id === testId);
-        if(test === undefined) {
-            console.error(`Test with id ${testId} not found. Returning null.`);
-            return null;
-        }
-
-        return test;
+    getTestFromCurrentUser(productId: string, testId: string): Test | undefined {
+        return this.getCurrentUserProductById(productId)?.tests.find(test => test.id === testId);
     }
 }

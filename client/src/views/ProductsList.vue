@@ -12,7 +12,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="{ name, id, description, active, tests } in this.allProducts" :key="id">
+                <tr v-for="{ name, id, description, active, tests } in allProducts" :key="id">
                     <td>{{ name }}</td>
                     <td>{{ id }}</td>
                     <td>{{ description }}</td>
@@ -28,17 +28,29 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import type { Product } from '@/models/product';
+import { EventBus } from '@/utils/eventbus';
+import { getAllInjectedUtils } from '@/utils/injector-utils';
+import { ProductUtil } from '@/utils/productutils';
+
 export default {
-    inject: ['$bus', '$products'],
     data() {
         return {
-            allProducts: this.$products.getCurrentUserAllProducts()
+            allProducts: [] as Product[],
+            $bus: new EventBus(),
+            $products: new ProductUtil()
         }
     },
     created() {
-        this.$bus.$on('user-change', () => {
-            this.allProducts = this.$products.getCurrentUserAllProducts();
+        const { $products, $bus } = getAllInjectedUtils();
+
+        this.$data.$products = $products;
+        this.$data.$bus = $bus;
+
+        this.allProducts = this.$data.$products.getCurrentUserAllProducts();
+        this.$data.$bus.$on('user-change', () => {
+            this.allProducts = this.$data.$products.getCurrentUserAllProducts();
         })
     }
 }

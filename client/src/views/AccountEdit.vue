@@ -6,43 +6,64 @@
                 <label for="" class="form-label">
                     Account name
                 </label>
-                <input type="text" class="form-control" v-model="this.account.name" />
+                <input type="text" class="form-control" v-model="account.name" />
             </div>
             <div class="mb-3">
                 <label for="" class="form-label">
                     ID (disabled for editing, auto-assigned upon creation of account)
                 </label>
-                <input type="text" class="form-control" disabled v-model="this.account.id" />
+                <input type="text" class="form-control" disabled v-model="account.id" />
             </div>
             <div class="mb-3">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" v-model="this.account.active">
+                    <input class="form-check-input" type="checkbox" v-model="account.active">
                     <label class="form-check-label" for="gridCheck1">Is Active</label>
                 </div>
             </div>
         </form>
         <div class="mb-3">
-            <button class="btn btn-primary me-2" @click.prevent="submit" :disabled="this.isFormInvalid">Confirm
+            <button class="btn btn-primary me-2" @click.prevent="submit" :disabled="isFormInvalid">Confirm
                 changes</button>
         </div>
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Account } from '@/models/account';
+import type { AccountUtil } from '@/utils/accountutils';
+import type { EventBus } from '@/utils/eventbus';
+import { getAllInjectedUtils } from '@/utils/injector-utils';
+
 export default {
-    inject: ['$bus', '$accounts'],
-    props: ['id'],
-    created() {
-        this.account = this.$accounts.getAccountById(this.id);
+    props: { 
+        id: { type: Number, default: -1 },
+    },
+    mounted() {
+        this.id
+    },
+    async created() {
+        const { $accounts } = getAllInjectedUtils();
+
+        this.$data.$accounts = $accounts;
+
+        const accountWithId = await this.$data.$accounts.getAccountById(this.id);
+
+        if(accountWithId === undefined) {
+            return;
+        }
+
+        this.account = accountWithId;
     },
     data() {
         return {
-            account: null
+            account: new Account(),
+            $bus: {} as EventBus,
+            $accounts: {} as AccountUtil
         }
     },
     methods: {
         submit() {
-            const updateResult = this.$accounts.updateAccountWithId(this.id, this.account);
+            const updateResult = this.$data.$accounts.updateAccountWithId(this.id, this.account);
 
             if (updateResult === null) {
                 alert('Failed to update account.');

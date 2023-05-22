@@ -13,7 +13,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="{ name, id, account, level, active } in this.allUsers" :key="id">
+                <tr v-for="{ name, id, account, level, active } in allUsers" :key="id">
                     <td>{{ name }}</td>
                     <td>{{ id }}</td>
                     <td>{{ level }}</td>
@@ -29,16 +29,24 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
+import type { User } from '@/models/user';
+import { getAllInjectedUtils } from '@/utils/injector-utils';
+import { UserUtil } from '@/utils/userutils';
+
 export default {
-    inject: ['$users'],
     data() {
         return {
-            allUsers: []
+            allUsers: [] as User[],
+            $users: new UserUtil(),
         }
     },
     async created() {
-        this.allUsers = await this.$users.getAllUsers();
+        const { $users } = getAllInjectedUtils();
+
+        this.$data.$users = $users;
+
+        this.allUsers = await this.$data.$users.getAllUsers();
     }
 }
 </script>

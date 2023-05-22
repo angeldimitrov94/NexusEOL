@@ -6,30 +6,30 @@
                 class="nav-brand"
                 aria-current="page"
                 active-class="active"
-                >{{ this.currentUser?.account?.name }}
+                >{{ currentUser?.account?.name }}
             </router-link>
             <NavbarLink 
-            v-for="{name, id} in this.activeProducts"
+            v-for="{name, id} in activeProducts"
             :key="id"
             :name="name" 
             :id="id"
             ></NavbarLink>
             <router-link 
-            v-if="this.userIsAdmin()"
+            v-if="userIsAdmin()"
             to="/products/manage"
             class="nav-item"
             aria-current="page"
             active-class="active"
             >Manage Products</router-link>
             <router-link
-            v-if="this.userIsSuperadmin()" 
+            v-if="userIsSuperadmin()" 
             to="/users"
             class="nav-item"
             aria-current="page"
             active-class="active"
             >Manage Users</router-link>
             <router-link 
-            v-if="this.userIsSuperadmin()"
+            v-if="userIsSuperadmin()"
             to="/accounts"
             class="nav-item"
             aria-current="page"
@@ -42,29 +42,44 @@
     </nav>
 </template>
 
-<script>
+<script lang="ts">
 import NavbarLink from './NavbarLink.vue';
 import UserBadge from './UserBadge.vue';
-import { User } from '../models/user.js'
+import { UserUtil } from '@/utils/userutils';
+import { ProductUtil } from '@/utils/productutils';
+import { User } from '@/models/user';
+import type { Product } from '@/models/product';
+import { defineComponent } from 'vue';
+import { EventBus } from '@/utils/eventbus';
+import { getAllInjectedUtils } from '@/utils/injector-utils';
 
-export default {
-    inject: ['$bus', '$users', '$products'],
+export default defineComponent({
     data() {
         return {
-            currentUser: null,
-            activeProducts: []
+            currentUser: new User(),
+            activeProducts: [] as Product[],
+            $users: new UserUtil(),
+            $products: new ProductUtil(),
+            $bus: new EventBus()
         };
     },
     created() {
-        this.currentUser = this.$users.getCurrentUser();
-        this.activeProducts = this.$products.getCurrentUserAllProducts()?.filter(p => p.active);
-        this.$bus.$on('user-change', () => { 
-            this.currentUser = this.$users.getCurrentUser();
-            this.activeProducts = this.$products.getCurrentUserAllProducts()?.filter(p => p.active);
+        const { $users, $products, $bus } = getAllInjectedUtils();
+
+        this.$data.$users = $users;
+        this.$data.$products = $products;
+        this.$data.$bus = $bus;
+
+        this.currentUser = this.$data.$users.getCurrentUser();
+
+        this.activeProducts = this.$data.$products.getCurrentUserAllProducts()?.filter(p => p.active);
+        this.$data.$bus.$on('user-change', () => { 
+            this.currentUser = this.$data.$users.getCurrentUser();
+            this.activeProducts = this.$data.$products.getCurrentUserAllProducts()?.filter(p => p.active);
             this.$router.push({ path: '/' });
         });
-        this.$bus.$on('product-created', () => {
-            this.activeProducts = this.$products.getCurrentUserAllProducts()?.filter(p => p.active);
+        this.$data.$bus.$on('product-created', () => {
+            this.activeProducts = this.$data.$products.getCurrentUserAllProducts()?.filter(p => p.active);
         })
     },
     methods: {
@@ -76,5 +91,5 @@ export default {
         }
     },
     components: { NavbarLink, UserBadge }
-}
+});
 </script>

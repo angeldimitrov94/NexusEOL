@@ -1,15 +1,15 @@
 <template>
     <div class="row row-cols-2 row-cols-md-2 g-4 m-3">
-        <div class="col" v-for="product in this.products">
-            <div class="card" :class="this.getStyleNameFromState(product)">
+        <div class="col" v-for="product in products">
+            <div class="card" :class="getStyleNameFromState(product)">
                 <!-- <img src="{{ product.imageLink }}" alt="Product image" class="card-img-top"> -->
                 <div class="card-body">
                     <div class="container text-center">
                         <div class="row"><h5 class="card-title">{{ product.name }}</h5></div>
                         <div class="row"><p class="card-text">{{ product?.state }}</p></div>
-                        <div class="row"><p class="card-text">{{ this.testCountValue(product) }}</p></div>
+                        <div class="row"><p class="card-text">{{ testCountValue(product) }}</p></div>
                         <div class="row">
-                            <progress max="100" :value="this.progressValue(product)"></progress>
+                            <progress max="100" :value="progressValue(product)"></progress>
                         </div>
                         <div class="row">
                             <router-link :to="`/products/${product.id}`" class="card-text btn btn-primary btn-sm">Go to...</router-link>
@@ -21,41 +21,52 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { inject } from 'vue';
 import { Product } from '../models/product'
+import { EventBus } from '@/utils/eventbus';
+import { ProductUtil } from '@/utils/productutils';
+import { ProductState } from '@/models/product-state';
+import { getAllInjectedUtils } from '@/utils/injector-utils';
 
 export default {
-    inject: ['$bus','$products'],
     data() {
         return {
-            products: []
+            products: [] as Product[],
+            $products: new ProductUtil(),
+            $bus: new EventBus()
         }
     },
     created() {
-        this.products = this.$products.getCurrentUserAllProducts();
-        this.$bus.$on('user-change', () => { 
-            this.products = this.$products.getCurrentUserAllProducts();
+        const { $products, $bus } = getAllInjectedUtils();
+
+        this.$data.$products = $products;
+        this.$data.$bus = $bus;
+
+        this.products = this.$data.$products.getCurrentUserAllProducts();
+        this.$data.$bus.$on('user-change', () => { 
+            this.products = this.$data.$products.getCurrentUserAllProducts();
             this.$router.push({ path: '/' });
         });
     },
     methods: {
-        getStyleNameFromState(product) {
+        getStyleNameFromState(product: Product) {
             if(product == null) {
                 return "nullProductTest";
             }
-            else if(product?.state == Product.NOT_STARTED)
+            else if(product?.state == ProductState.NOT_STARTED)
             {
                 return "notStartedTest";
             }
-            else if(product?.state == Product.RUNNING)
+            else if(product?.state == ProductState.RUNNING)
             {
                 return "runningTest";
             }
-            else if(product?.state == Product.COMPLETE_FAIL)
+            else if(product?.state == ProductState.COMPLETE_FAIL)
             {
                 return "failTest";
             }
-            else if(product?.state == Product.COMPLETE_SUCCESS)
+            else if(product?.state == ProductState.COMPLETE_SUCCESS)
             {
                 return "successTest";
             }
@@ -63,10 +74,10 @@ export default {
                 return "unknownStateTest";
             }
         },
-        progressValue(product) {
+        progressValue(product: Product) {
             return (product.currentTestId === -1 ? 0 : product.currentTestId / product.tests?.length === 0 ? 1 : product.tests?.length)*100;
         },
-        testCountValue(product) {
+        testCountValue(product: Product) {
             return `${product.currentTestId === -1 ? 0 : product.currentTestId}/${product.tests?.length}`
         }
     }

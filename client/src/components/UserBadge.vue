@@ -1,10 +1,10 @@
 <template>
-    <form class="row row-cols-lg-auto g-3 align-items-center" v-if="this.isSignedIn === false">
+    <form class="row row-cols-lg-auto g-3 align-items-center" v-if="isSignedIn === false">
         <div class="col-12">
             <input 
             type="text" 
             class="form-control"
-            v-model="this.signinUsername"
+            v-model="signinUsername"
             placeholder="Username or email"
             autocomplete="username"/>
         </div>
@@ -12,66 +12,78 @@
             <input 
             type="password"
             class="form-control"
-            v-model="this.signinPassword"
+            v-model="signinPassword"
             placeholder="Password"
             autocomplete="password"/>
         </div>
     </form>
     <button type="button" class="btn btn-secondary" @click.prevent="attemptSigninout()">
-    Sign {{this.getSignInOutTitle()}}
+    Sign {{getSignInOutTitle()}}
     </button>
 </template>
 
-<script>
+<script lang="ts">
+import { User } from '@/models/user';
+import type { EventBus } from '@/utils/eventbus';
+import { getAllInjectedUtils } from '@/utils/injector-utils';
+import type { UserUtil } from '@/utils/userutils';
+
 export default {
-    inject: ['$users', '$bus'],
     data() {
         return {
-            currentUser: null,
+            currentUser: new User(),
             isSignedIn: false,
             signinUsername: "",
-            signinPassword: ""
+            signinPassword: "",
+            $users: {} as UserUtil,
+            $bus: {} as EventBus
         }
     },
     created() {
-        this.currentUser = this.$users.getCurrentUser();
-        this.isSignedIn = this.$users.isUserCurrentlySignedIn();
-        this.$bus.$on('user-change', this.userChangeRefresh);
+        const { $users, $bus } = getAllInjectedUtils();
+
+        this.$data.$users = $users;
+        this.$data.$bus = $bus
+
+        this.currentUser = this.$data.$users.getCurrentUser();
+        this.isSignedIn = this.$data.$users.isUserCurrentlySignedIn();
+        this.$data.$bus.$on('user-change', this.userChangeRefresh);
     },
     methods: {
         async attemptSigninout() {
-            let [success, message] = [false, "Invalid sign in/out operation"];
+            let success = false;
+            let message = "Invalid sign in/out operation";
 
-            if(this.$users.getCurrentUser() === null) {
+            if(this.$data.$users.getCurrentUser().isDefault() === true) {
                 console.log("attempt signin");
-                [success, message] = await this.$users.signin(this.signinUsername, this.signinPassword);
+                [success, message] = await this.$data.$users.signin(this.$data.signinUsername, this.$data.signinPassword);
             }
-            else if(this.$users.isUserCurrentlySignedIn() === true){
+            else if(this.$data.$users.isUserCurrentlySignedIn() === true){
                 console.log("attempt signout");
-                [success, message] = this.$users.signout();
+                [success, message] = this.$data.$users.signout();
             }
             else {
                 console.error('Neither logged in nor logged out user!');
             }
 
-            this.isSignedIn = this.$users.isUserCurrentlySignedIn();
+            this.$data.isSignedIn = this.$data.$users.isUserCurrentlySignedIn();
 
             if(success === true) {
-                this.$bus.$emit('user-change', {});
+                this.$data.$bus.$emit('user-change', {});
             }
 
-            this.signinUsername = "";
-            this.signinPassword = "";
+            this.$data.signinUsername = "";
+            this.$data.signinPassword = "";
             
             alert(message);
         },
         userChangeRefresh() {
-            this.currentUser = this.$users.getCurrentUser();
-            this.isSignedIn = this.$users.isUserCurrentlySignedIn();
+            this.$data.currentUser = this.$data.$users.getCurrentUser();
+            this.$data.isSignedIn = this.$data.$users.isUserCurrentlySignedIn();
         },
         getSignInOutTitle() {
-            const thisUser = this.$users.getCurrentUser();
-            return this.$users.isUserCurrentlySignedIn() ? `${thisUser?.name} (${thisUser?.level}) out` : 'in';
+            const thisUser = this.$data.$users.getCurrentUser();
+            return this.$data.$users.isUserCurrentlySignedIn() ? `${thisUser?.name} (${thisUser?.level}) out` : 'in';
         }
     }
 }

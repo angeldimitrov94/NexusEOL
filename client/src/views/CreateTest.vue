@@ -6,17 +6,17 @@
                 <label for="" class="form-label">
                     Name
                 </label>
-                <input type="text" class="form-control" v-model="this.name" />
+                <input type="text" class="form-control" v-model="name" />
             </div>
             <div class="mb-3">
                 <label for="" class="form-label">
                     Description
                 </label>
-                <textarea type="text" class="form-control" rows="5" v-model="this.description"></textarea>
+                <textarea type="text" class="form-control" rows="5" v-model="description"></textarea>
             </div>
             <div class="mb-3">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" v-model="this.active">
+                    <input class="form-check-input" type="checkbox" v-model="active">
                     <label class="form-check-label" for="gridCheck1">Is Active</label>
                 </div>
             </div>
@@ -26,27 +26,45 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
+import { inject } from 'vue';
 import { Test } from '../models/test';
+import { EventBus } from '@/utils/eventbus';
+import { getAllInjectedUtils } from '@/utils/injector-utils';
+import { ProductUtil } from '@/utils/productutils';
 export default {
-    props: ['id'],
-    inject: ['$products','$bus'],
+    props: {
+        id: { type: String, default: "" },
+    },
+    mounted() {
+        this.id
+    },
     data() {
         return {
             name: "",
             description: "",
-            active: true
+            active: true,
+            $products: new ProductUtil(),
+            $bus: new EventBus()
         }
+    },
+    created() {
+        const { $products, $bus } = getAllInjectedUtils();
+
+        this.$data.$products = $products;
+        this.$data.$bus = $bus
     },
     methods: {
         submit() {
 
             try {
-                const newTest = new Test(this.name, this.description);
-                const success = this.$products.createNewTestForCurrentUser(this.id, newTest);
+                const newTest = new Test();
+                newTest.name = this.name;
+                newTest.description = this.description;
+                const success = this.$data.$products.createNewTestForCurrentUser(this.id, newTest);
 
                 if(success === true) {
-                    this.$bus.$emit('test-created', {
+                    this.$data.$bus.$emit('test-created', {
                         id: newTest.id,
                     });
 

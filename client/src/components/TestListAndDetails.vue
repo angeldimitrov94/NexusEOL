@@ -1,7 +1,7 @@
 <template>
   <div class="col-md-2 col-sm-3">
     <ul class="nav flex-md-column">
-      <li v-for="test in this.tests" class="nav-item">
+      <li v-for="test in tests" class="nav-item">
         <a class="nav-link" :class="isThisIdActiveClass(test.id)" href="#" :key="test?.id"
           @click.prevent="makeThisIdActiveId(test.id)">
           <img src="page.svg" alt="page icon" />
@@ -13,14 +13,14 @@
   <div class="col-md-8 col-sm-10">
     <div class="vstack gap-3">
       <div class="p-2">
-        <h1>{{ this.currentlySelectedTest?.name }}</h1>
+        <h1>{{ currentlySelectedTest?.name }}</h1>
       </div>
       <div class="p-2">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Messages</h5>
             <div class="card-text overflow-auto">
-              <ul v-for="{ dateTime, level, text } in this.currentlySelectedTest?.messages">
+              <ul v-for="{ dateTime, level, text } in currentlySelectedTest?.messages">
                 <li>{{ dateTime.padEnd(25, ' ') }} - {{ level.padEnd(6, ' ') }} - {{ text }}</li>
               </ul>
             </div>
@@ -32,8 +32,7 @@
           <div class="card-body">
             <h5 class="card-title">Actions</h5>
             <div class="card-text">
-              <p>{{ this.currentlySelectedTest?.actions?.message === undefined ? "No actions pending" :
-                this.currentlySelectedTest?.actions?.message }}</p>
+              <p>{{ actionText }}</p>
               <button type="button" class="btn btn-success disabled">Proceed</button>
               <button type="button" class="btn btn-danger disabled">Abort</button>
             </div>
@@ -44,30 +43,67 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: ['tests'],
-  inject: ['$bus'],
-  created() {
+<script lang="ts">
+import { Test } from '@/models/test';
 
+export default {
+  props: { 
+    tests: Array<Test>,
+  },
+  mounted() {
+    this.tests
+  },
+  created() {
+    this.setCurrentlySelectedTest(this.$data.currentlySelectedTestId);
   },
   data() {
     return {
-      currentlySelectedTestId: '0',
-      currentlySelectedTest: {}
+      currentlySelectedTestId: "",
+      currentlySelectedTest: new Test()
     }
   },
   watch: {
-    currentlySelectedTestId(newTestId, oldTestId) {
-      this.currentlySelectedTest = this.tests.find(test => test.id == newTestId);
+    currentlySelectedTestId(newTestId: string, oldTestId) {
+      const selectedTest = this.tests?.find(test => test.id == newTestId);
+
+      if(!selectedTest) {
+        console.error(`Invalid test id [${newTestId}] passed in, could not find a test with that id.`);
+        return;
+      }
+
+      this.currentlySelectedTest = selectedTest;
     }
   },
   methods: {
-    makeThisIdActiveId(id) {
+    makeThisIdActiveId(id: string) {
       this.currentlySelectedTestId = id;
     },
-    isThisIdActiveClass(id) {
+    isThisIdActiveClass(id: string) {
       return id === this.currentlySelectedTestId ? "active" : "";
+    },
+    setCurrentlySelectedTest(id: string) {
+      const selectedTest = this.tests?.find(test => test.id == id);
+
+      if(!selectedTest) {
+        console.error(`Invalid test id [${id}] passed in, could not find a test with that id. Tests : `);
+        console.error(this.tests);
+        console.error(this.currentlySelectedTest);
+        return;
+      }
+
+      this.currentlySelectedTest = selectedTest;
+    }
+  },
+  computed: {
+    actionText() {
+      const currentlySelectedTest = this.currentlySelectedTest;
+      console.log(currentlySelectedTest);
+      
+      const actionTextValue = currentlySelectedTest === undefined || currentlySelectedTest?.currentActionIndex === -1 ? "No actions for this test" :
+      currentlySelectedTest?.actions[currentlySelectedTest.currentActionIndex]?.message;
+      console.log(actionTextValue);
+      
+      return actionTextValue;
     }
   }
 }

@@ -11,7 +11,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="{ name, id, active } in this.allAccounts" :key="id">
+                <tr v-for="{ name, id, active } in allAccounts" :key="id">
                     <td>{{ name }}</td>
                     <td>{{ id }}</td>
                     <td>{{ active ? 'yes' : 'no' }}</td>
@@ -25,17 +25,24 @@
         </div>
     </div>
 </template>
-<script>
+<script lang="ts">
+import { Account } from '@/models/account';
+import type { AccountUtil } from '@/utils/accountutils';
+import { getAllInjectedUtils } from '@/utils/injector-utils';
+
 export default {
-    inject: ['$accounts'],
-    props: ['id'],
     data() {
         return {
-            allAccounts: []
+            $accounts: {} as AccountUtil,
+            allAccounts: [] as Account[]
         }
     },
     async created() {
-        this.allAccounts = await this.$accounts.getAllAccounts();
+        const { $accounts } = getAllInjectedUtils();
+
+        this.$accounts = $accounts;
+        
+        this.allAccounts = await this.$data.$accounts.getAllAccounts();
     }
 }
 </script>
