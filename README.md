@@ -10,16 +10,16 @@
       - receiving data from remote nodes
       - serving data to front-end
       - persisting received data to storage
-  - cloud nosql database
-    - stores real-time data and state
-    - functions as a data lake for 'relatively recent' data (exact definition of 'relatively recent', TBD)
-    - will be configured to perform archiving of data older than 'relatively recent' to S3 or other cloud object storage
-  - on-premises
-    - local nosql instance for generated data awaiting upload to cloud
-    - TestNodeLogicEngine background service that will be responsible for running physical test logic/interfacing with equipment
-    - TestNodeLifeline background service for communicating time-sensitive test state data to cloud for updating front-end
-    - TestNodeUploader background service for performing migration of on-premises data to cloud
-    - TestNodeSupervisor background service for monitoring TestLogicEngine, TestLifeline, TestUploader service states and reporting state of node to cloud for update in front-end
+    - cloud nosql database
+      - stores real-time data and state
+      - functions as a data lake for 'relatively recent' data (exact definition of 'relatively recent', TBD)
+      - will be configured to perform archiving of data older than 'relatively recent' to S3 or other cloud object storage
+- on-premises
+  - local nosql instance for generated data awaiting upload to cloud
+  - TestNodeLogicEngine background service that will be responsible for running physical test logic/interfacing with equipment
+  - TestNodeLifeline background service for communicating time-sensitive test state data to cloud for updating front-end
+  - TestNodeUploader background service for performing migration of on-premises data to cloud
+  - TestNodeSupervisor background service for monitoring TestLogicEngine, TestLifeline, TestUploader service states and reporting state of node to cloud for update in front-end
 
 ## Roles
 - superadmin
