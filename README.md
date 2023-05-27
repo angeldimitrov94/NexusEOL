@@ -14,12 +14,12 @@
     - stores real-time data and state
     - functions as a data lake for 'relatively recent' data (exact definition of 'relatively recent', TBD)
     - will be configured to perform archiving of data older than 'relatively recent' to S3 or other cloud object storage
-- on-premises
-  - local nosql instance for generated data awaiting upload to cloud
-  - TestNodeLogicEngine background service that will be responsible for running physical test logic/interfacing with equipment
-  - TestNodeLifeline background service for communicating time-sensitive test state data to cloud for updating front-end
-  - TestNodeUploader background service for performing migration of on-premises data to cloud
-  - TestNodeSupervisor background service for monitoring TestLogicEngine, TestLifeline, TestUploader service states and reporting state of node to cloud for update in front-end
+  - on-premises
+    - local nosql instance for generated data awaiting upload to cloud
+    - TestNodeLogicEngine background service that will be responsible for running physical test logic/interfacing with equipment
+    - TestNodeLifeline background service for communicating time-sensitive test state data to cloud for updating front-end
+    - TestNodeUploader background service for performing migration of on-premises data to cloud
+    - TestNodeSupervisor background service for monitoring TestLogicEngine, TestLifeline, TestUploader service states and reporting state of node to cloud for update in front-end
 
 ## Roles
 - superadmin
@@ -39,9 +39,9 @@
     - configure products
     - connect subtest logic
     - assign products to technicians
-- business owner
+- business intelligence user (biuser)
   - rights :
-    - view current status of products-under-test
+    - view current status of all products for an account
     - view dashboard
 - technician
   - rights :
@@ -50,7 +50,8 @@
 
 ## Features
 - create account
-- modify 'auxiliary' account details such as name, address, etc
+- modify account details such as name, address, etc
+  - with the exception of account ID
 - create users for account
 - create product for account
 - get list of all available integrations
