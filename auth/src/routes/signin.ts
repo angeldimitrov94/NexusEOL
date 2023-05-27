@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import { validateRequest } from '@angeldimitrov94/ticketing-common';
+import { validateRequest } from '@testsequencer/common';
 import { User } from '../models/user';
-import { BadRequestError } from '@angeldimitrov94/ticketing-common';
+import { BadRequestError } from '@testsequencer/common';
 import { Password } from '../services/password';
 import jwt from 'jsonwebtoken';
 

@@ -7,7 +7,7 @@ import { currentUserRouter } from './routes/current-user';
 import { signinRouter } from './routes/signin';
 import { signoutRouter } from './routes/signout';
 import { signupRouter } from './routes/signup';
-import { errorHandler, NotFoundError } from '@angeldimitrov94/ticketing-common';
+import { errorHandler, NotFoundError } from '@testsequencer/common';
 
 const app = express();
 app.set('trust proxy', true);
