@@ -6,7 +6,6 @@ import { UserUtil } from './utils/userutils';
 import { ProductUtil } from './utils/productutils';
 import { AccountUtil } from './utils/accountutils';
 import router from './router'
-import { AccountUtilSymbol, EventBusSymbol, ProductUtilSymbol, UsersUtilSymbol } from './models/symbols';
 
 const $userUtil = new UserUtil();
 const $eventBus = new EventBus();
@@ -16,10 +15,10 @@ const $accountUtil = new AccountUtil();
 
 const app = createApp(AppVue)
     .use(router);
-app.provide(UsersUtilSymbol, $userUtil);
-app.provide(EventBusSymbol, $eventBus);
-app.provide(ProductUtilSymbol, $productUtil);
-app.provide(AccountUtilSymbol, $accountUtil);
+app.provide('$users', $userUtil);
+app.provide('$bus', $eventBus);
+app.provide('$products', $productUtil);
+app.provide('$accounts', $accountUtil);
 
 app.mount('#app')
 

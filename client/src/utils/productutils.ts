@@ -1,5 +1,4 @@
-import { Test } from '@/models/test';
-import { Product } from '../models/product';
+import type { ProductDoc, TestDoc } from '@testsequencer/common';
 import { UserUtil } from './userutils';
 
 export class ProductUtil {
@@ -7,7 +6,7 @@ export class ProductUtil {
     currentProductId = "";
     currentTestId = "";
 
-    updateCurrentUserProducts(modifiedProducts: Array<Product>) {
+    updateCurrentUserProducts(modifiedProducts: Array<ProductDoc>) {
         if(modifiedProducts === null || modifiedProducts === undefined || !Array.isArray(modifiedProducts)) {
             console.error('Invalid modified products passed in. Not modifying products.');
             return;
@@ -26,7 +25,7 @@ export class ProductUtil {
         return true;
     }
 
-    updateCurrentUserProductWithId(productId: string, modifiedProduct: Product) {
+    updateCurrentUserProductWithId(productId: string, modifiedProduct: ProductDoc) {
         if(modifiedProduct === null || modifiedProduct === undefined) {
             console.error('Invalid modified product passed in. Not modifying product.');
             return;
@@ -43,7 +42,7 @@ export class ProductUtil {
         console.log(this.getCurrentUserAllProducts());
         console.log(existingProduct);
         if(existingProduct === undefined) {
-            console.error('Product with this id does not exist. Not modifying this product.')
+            console.error('ProductDoc with this id does not exist. Not modifying this product.')
             return;
         }
 
@@ -53,7 +52,7 @@ export class ProductUtil {
         return true;
     }
 
-    updateCurrentUserTestWithId(productId: string, testId: string, modifiedTest: Test) {
+    updateCurrentUserTestWithId(productId: string, testId: string, modifiedTest: TestDoc) {
         if(modifiedTest === null || modifiedTest === undefined) {
             console.error('Invalid modified test passed in. Not modifying test.');
             return;
@@ -68,13 +67,13 @@ export class ProductUtil {
 
         const existingProduct = this.getCurrentUserAllProducts().find(product => product.id === productId);
         if(existingProduct === undefined) {
-            console.error('Product with this productId does not exist. Not modifying this test.')
+            console.error('ProductDoc with this productId does not exist. Not modifying this test.')
             return;
         }
 
         let existingTest = existingProduct.tests.find(test => test.id === testId);
         if(existingTest === undefined) {
-            console.error('Test with this testId does not exist. Not modifying this test.')
+            console.error('TestDoc with this testId does not exist. Not modifying this test.')
             return;
         }
 
@@ -84,7 +83,7 @@ export class ProductUtil {
         return true;
     }
 
-    createNewProductForCurrentUser(newProduct: Product) {
+    createNewProductForCurrentUser(newProduct: ProductDoc) {
         if(newProduct === null || newProduct === undefined) {
             console.error('Invalid new product passed in. Not creating product.');
             return;
@@ -99,7 +98,7 @@ export class ProductUtil {
 
         const allProducts = this.getCurrentUserAllProducts();
         if(allProducts.find(product => product.id === newProduct.id) !== undefined) {
-            console.error(`Product with id ${newProduct.id} already exists. Not creating product.`);
+            console.error(`ProductDoc with id ${newProduct.id} already exists. Not creating product.`);
             return;
         }
 
@@ -109,7 +108,7 @@ export class ProductUtil {
         return true;
     }
 
-    createNewTestForCurrentUser(productId: string, newTest: Test) {
+    createNewTestForCurrentUser(productId: string, newTest: TestDoc) {
         if(newTest === null || newTest === undefined) {
             console.error('Invalid new test passed in. Not creating test.');
             return;
@@ -124,13 +123,13 @@ export class ProductUtil {
 
         const existingProduct = this.getCurrentUserAllProducts().find(product => product.id === productId);
         if(existingProduct === undefined) {
-            console.error('Product with this productId does not exist. Not adding this test.')
+            console.error('ProductDoc with this productId does not exist. Not adding this test.')
             return;
         }
 
         const testWithTestId = existingProduct.tests.find(test => test.id === newTest.id);
         if(testWithTestId !== undefined) {
-            console.error(`Test with id ${newTest.id} already exists. Not creating test.`);
+            console.error(`TestDoc with id ${newTest.id} already exists. Not creating test.`);
             return;
         }
 
@@ -140,16 +139,16 @@ export class ProductUtil {
         return true;
     }
 
-    getCurrentUserAllProducts(): Product[] {
+    getCurrentUserAllProducts(): ProductDoc[] {
         return this.userUtil.getCurrentUser()?.account?.products;
     }
 
-    getCurrentUserProductById(productId: string): Product | undefined {
+    getCurrentUserProductById(productId: string): ProductDoc | undefined {
         const currentUser = this.userUtil.getCurrentUser();
         return currentUser.account?.products?.find(product => product?.id === productId);
     }
 
-    getTestFromCurrentUser(productId: string, testId: string): Test | undefined {
+    getTestFromCurrentUser(productId: string, testId: string): TestDoc | undefined {
         return this.getCurrentUserProductById(productId)?.tests.find(test => test.id === testId);
     }
 }

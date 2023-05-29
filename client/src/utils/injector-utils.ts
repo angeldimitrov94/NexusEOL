@@ -1,26 +1,25 @@
 import { inject } from "@vue/runtime-core";
-import { AccountUtilSymbol, EventBusSymbol, ProductUtilSymbol, UsersUtilSymbol } from "@/models/symbols";
 
 function getAllInjectedUtils() {
-    const $users = inject(UsersUtilSymbol);
+    const $users = inject('$users');
 
     if(!$users) {
         throw new Error('UsersUtil could not be resolved');
     }
 
-    const $products = inject(ProductUtilSymbol);
+    const $products = inject('$products');
 
     if(!$products) {
         throw new Error('ProductUtil could not be resolved');
     }
 
-    const $bus = inject(EventBusSymbol);
+    const $bus = inject('$bus');
 
     if(!$bus) {
         throw new Error('EventBus could not be resolved');
     }
 
-    const $accounts = inject(AccountUtilSymbol);
+    const $accounts = inject('$accounts');
 
     if(!$accounts) {
         throw new Error('AccounUtil could not be resolved');

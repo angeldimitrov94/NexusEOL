@@ -1,18 +1,18 @@
-import { Account } from "../models/account";
+import type { AccountDoc } from "@testsequencer/common";
 
 export class AccountUtil {
-    async getAllAccounts(): Promise<Account[]> {
-        let allAccounts: Account[] = [];
+    async getAllAccounts(): Promise<AccountDoc[]> {
+        let allAccounts: AccountDoc[] = [];
         await fetch('accounts.json').
         then((response) => { return response.json()} ).
         then((data) => {
-            allAccounts = data as Account[];
+            allAccounts = data as AccountDoc[];
         });
 
         return allAccounts;
     }
 
-    async appendAndPersistNewAccount(newAccount: Account) {
+    async appendAndPersistNewAccount(newAccount: AccountDoc) {
         //
     }
 
@@ -21,7 +21,7 @@ export class AccountUtil {
         return allAccounts?.find(account => account.id === id);
     }
 
-    async updateAccountWithId(id: number, updatedAccount: Account) {
+    async updateAccountWithId(id: number, updatedAccount: AccountDoc) {
         //
         return true;
     }
