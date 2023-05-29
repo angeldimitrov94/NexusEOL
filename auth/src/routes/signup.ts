@@ -2,8 +2,7 @@ import express, {Request, Response} from 'express';
 import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
 
-import { User } from '../models/user';
-import { BadRequestError } from '@testsequencer/common';
+import { Account, BadRequestError, User, UserRole } from '@testsequencer/common';
 import { validateRequest } from '@testsequencer/common';
 
 const router = express.Router();
@@ -27,7 +26,7 @@ async (req: Request, res: Response) => {
         throw new BadRequestError(`Email ${email} in use already`);     
     }
 
-    const user = User.build({ email, password });
+    const user = User.build({ email, password, name: email, level: UserRole.TECHNICIAN });
     await user.save();
 
     //Generate JWT

@@ -1,9 +1,6 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import { validateRequest } from '@testsequencer/common';
-import { User } from '../models/user';
-import { BadRequestError } from '@testsequencer/common';
-import { Password } from '../services/password';
+import { validateRequest, BadRequestError, User, Password } from '@testsequencer/common';
 import jwt from 'jsonwebtoken';
 
 const router = express.Router();
