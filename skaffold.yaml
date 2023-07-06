@@ -7,8 +7,8 @@ deploy:
 build:
   local:
     push: false
-  tagPolicy: 
-    sha256: {}
+  # googleCloudBuild:
+  #   projectId: testsequencer-388220
   artifacts:
     - image: eolnexus/auth
       context: auth
@@ -25,4 +25,36 @@ build:
       sync:
         manual:
           - src: "**/*.ts"
+            dest: .
+    - image: eolnexus/users
+      context: users
+      docker:
+        dockerfile: Dockerfile
+      sync: 
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: eolnexus/products
+      context: products
+      docker:
+        dockerfile: Dockerfile
+      sync: 
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: eolnexus/tests
+      context: tests
+      docker:
+        dockerfile: Dockerfile
+      sync: 
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: eolnexus/accounts
+      context: accounts
+      docker:
+        dockerfile: Dockerfile
+      sync: 
+        manual:
+          - src: 'src/**/*.ts'
             dest: .
