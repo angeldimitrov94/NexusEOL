@@ -12,7 +12,7 @@
                 <label for="" class="form-label">
                     ID (disabled for editing, auto-assigned upon creation of account)
                 </label>
-                <input type="text" class="form-control" disabled v-model="account.id" />
+                <input type="text" class="form-control" disabled v-model="account.__id" />
             </div>
             <div class="mb-3">
                 <div class="form-check">
@@ -29,14 +29,14 @@
 </template>
 
 <script lang="ts">
-import { Account } from '@/models/account';
 import type { AccountUtil } from '@/utils/accountutils';
 import type { EventBus } from '@/utils/eventbus';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
+import { type AccountAttrs } from '@testsequencer/common';
 
 export default {
     props: { 
-        id: { type: Number, default: -1 },
+        id: { type: String, default: "" },
     },
     mounted() {
         this.id
@@ -46,7 +46,7 @@ export default {
 
         this.$data.$accounts = $accounts;
 
-        const accountWithId = await this.$data.$accounts.getAccountById(this.id);
+        const accountWithId = await this.$data.$accounts.getAccount(this.id);
 
         if(accountWithId === undefined) {
             return;
@@ -56,14 +56,14 @@ export default {
     },
     data() {
         return {
-            account: new Account(),
+            account: {} as AccountAttrs,
             $bus: {} as EventBus,
             $accounts: {} as AccountUtil
         }
     },
     methods: {
         submit() {
-            const updateResult = this.$data.$accounts.updateAccountWithId(this.id, this.account);
+            const updateResult = this.$data.$accounts.patchAccount(this.id, this.account);
 
             if (updateResult === null) {
                 alert('Failed to update account.');

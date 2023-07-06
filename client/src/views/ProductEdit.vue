@@ -12,7 +12,7 @@
                 <label for="" class="form-label">
                     ID (disabled for editing, auto-assigned upon creation of product)
                 </label>
-                <input type="text" class="form-control" disabled v-model="product.id" />
+                <input type="text" class="form-control" disabled v-model="product.__id" />
             </div>
             <div class="mb-3">
                 <label for="" class="form-label">
@@ -39,25 +39,23 @@
 </template>
 
 <script lang="ts">
-import { Product } from '@/models/product';
-import { EventBus } from '@/utils/eventbus';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
 import { ProductUtil } from '@/utils/productutils';
-import { inject } from 'vue';
+import { type ProductAttrs } from '@testsequencer/common';
 
 export default {
     props: { 
-        id: { type: Number, default: -1 },
+        id: { type: String, default: "" },
     },
     mounted() {
         this.id
     },
-    created() {
+    async created() {
         const { $products } = getAllInjectedUtils();
 
         this.$data.$products = $products;
 
-        const currentUserProductWithId = this.$data.$products.getCurrentUserProductById(this.id);
+        const currentUserProductWithId = await this.$data.$products.getProduct(this.id);
 
         if(currentUserProductWithId === undefined) {
             return;
@@ -67,13 +65,13 @@ export default {
     },
     data() {
         return {
-            product: new Product(),
+            product: {} as ProductAttrs,
             $products: new ProductUtil()
         }
     },
     methods: {
-        submit() {
-            const updateResult = this.$data.$products.updateCurrentUserProductWithId(this.id, this.product);
+        async submit() {
+            const updateResult = await this.$data.$products.patchProduct(this.product);
 
             if (updateResult === null) {
                 alert('Failed to update product.');

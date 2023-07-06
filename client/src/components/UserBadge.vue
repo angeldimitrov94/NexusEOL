@@ -18,55 +18,81 @@
         </div>
     </form>
     <button type="button" class="btn btn-secondary" @click.prevent="attemptSigninout()">
-    Sign {{getSignInOutTitle()}}
+    Sign {{signInOutTitle}}
     </button>
 </template>
 
 <script lang="ts">
-import { User } from '@/models/user';
+import type CookieUser from '@/models/cookie-user';
 import type { EventBus } from '@/utils/eventbus';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
 import type { UserUtil } from '@/utils/userutils';
+import type { UserAttrs } from '@testsequencer/common';
 
 export default {
     data() {
         return {
-            currentUser: new User(),
             isSignedIn: false,
             signinUsername: "",
             signinPassword: "",
             $users: {} as UserUtil,
-            $bus: {} as EventBus
+            $bus: {} as EventBus,
+            signInOutTitle: "in",
+            errorMessage: ""
         }
     },
-    created() {
+    async created() {
         const { $users, $bus } = getAllInjectedUtils();
 
         this.$data.$users = $users;
         this.$data.$bus = $bus
 
-        this.currentUser = this.$data.$users.getCurrentUser();
-        this.isSignedIn = this.$data.$users.isUserCurrentlySignedIn();
         this.$data.$bus.$on('user-change', this.userChangeRefresh);
+        this.$data.isSignedIn = await this.$data.$users.isUserCurrentlySignedIn();
+        this.$data.signInOutTitle = this.getSignInOutTitle();
     },
     methods: {
         async attemptSigninout() {
             let success = false;
-            let message = "Invalid sign in/out operation";
 
-            if(this.$data.$users.getCurrentUser().isDefault() === true) {
+            if(this.$data.$users.cachedCookieUser === null) {
                 console.log("attempt signin");
-                [success, message] = await this.$data.$users.signin(this.$data.signinUsername, this.$data.signinPassword);
+                const result = await this.$data.$users.signin(this.$data.signinUsername, this.$data.signinPassword);        
+                
+                if((result as UserAttrs).name && (result as UserAttrs).level && (result as UserAttrs).email) {
+                    const userAttrs = result as UserAttrs;
+                    success = true;
+
+                    const newlySignedInUser: CookieUser = {
+                        name: userAttrs.name,
+                        level: userAttrs.level,
+                        email: userAttrs.email
+                    };
+
+                    this.$data.$users.cachedCookieUser = newlySignedInUser;
+
+                    this.$data.errorMessage = `Signed in user : ` + JSON.stringify(userAttrs);
+                }
+                else {
+                    this.$data.errorMessage = `Failed to sign in user : ` + JSON.stringify(result);
+                }
             }
-            else if(this.$data.$users.isUserCurrentlySignedIn() === true){
+            else if(this.$data.isSignedIn === true){
                 console.log("attempt signout");
-                [success, message] = this.$data.$users.signout();
+                success = await this.$data.$users.signout();
+
+                if(success) {
+                    this.$data.$users.cachedCookieUser = null;
+                }
+
+                this.$data.errorMessage = `Signed out user`;
             }
             else {
                 console.error('Neither logged in nor logged out user!');
+                this.$data.errorMessage = `Neither logged in nor logged out user!`;
             }
 
-            this.$data.isSignedIn = this.$data.$users.isUserCurrentlySignedIn();
+            this.$data.isSignedIn = await this.$data.$users.isUserCurrentlySignedIn();
 
             if(success === true) {
                 this.$data.$bus.$emit('user-change', {});
@@ -74,16 +100,17 @@ export default {
 
             this.$data.signinUsername = "";
             this.$data.signinPassword = "";
+
+            this.$data.signInOutTitle = this.getSignInOutTitle();
             
-            alert(message);
+            alert(this.$data.errorMessage);
         },
-        userChangeRefresh() {
-            this.$data.currentUser = this.$data.$users.getCurrentUser();
-            this.$data.isSignedIn = this.$data.$users.isUserCurrentlySignedIn();
+        async userChangeRefresh() {
+            this.$data.isSignedIn = await this.$data.$users.isUserCurrentlySignedIn();
         },
         getSignInOutTitle() {
-            const thisUser = this.$data.$users.getCurrentUser();
-            return this.$data.$users.isUserCurrentlySignedIn() ? `${thisUser?.name} (${thisUser?.level}) out` : 'in';
+            if(this.$data.$users.cachedCookieUser) return `${this.$data.$users.cachedCookieUser?.email} (${this.$data.$users.cachedCookieUser?.level}) out`;
+            else return 'in';
         }
     }
 }

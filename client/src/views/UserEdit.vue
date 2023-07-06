@@ -39,32 +39,31 @@
                     <input class="form-check-input" type="checkbox" v-model="isTechnician">
                 </div>
             </div>
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col">
                     <label for="" class="form-label">Is User Active</label>
                 </div>
                 <div class="col">
                     <input class="form-check-input" type="checkbox" v-model="isActive">
                 </div>
-            </div>
+            </div> -->
             <div class="row"><button class="btn btn-primary me-2" @click.prevent="submit">Confirm changes</button></div>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { User } from '../models/user';
-import { UserRole } from '@/models/user-role';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
 import { UserUtil } from '@/utils/userutils';
+import { UserRole, type UserAttrs } from '@testsequencer/common';
 export default {
     props: { 
         id: { type: String, default: "" },
     },
     data() {
         return {
-            user: new User(),
+            user: {} as UserAttrs,
             isActive: false,
-            level: UserRole.TECHNICIAN,
+            level: "",
             isSuperadmin: false,
             isAdmin: false,
             isBIUser: false,
@@ -77,16 +76,13 @@ export default {
 
         this.$data.$users = $users;
 
-        const userWithId = await this.$data.$users.getUserByUserId(this.id);
+        const userWithId = await this.$data.$users.getUser(this.id);
 
-        if(userWithId === undefined) {
-            this.user = new User();
-        }
-        else {
+        if(userWithId !== undefined) {
             this.user = userWithId;
         }
 
-        this.isActive = this.user.active;
+        this.isActive = true;
         this.level = this.user.level;
 
         switch (this.user.level) {

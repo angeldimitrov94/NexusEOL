@@ -12,12 +12,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="{ name, id, description, active, tests } in allProducts" :key="id">
+                <tr v-for="{ name, __id, description, active, tests } in allProducts" :key="__id">
                     <td>{{ name }}</td>
-                    <td>{{ id }}</td>
+                    <td>{{ __id }}</td>
                     <td>{{ description }}</td>
                     <td>{{ active ? 'yes' : 'no' }}</td>
-                    <td><router-link class="btn btn-primary btn-sm" :to="{ name: 'ProductEdit', params: { id: id } }">Edit
+                    <td><router-link class="btn btn-primary btn-sm" :to="{ name: 'ProductEdit', params: { id: __id } }">Edit
                             Product</router-link></td>
                 </tr>
             </tbody>
@@ -29,28 +29,28 @@
 </template>
 
 <script lang="ts">
-import type { Product } from '@/models/product';
 import { EventBus } from '@/utils/eventbus';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
 import { ProductUtil } from '@/utils/productutils';
+import type { ProductAttrs } from '@testsequencer/common';
 
 export default {
     data() {
         return {
-            allProducts: [] as Product[],
+            allProducts: [] as ProductAttrs[],
             $bus: new EventBus(),
             $products: new ProductUtil()
         }
     },
-    created() {
+    async created() {
         const { $products, $bus } = getAllInjectedUtils();
 
         this.$data.$products = $products;
         this.$data.$bus = $bus;
 
-        this.allProducts = this.$data.$products.getCurrentUserAllProducts();
-        this.$data.$bus.$on('user-change', () => {
-            this.allProducts = this.$data.$products.getCurrentUserAllProducts();
+        this.$data.allProducts = await this.$data.$products.getAllProducts();
+        this.$data.$bus.$on('user-change', async () => {
+            this.$data.allProducts = await this.$data.$products.getAllProducts();
         })
     }
 }

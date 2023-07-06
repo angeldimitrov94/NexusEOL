@@ -6,8 +6,25 @@ import { UserUtil } from './utils/userutils';
 import { ProductUtil } from './utils/productutils';
 import { AccountUtil } from './utils/accountutils';
 import router from './router'
+import axios from 'axios';
+
+function sleep(milliseconds: number) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+        currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+}
 
 const $userUtil = new UserUtil();
+
+await $userUtil.initialize();
+do {
+    sleep(10);
+    console.log(`Sleep 10ms since $userUtil.initialized === ${$userUtil.initialized}`);
+} 
+while ($userUtil.initialized === false)
+
 const $eventBus = new EventBus();
 const $productUtil = new ProductUtil();
 $productUtil.userUtil = $userUtil;
@@ -21,6 +38,8 @@ app.provide('$products', $productUtil);
 app.provide('$accounts', $accountUtil);
 
 app.mount('#app')
+
+axios.defaults.withCredentials = true;
 
 declare module 'vue' {
     interface ComponentCustomProperties {

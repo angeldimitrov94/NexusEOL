@@ -12,7 +12,7 @@
                 <label for="" class="form-label">
                     ID (disabled for editing, auto-assigned upon creation of product)
                 </label>
-                <input type="text" class="form-control" disabled v-model="test.id" />
+                <input type="text" class="form-control" disabled v-model="test.__id" />
             </div>
             <div class="mb-3">
                 <label for="" class="form-label">
@@ -33,38 +33,35 @@
     </div>
 </template>
 <script lang="ts">
-import { Test } from '@/models/test';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
 import { ProductUtil } from '@/utils/productutils';
+import { type TestAttrs } from '@testsequencer/common';
 
 export default {
     props: { 
         productId: { type: String, default: "" },
         testId: { type: String, default: "" },
     },
-    created() {
+    async created() {
         const { $products } = getAllInjectedUtils();
 
         this.$data.$products = $products;
 
-        const testWithId = this.$data.$products.getTestFromCurrentUser(this.productId, this.testId);
+        const testWithId = await this.$data.$products.getTest(this.productId, this.testId);
 
-        if(testWithId === undefined) {
-            this.test = new Test()
-        }
-        else {
+        if(testWithId !== undefined) {
             this.test = testWithId;
         }
     },
     data() {
         return {
-            test: new Test(),
+            test: {} as TestAttrs,
             $products: new ProductUtil(),
         }
     },
     methods: {
-        submit() {
-            const updateResult = this.$data.$products.updateCurrentUserTestWithId(this.productId, this.testId, this.test);
+        async submit() {
+            const updateResult = await this.$data.$products.patchTest(this.productId, this.test);
 
             if (updateResult === null) {
                 alert('Failed to update test.');

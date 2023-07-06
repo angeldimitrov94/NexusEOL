@@ -1,154 +1,143 @@
-import type { ProductDoc, TestDoc } from '@testsequencer/common';
+import type { ProductAttrs, TestAttrs } from '@testsequencer/common';
 import { UserUtil } from './userutils';
+import axios from 'axios';
 
 export class ProductUtil {
     userUtil: UserUtil = new UserUtil();
     currentProductId = "";
     currentTestId = "";
 
-    updateCurrentUserProducts(modifiedProducts: Array<ProductDoc>) {
-        if(modifiedProducts === null || modifiedProducts === undefined || !Array.isArray(modifiedProducts)) {
-            console.error('Invalid modified products passed in. Not modifying products.');
-            return;
-        }
-
-        const currentUser = this.userUtil.getCurrentUser();
-
-        if(currentUser === null) {
-            console.error('Current user is null. Not modifying any products.');
-            return;
-        }
-
-        currentUser.products = modifiedProducts;
-        this.userUtil.saveUserToLocalStorage();
-
-        return true;
-    }
-
-    updateCurrentUserProductWithId(productId: string, modifiedProduct: ProductDoc) {
+    async patchProduct(modifiedProduct: ProductAttrs): Promise<ProductAttrs|undefined> {
         if(modifiedProduct === null || modifiedProduct === undefined) {
             console.error('Invalid modified product passed in. Not modifying product.');
             return;
         }
 
-        const currentUser = this.userUtil.getCurrentUser();
+        const { data, status } = await axios.patch(`https://nexus.eol/api/products/${modifiedProduct.__id}/edit`, {
+            productDoc: modifiedProduct
+        });
 
-        if(currentUser === null) {
-            console.error('Current user is null. Not modifying any products.');
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
             return;
         }
 
-        let existingProduct = this.getCurrentUserAllProducts().find(product => product.id === productId);
-        console.log(this.getCurrentUserAllProducts());
-        console.log(existingProduct);
-        if(existingProduct === undefined) {
-            console.error('ProductDoc with this id does not exist. Not modifying this product.')
-            return;
-        }
-
-        existingProduct = modifiedProduct;
-        this.userUtil.saveUserToLocalStorage();
-
-        return true;
+        return data as ProductAttrs;
     }
 
-    updateCurrentUserTestWithId(productId: string, testId: string, modifiedTest: TestDoc) {
+    async patchTest(parentProductId: string, modifiedTest: TestAttrs): Promise<TestAttrs|undefined> {
         if(modifiedTest === null || modifiedTest === undefined) {
             console.error('Invalid modified test passed in. Not modifying test.');
             return;
         }
 
-        const currentUser = this.userUtil.getCurrentUser();
+        const { data, status } = await axios.patch(`https://nexus.eol/api/products/${parentProductId}/tests/${modifiedTest.__id}/edit`, {
+            testDoc: modifiedTest
+        });
 
-        if(currentUser === null) {
-            console.error('Current user is null. Not modifying test.');
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
             return;
         }
 
-        const existingProduct = this.getCurrentUserAllProducts().find(product => product.id === productId);
-        if(existingProduct === undefined) {
-            console.error('ProductDoc with this productId does not exist. Not modifying this test.')
-            return;
-        }
-
-        let existingTest = existingProduct.tests.find(test => test.id === testId);
-        if(existingTest === undefined) {
-            console.error('TestDoc with this testId does not exist. Not modifying this test.')
-            return;
-        }
-
-        existingTest = modifiedTest;
-        this.userUtil.saveUserToLocalStorage();
-
-        return true;
+        return data as TestAttrs;
     }
 
-    createNewProductForCurrentUser(newProduct: ProductDoc) {
-        if(newProduct === null || newProduct === undefined) {
+    async postProduct(productAttrs: ProductAttrs): Promise<ProductAttrs|undefined> {
+        if(productAttrs === null || productAttrs === undefined) {
             console.error('Invalid new product passed in. Not creating product.');
             return;
         }
 
-        const currentUser = this.userUtil.getCurrentUser();
+        const currentUser = this.userUtil.cachedCookieUser;
 
-        if(currentUser === null) {
-            console.error('Current user is null. Not creating product.');
+        if(currentUser === undefined) {
+            console.error('Current user is undefined. Not creating product.');
             return;
         }
 
-        const allProducts = this.getCurrentUserAllProducts();
-        if(allProducts.find(product => product.id === newProduct.id) !== undefined) {
-            console.error(`ProductDoc with id ${newProduct.id} already exists. Not creating product.`);
-            return;
+        const { data, status } = await axios.post('https://nexus.eol/api/products/create', {
+            productAttrs
+        });
+
+        const success = status === 201;
+        if(!success) {
+            console.error(data);
         }
 
-        allProducts.push(newProduct);
-        this.userUtil.saveUserToLocalStorage();
-
-        return true;
+        return data as ProductAttrs;
     }
 
-    createNewTestForCurrentUser(productId: string, newTest: TestDoc) {
-        if(newTest === null || newTest === undefined) {
+    async postTest(productId: string, testAttrs: TestAttrs): Promise<TestAttrs|undefined> {
+        if(testAttrs === null || testAttrs === undefined) {
             console.error('Invalid new test passed in. Not creating test.');
             return;
         }
 
-        const currentUser = this.userUtil.getCurrentUser();
+        const { data, status } = await axios.post(`https://nexus.eol/api/products/${productId}/tests/create`, {
+            testAttrs
+        });
 
-        if(currentUser === null) {
-            console.error('Current user is null. Not creating test.');
+        const success = status === 201;
+        if(!success) {
+            console.error(data);
             return;
         }
 
-        const existingProduct = this.getCurrentUserAllProducts().find(product => product.id === productId);
-        if(existingProduct === undefined) {
-            console.error('ProductDoc with this productId does not exist. Not adding this test.')
+        return data as TestAttrs;
+    }
+
+    async getAllProducts(): Promise<ProductAttrs[]> {
+        const { data, status } = await axios.get(`https://nexus.eol/api/products`);
+
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
+            return [];
+        }
+        else {
+            return data as ProductAttrs[];
+        }
+    }
+
+    async getProduct(productId: string): Promise<ProductAttrs | undefined> {
+        const { data, status } = await axios.get(`https://nexus.eol/api/products/${productId}`);
+
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
             return;
         }
+        else {
+            return data as ProductAttrs;
+        }
+    }
 
-        const testWithTestId = existingProduct.tests.find(test => test.id === newTest.id);
-        if(testWithTestId !== undefined) {
-            console.error(`TestDoc with id ${newTest.id} already exists. Not creating test.`);
+    async getTest(productId: string, testId: string): Promise<TestAttrs | undefined> {
+        const { data, status } = await axios.get(`https://nexus.eol/api/products/${productId}/tests/${testId}`);
+
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
             return;
         }
-
-        existingProduct.tests.push(newTest);
-        this.userUtil.saveUserToLocalStorage();
-
-        return true;
+        else {
+            return data as TestAttrs;
+        }
     }
 
-    getCurrentUserAllProducts(): ProductDoc[] {
-        return this.userUtil.getCurrentUser()?.account?.products;
-    }
+    async getAllTests(productId: string | undefined): Promise<TestAttrs[]> {
+        const { data, status } = await axios.get(`https://nexus.eol/api/products/${productId}/tests`);
 
-    getCurrentUserProductById(productId: string): ProductDoc | undefined {
-        const currentUser = this.userUtil.getCurrentUser();
-        return currentUser.account?.products?.find(product => product?.id === productId);
-    }
-
-    getTestFromCurrentUser(productId: string, testId: string): TestDoc | undefined {
-        return this.getCurrentUserProductById(productId)?.tests.find(test => test.id === testId);
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
+            return [];
+        }
+        else {
+            return data as TestAttrs[];
+        }
     }
 }

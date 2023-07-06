@@ -1,29 +1,57 @@
-import type { AccountDoc } from "@testsequencer/common";
+import type { AccountAttrs } from "@testsequencer/common";
+import axios from "axios";
 
 export class AccountUtil {
-    async getAllAccounts(): Promise<AccountDoc[]> {
-        let allAccounts: AccountDoc[] = [];
-        await fetch('accounts.json').
-        then((response) => { return response.json()} ).
-        then((data) => {
-            allAccounts = data as AccountDoc[];
-        });
+    async getAllAccounts(): Promise<AccountAttrs[]> {
+        const { data, status } = await axios.get(`https://nexus.eol/api/accounts`);
 
-        return allAccounts;
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
+            return [];
+        }
+        else {
+            return data as AccountAttrs[];
+        }
     }
 
-    async appendAndPersistNewAccount(newAccount: AccountDoc) {
-        //
+    async postNewAccount(newAccount: AccountAttrs): Promise<AccountAttrs|undefined> {
+        const { data, status } = await axios.post(`https://nexus.eol/api/accounts/create`, 
+        newAccount);
+
+        const success = status === 201;
+        if(!success) {
+            console.error(data);
+            return undefined;
+        }
+        else {
+            return data as AccountAttrs;
+        }
     }
 
-    async getAccountById(id: number) {
-        const allAccounts = await this.getAllAccounts();
-        return allAccounts?.find(account => account.id === id);
+    async getAccount(id: string): Promise<AccountAttrs | undefined> {
+        const { data, status } = await axios.get(`https://nexus.eol/api/accounts/${id}`);
+
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
+            return undefined;
+        }
+        else {
+            return data as AccountAttrs;
+        }
     }
 
-    async updateAccountWithId(id: number, updatedAccount: AccountDoc) {
-        //
-        return true;
+    async patchAccount(accountId: string, account: AccountAttrs): Promise<AccountAttrs|undefined> {
+        const { data, status } = await axios.patch(`https://nexus.eol/api/accounts/${accountId}/edit`, account);
+
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
+            return;
+        }
+
+        return data as AccountAttrs;
     }
 }
 

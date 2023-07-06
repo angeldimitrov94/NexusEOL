@@ -1,36 +1,31 @@
 <template>
     <div class="m-3">
-        <div class="container-fluid" v-if="$users.isUserCurrentlySignedIn() === false">
+        <div class="container-fluid" v-if="isSignedIn == false">
             <div class="row">
                 <h1>Please log in.</h1>
             </div>
         </div>
-        <div class="container-fluid" v-if="$users.isUserCurrentlySignedIn() === true && product !== null">
+        <div class="container-fluid" v-if="isSignedIn === true">
             <div class="row">
-                <TestListAndDetails :tests="product?.tests"></TestListAndDetails>
-            </div>
-        </div>
-        <div class="container-fluid" v-if="$users.isUserCurrentlySignedIn() === true && product === null">
-            <div class="row">
-                <h1>No products are defined for this user. Please contact your administrator for help.</h1>
+                <TestListAndDetails :product-id="product?.__id"></TestListAndDetails>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { Product } from '../models/product';
 import TestListAndDetails from '../components/TestListAndDetails.vue';
 import { EventBus } from '@/utils/eventbus';
 import { ProductUtil } from '@/utils/productutils';
 import { UserUtil } from '@/utils/userutils';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
+import { type ProductAttrs } from '@testsequencer/common';
 
 export default {
     props: { 
-        id: { type: Number, default: -1 },
+        id: { type: String, required: true },
     },
-    created() {
+    async created() {
         const { $products, $bus, $users } = getAllInjectedUtils();
 
         this.$data.$products = $products;
@@ -42,13 +37,16 @@ export default {
         this.$data.$bus.$on("user-change", () => {
             this.setProduct(this.id);
         });
+
+        this.$data.isSignedIn = await this.$users.isUserCurrentlySignedIn();
     },
     data() {
         return {
-            product: new Product(),
+            product: {} as ProductAttrs,
             $bus: new EventBus(),
             $products: new ProductUtil(),
-            $users: new UserUtil()
+            $users: new UserUtil(),
+            isSignedIn: false
         };
     },
     watch: {
@@ -57,15 +55,15 @@ export default {
         }
     },
     methods: {
-        setProduct(id: number) {
-            const currentUserProductByID = this.$data.$products.getCurrentUserProductById(id);
+        async setProduct(id: string) {
+            const currentUserProductByID = await this.$data.$products.getProduct(id);
 
-            if(currentUserProductByID === undefined) {
-                this.product = new Product()
-            }
-            else {
+            if(currentUserProductByID) {
                 this.product = currentUserProductByID;
             }
+        },
+        async isSignedIn(): Promise<boolean> {
+            return await this.$users.isUserCurrentlySignedIn();
         }
     },
     components: { TestListAndDetails }

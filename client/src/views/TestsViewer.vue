@@ -12,7 +12,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="{ name, id: testId, description, active } in product?.tests" :key="testId">
+                <tr v-for="{ name, __id: testId, description, active } in tests" :key="testId">
                     <td>{{ name }}</td>
                     <td>{{ testId }}</td>
                     <td>{{ description }}</td>
@@ -30,9 +30,9 @@
 </template>
 
 <script lang="ts">
-import { Product } from '@/models/product';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
 import { ProductUtil } from '@/utils/productutils';
+import { type ProductAttrs, type TestAttrs } from '@testsequencer/common';
 
 export default {
     props: { 
@@ -40,22 +40,20 @@ export default {
     },
     data() {
         return {
-            product: new Product(),
-            $products: new ProductUtil()
+            product: {} as ProductAttrs,
+            $products: {} as ProductUtil,
+            tests: [] as TestAttrs[]
         }
     },
-    created() {
+    async created() {
         const { $products } = getAllInjectedUtils();
 
         this.$data.$products = $products;
 
-        const productWithId = this.$data.$products.getCurrentUserProductById(this.id);
+        const productWithId = await this.$data.$products.getProduct(this.id);
+        this.$data.tests = await $products.getAllTests(this.id);
 
-        if(productWithId === undefined) {
-            this.product = new Product();
-        }
-        else
-        {
+        if(productWithId !== undefined) {
             this.product = productWithId;
         }
     }

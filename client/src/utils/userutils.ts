@@ -1,111 +1,151 @@
-import { UserRole, type UserDoc } from "@testsequencer/common";
-import { User } from "@testsequencer/common";
+import type CookieUser from "@/models/cookie-user";
+import { type UserAttrs } from "@testsequencer/common";
+import axios from "axios";
 
 export class UserUtil {
-    readonly STORAGE_USER_KEY : string = 'user';
-    currentUser : User.build();
-    currentProductId : string = "";
-    currentTestId : string = "";
-    isSignedIn : boolean = false;
+    cachedCookieUser: CookieUser|null; 
+    initialized: boolean;
 
-    // constructor() {
-    //     const localStorageUser = localStorage.getItem(this.STORAGE_USER_KEY);
-        
-    //     if(localStorageUser) {
-    //         const localStorageUserJson = JSON.parse(localStorageUser);
-
-    //         if(localStorageUserJson.name && localStorageUserJson.id && 
-    //             localStorageUserJson.level && localStorageUserJson.signedIn && 
-    //             localStorageUserJson.active && localStorageUserJson.account &&
-    //             localStorageUserJson.products)
-    //         {
-    //             this.currentUser.name = localStorageUserJson.name;
-    //             this.currentUser.id = localStorageUserJson.id;
-    //             this.currentUser.level = localStorageUserJson.level;
-    //             this.currentUser.signedIn = localStorageUserJson.signedIn;
-    //             this.currentUser.active = localStorageUserJson.active;
-    //             this.currentUser.account = localStorageUserJson.account;
-    //             this.currentUser.products = localStorageUserJson.products;
-    //             this.isSignedIn = !this.currentUser.isDefault();
-    //         }
-    //     }
-    // }
-
-    getCurrentUser(): UserDoc {
-        return this.currentUser;
+    constructor() {
+        this.initialized = false;
+        this.cachedCookieUser = null;
     }
 
-    async getUserByUserId(userId: string) {
-        let allUsers = await this.getAllUsers();
-        return allUsers.find(user => user.id === userId);
+    async initialize() {
+        this.cachedCookieUser = await this.getCurrentUser();
+        this.initialized = true;
     }
 
-    async getAllUsers(): Promise<UserDoc[]> {
-        let allUsers : UserDoc[] = [];
-        await fetch('users.json').
-        then((response) => { return response.json()} ).
-        then((data) => {
-            allUsers = data;
+    async getUser(userId: string): Promise<UserAttrs | undefined> {
+        const { data, status } = await axios.get(`https://nexus.eol/api/users/${userId}`, 
+        {
+            validateStatus: function (status: number) {
+                return status < 500; // Resolve only if the status code is less than 500
+            }
         });
 
-        return allUsers;
-    }
-
-    private async getAllUsersWithPassword(): Promise<UserDoc[]> {
-        // let allUsers : UserWithPassword[] = [];
-        // await fetch('users.json').
-        // then((response) => { return response.json()} ).
-        // then((data) => {
-        //     allUsers = data;
-        // });
-
-        // return allUsers;
-        return [];
-    }
-
-    async signin(username: string, password: string): Promise<[success: boolean, message: string]> {
-        let allUsers =  await this.getAllUsersWithPassword();
-        const usernameUser = allUsers.find(user => user?.name === username.trim());
-
-        if(usernameUser === undefined) {
-            return [false, "Username not found in list of users!"];
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
+            return undefined;
         }
         else {
-            // if(usernameUser?.password !== password.trim()) {
-            //     return [false, "Incorrect password!"];
-            // }
-            // else {
-                this.currentUser.name = usernameUser.name;
-                this.currentUser.id =  usernameUser.id;
-                this.currentUser.level = usernameUser.level, 
-                this.currentUser.account =  usernameUser.account, 
-                this.currentUser.active =  usernameUser.active,
-                this.currentUser.signedIn =  true,
-                this.currentUser.products =  usernameUser.products
-
-                localStorage.setItem(this.STORAGE_USER_KEY, JSON.stringify(this.currentUser));
-                this.isSignedIn = true;
-                return [true, "Successfully logged in!"];
-            //};
-        };
+            return data as UserAttrs;
+        }
     }
 
-    signout(): [success: boolean, message: string] {
-        //this.currentUser = new UserDoc();
-        localStorage.removeItem(this.STORAGE_USER_KEY);
-        this.isSignedIn = false;
-        return [true, "Successfully logged out!"];
+    async getAllUsers(): Promise<UserAttrs[]> {
+        const { data, status } = await axios.get(`https://nexus.eol/api/users`, 
+        {
+            validateStatus: function (status: number) {
+                return status < 500; // Resolve only if the status code is less than 500
+            }
+        });
+
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
+            return [];
+        }
+        else {
+            return data as UserAttrs[];
+        }
     }
 
-    isUserCurrentlySignedIn() {
-        return this.isSignedIn;
+    async postUser(user: UserAttrs): Promise<UserAttrs|undefined> {
+        const { data, status } = await axios.post(`https://nexus.eol/api/users/create`, user, 
+        {
+            validateStatus: function (status: number) {
+                return status < 500; // Resolve only if the status code is less than 500
+            }
+        });
+
+        const success = status === 201;
+        if(!success) {
+            console.error(data);
+            return undefined;
+        }
+        else {
+            return data as UserAttrs;
+        }
+    } 
+
+    async patchUser(user: UserAttrs): Promise<UserAttrs|undefined> {
+        const { data, status } = await axios.patch(`https://nexus.eol/api/users/${user.__id}/edit`, user, 
+        {
+            validateStatus: function (status: number) {
+                return status < 500; // Resolve only if the status code is less than 500
+            }
+        });
+
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
+            return undefined;
+        }
+        else {
+            return data as UserAttrs;
+        }
+    } 
+
+    async signin(email: string, password: string): Promise<UserAttrs|string|object> {
+        const { data, status } = await axios.post(`https://nexus.eol/api/auth/signin`, {
+            email,
+            password
+        }, 
+        {
+            validateStatus: function (status: number) {
+                return status < 500; // Resolve only if the status code is less than 500
+            }
+        });
+
+        const success = status === 200;
+        if(!success) {
+            return data;
+        }
+
+        return data as UserAttrs;
     }
 
-    saveUserToLocalStorage() {
-        localStorage.setItem(this.STORAGE_USER_KEY, JSON.stringify(this.currentUser));
+    async signout(): Promise<boolean> {
+        const { data, status } = await axios.post(`https://nexus.eol/api/auth/signout`, 
+        {
+            validateStatus: function (status: number) {
+                return status < 500; // Resolve only if the status code is less than 500
+            }
+        });
+
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
+            alert(data.errors);
+            return false;
+        }
+
+        return true;
     }
 
-    async appendAndPersistNewUser(newUser: UserDoc) {
-        //
+    async isUserCurrentlySignedIn(): Promise<boolean> {
+        return this.cachedCookieUser !== null;
+    }
+
+    async getCurrentUser(): Promise<CookieUser> {
+        const { data, status } = await axios.get(`https://nexus.eol/api/auth/currentuser`, 
+        {
+            validateStatus: function (status: number) {
+                return status < 500; // Resolve only if the status code is less than 500
+            }
+        });
+
+        console.log('data.currentUser : '+data?.currentUser);
+        
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
+        }
+
+        const currentUser: CookieUser = data.currentUser as CookieUser;
+
+        return currentUser;
     }
 }

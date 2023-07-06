@@ -8,19 +8,17 @@
                     <th>Id</th>
                     <th>Level</th>
                     <th>Account Name</th>
-                    <th>Active</th>
                     <th>Edit User</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="{ name, id, account, level, active } in allUsers" :key="id">
+                <tr v-for="{ name, __id, accountId, level } in allUsers" :key="__id">
                     <td>{{ name }}</td>
-                    <td>{{ id }}</td>
+                    <td>{{ __id }}</td>
                     <td>{{ level }}</td>
-                    <td>{{ account?.name }}</td>
-                    <td>{{ active ? 'yes' : 'no' }}</td>
+                    <td>{{ accountId }}</td>
                     <td><router-link class="btn btn-primary btn-sm"
-                            :to="{ name: 'UserEdit', params: { id: id } }">Edit</router-link></td>
+                            :to="{ name: 'UserEdit', params: { id: __id } }">Edit</router-link></td>
                 </tr>
             </tbody>
         </table>
@@ -30,14 +28,14 @@
     </div>
 </template>
 <script lang="ts">
-import type { User } from '@/models/user';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
 import { UserUtil } from '@/utils/userutils';
+import type { UserAttrs } from '@testsequencer/common';
 
 export default {
     data() {
         return {
-            allUsers: [] as User[],
+            allUsers: [] as UserAttrs[],
             $users: new UserUtil(),
         }
     },

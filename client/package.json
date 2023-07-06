@@ -3,15 +3,17 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false"
   },
   "dependencies": {
-    "@testsequencer/common": "^1.0.1",
+    "@testsequencer/common": "^2.0.11",
+    "axios": "^1.4.0",
     "bootstrap": "^5.2.3",
+    "cookie-parser": "^1.4.6",
     "vue": "^3.3.2",
     "vue-router": "^4.2.0"
   },

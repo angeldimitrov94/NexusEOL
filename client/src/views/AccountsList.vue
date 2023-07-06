@@ -11,11 +11,11 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="{ name, id, active } in allAccounts" :key="id">
+                <tr v-for="{ name, __id, active } in allAccounts" :key="__id">
                     <td>{{ name }}</td>
-                    <td>{{ id }}</td>
+                    <td>{{ __id }}</td>
                     <td>{{ active ? 'yes' : 'no' }}</td>
-                    <td><router-link class="btn btn-primary btn-sm" :to="{ name: 'AccountEdit', params: { id: id } }">Edit
+                    <td><router-link class="btn btn-primary btn-sm" :to="{ name: 'AccountEdit', params: { id: __id } }">Edit
                         Account</router-link></td>
                 </tr>
             </tbody>
@@ -26,15 +26,15 @@
     </div>
 </template>
 <script lang="ts">
-import { Account } from '@/models/account';
 import type { AccountUtil } from '@/utils/accountutils';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
+import type { AccountAttrs } from '@testsequencer/common';
 
 export default {
     data() {
         return {
             $accounts: {} as AccountUtil,
-            allAccounts: [] as Account[]
+            allAccounts: [] as AccountAttrs[]
         }
     },
     async created() {

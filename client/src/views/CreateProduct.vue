@@ -32,9 +32,9 @@
 
 <script lang="ts">
 import { ProductUtil } from '@/utils/productutils';
-import { Product } from '../models/product';
 import { EventBus } from '@/utils/eventbus';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
+import { type ProductAttrs } from '@testsequencer/common';
 
 export default {
     props: {
@@ -64,22 +64,22 @@ export default {
         this.$data.$bus = $bus
     },
     methods: {
-        submitForm() {
+        async submitForm() {
             if (!this.name || !this.description) {
                 alert('Missing data!');
                 return;
             }
 
             try {
-                const product = new Product();
+                const product = {} as ProductAttrs;
                 product.name = this.name
                 product.description = this.description, 
                 product.active = this.active;
-                const success = this.$data.$products.createNewProductForCurrentUser(product);
+                const createdProduct = await this.$data.$products.postProduct(product);
 
-                if(success === true) {
+                if(createdProduct) {
                     this.$data.$bus.$emit('product-created', {
-                        id: product.id,
+                        id: product.__id,
                     });
 
                     alert(`New product created!\r\n${JSON.stringify(product)}`);

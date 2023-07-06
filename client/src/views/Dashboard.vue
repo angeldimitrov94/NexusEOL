@@ -12,7 +12,7 @@
                             <progress max="100" :value="progressValue(product)"></progress>
                         </div>
                         <div class="row">
-                            <router-link :to="`/products/${product.id}`" class="card-text btn btn-primary btn-sm">Go to...</router-link>
+                            <router-link :to="`/products/${product.__id}`" class="card-text btn btn-primary btn-sm">Go to...</router-link>
                         </div>
                     </div>
                 </div>
@@ -22,35 +22,39 @@
 </template>
 
 <script lang="ts">
-import { inject } from 'vue';
-import { Product } from '../models/product'
 import { EventBus } from '@/utils/eventbus';
 import { ProductUtil } from '@/utils/productutils';
-import { ProductState } from '@/models/product-state';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
+import { ProductState, type ProductAttrs } from '@testsequencer/common';
+import { UserUtil } from '@/utils/userutils';
 
 export default {
     data() {
         return {
-            products: [] as Product[],
+            products: [] as ProductAttrs[],
             $products: new ProductUtil(),
-            $bus: new EventBus()
+            $bus: new EventBus(),
+            $users: new UserUtil()
         }
     },
-    created() {
-        const { $products, $bus } = getAllInjectedUtils();
+    async created() {
+        const { $products, $bus, $users } = getAllInjectedUtils();
 
         this.$data.$products = $products;
         this.$data.$bus = $bus;
+        this.$data.$users = $users;
 
-        this.products = this.$data.$products.getCurrentUserAllProducts();
-        this.$data.$bus.$on('user-change', () => { 
-            this.products = this.$data.$products.getCurrentUserAllProducts();
+        if(this.$data.$users.cachedCookieUser !== undefined) {
+            this.products = await this.$data.$products.getAllProducts();
+        }
+
+        this.$data.$bus.$on('user-change', async () => { 
+            this.products = await this.$data.$products.getAllProducts();
             this.$router.push({ path: '/' });
         });
     },
     methods: {
-        getStyleNameFromState(product: Product) {
+        getStyleNameFromState(product: ProductAttrs) {
             if(product == null) {
                 return "nullProductTest";
             }
@@ -74,11 +78,13 @@ export default {
                 return "unknownStateTest";
             }
         },
-        progressValue(product: Product) {
-            return (product.currentTestId === -1 ? 0 : product.currentTestId / product.tests?.length === 0 ? 1 : product.tests?.length)*100;
+        progressValue(product: ProductAttrs) {
+            const testAttemptIdInt: number = parseInt(product.mostRecentTestAttemptId);
+            return (testAttemptIdInt === -1 ? 0 : testAttemptIdInt / product.tests?.length === 0 ? 1 : product.tests?.length)*100;
         },
-        testCountValue(product: Product) {
-            return `${product.currentTestId === -1 ? 0 : product.currentTestId}/${product.tests?.length}`
+        testCountValue(product: ProductAttrs) {
+            const testAttemptIdInt: number = parseInt(product.mostRecentTestAttemptId);
+            return `${testAttemptIdInt === -1 ? 0 : testAttemptIdInt}/${product.tests?.length}`
         }
     }
 }

@@ -1,18 +1,18 @@
 <template>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <router-link 
+            <!-- <router-link 
                 to="/"
                 class="nav-brand"
                 aria-current="page"
                 active-class="active"
                 >{{ currentUser?.account?.name }}
-            </router-link>
+            </router-link> -->
             <NavbarLink 
-            v-for="{name, id} in activeProducts"
-            :key="id"
+            v-for="{name, __id} in activeProducts"
+            :key="__id"
             :name="name" 
-            :id="id"
+            :id="__id"
             ></NavbarLink>
             <router-link 
             v-if="userIsAdmin()"
@@ -47,47 +47,50 @@ import NavbarLink from './NavbarLink.vue';
 import UserBadge from './UserBadge.vue';
 import { UserUtil } from '@/utils/userutils';
 import { ProductUtil } from '@/utils/productutils';
-import { User } from '@/models/user';
-import type { Product } from '@/models/product';
 import { defineComponent } from 'vue';
 import { EventBus } from '@/utils/eventbus';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
+import type {  ProductAttrs } from '@testsequencer/common';
+import type CookieUser from '@/models/cookie-user';
 
 export default defineComponent({
     data() {
         return {
-            currentUser: new User(),
-            activeProducts: [] as Product[],
+            activeProducts: [] as ProductAttrs[],
             $users: new UserUtil(),
             $products: new ProductUtil(),
             $bus: new EventBus()
         };
     },
-    created() {
+    async created() {
         const { $users, $products, $bus } = getAllInjectedUtils();
 
         this.$data.$users = $users;
         this.$data.$products = $products;
         this.$data.$bus = $bus;
 
-        this.currentUser = this.$data.$users.getCurrentUser();
-
-        this.activeProducts = this.$data.$products.getCurrentUserAllProducts()?.filter(p => p.active);
-        this.$data.$bus.$on('user-change', () => { 
-            this.currentUser = this.$data.$users.getCurrentUser();
-            this.activeProducts = this.$data.$products.getCurrentUserAllProducts()?.filter(p => p.active);
+        if(this.$data.$users.cachedCookieUser !== undefined) {
+            const allProducts = await this.$data.$products.getAllProducts();
+            this.activeProducts = allProducts?.filter(p => p.active);
+        }
+        
+        this.$data.$bus.$on('user-change', async () => { 
+            const allProducts = await this.$data.$products.getAllProducts();
+            this.activeProducts = allProducts?.filter(p => p.active);
             this.$router.push({ path: '/' });
         });
-        this.$data.$bus.$on('product-created', () => {
-            this.activeProducts = this.$data.$products.getCurrentUserAllProducts()?.filter(p => p.active);
+
+        this.$data.$bus.$on('product-created', async () => {
+            const allProducts = await this.$data.$products.getAllProducts();
+            this.activeProducts = allProducts?.filter(p => p.active);
         })
     },
     methods: {
         userIsAdmin() {
-            return this.currentUser?.level === 'superadmin' || this.currentUser?.level === 'admin';
+            return this.$data.$users.cachedCookieUser?.level === 'superadmin' || this.$data.$users.cachedCookieUser?.level === 'admin';
         },
         userIsSuperadmin() {
-            return this.currentUser?.level === 'superadmin';
+            return this.$data.$users.cachedCookieUser?.level === 'superadmin';
         }
     },
     components: { NavbarLink, UserBadge }

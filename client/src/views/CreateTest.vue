@@ -27,8 +27,7 @@
     </div>
 </template>
 <script lang="ts">
-import { inject } from 'vue';
-import { Test } from '../models/test';
+import { type TestAttrs } from '@testsequencer/common';
 import { EventBus } from '@/utils/eventbus';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
 import { ProductUtil } from '@/utils/productutils';
@@ -55,17 +54,17 @@ export default {
         this.$data.$bus = $bus
     },
     methods: {
-        submit() {
+        async submit() {
 
             try {
-                const newTest = new Test();
+                const newTest = {} as TestAttrs;
                 newTest.name = this.name;
                 newTest.description = this.description;
-                const success = this.$data.$products.createNewTestForCurrentUser(this.id, newTest);
+                const result = await this.$data.$products.postTest(this.id, newTest);
 
-                if(success === true) {
+                if(result) {
                     this.$data.$bus.$emit('test-created', {
-                        id: newTest.id,
+                        id: newTest.__id,
                     });
 
                     alert(`New test created!\r\n${JSON.stringify(newTest)}`);

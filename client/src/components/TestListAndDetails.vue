@@ -2,8 +2,8 @@
   <div class="col-md-2 col-sm-3">
     <ul class="nav flex-md-column">
       <li v-for="test in tests" class="nav-item">
-        <a class="nav-link" :class="isThisIdActiveClass(test.id)" href="#" :key="test?.id"
-          @click.prevent="makeThisIdActiveId(test.id)">
+        <a class="nav-link" :class="isThisIdActiveClass(test?.__id)" href="#" :key="test?.__id"
+          @click.prevent="makeThisIdActiveId(test?.__id)">
           <img src="page.svg" alt="page icon" />
           {{ test?.name }}
         </a>
@@ -44,27 +44,36 @@
 </template>
 
 <script lang="ts">
-import { Test } from '@/models/test';
+import type { TestAttrs } from '@testsequencer/common';
+import type { ProductUtil } from '@/utils/productutils';
+import { getAllInjectedUtils } from '@/utils/injector-utils';
 
 export default {
   props: { 
-    tests: Array<Test>,
+    productId: String,
   },
   mounted() {
-    this.tests
+    this.productId
   },
-  created() {
+  async created() {
+    const { $products } = getAllInjectedUtils();
+
+    this.$data.$products = $products;
+    this.$data.tests = await $products.getAllTests(this.productId);
     this.setCurrentlySelectedTest(this.$data.currentlySelectedTestId);
   },
   data() {
     return {
       currentlySelectedTestId: "",
-      currentlySelectedTest: new Test()
+      currentlySelectedTest: {} as TestAttrs,
+      $products: {} as ProductUtil,
+      tests: [] as TestAttrs[]
     }
   },
   watch: {
     currentlySelectedTestId(newTestId: string, oldTestId) {
-      const selectedTest = this.tests?.find(test => test.id == newTestId);
+
+      const selectedTest = this.tests?.find(test => test.__id == newTestId);
 
       if(!selectedTest) {
         console.error(`Invalid test id [${newTestId}] passed in, could not find a test with that id.`);
@@ -75,18 +84,24 @@ export default {
     }
   },
   methods: {
-    makeThisIdActiveId(id: string) {
+    makeThisIdActiveId(id: string|undefined) {
+      if(!id) return;
+
       this.currentlySelectedTestId = id;
     },
-    isThisIdActiveClass(id: string) {
+    isThisIdActiveClass(id: string|undefined) {
+      if(!id) return "";
+
       return id === this.currentlySelectedTestId ? "active" : "";
     },
     setCurrentlySelectedTest(id: string) {
-      const selectedTest = this.tests?.find(test => test.id == id);
+      if(!id) return;
+
+      const selectedTest = this.tests?.find(test => test.__id == id);
 
       if(!selectedTest) {
         console.error(`Invalid test id [${id}] passed in, could not find a test with that id. Tests : `);
-        console.error(this.tests);
+        console.error(this.productId);
         console.error(this.currentlySelectedTest);
         return;
       }
