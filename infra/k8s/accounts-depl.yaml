@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
-  name: auth-depl
+  name: accounts-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth
+      app: accounts
   template:
     metadata:
       labels:
-        app: auth
+        app: accounts
     spec:
       containers:
-        - name: auth
-          image: eolnexus/auth
+        - name: accounts
+          image: eolnexus/accounts
           env: 
             - name: MONGO_URI
-              value: 'mongodb://users-mongo-srv:27017/users'
+              value: 'mongodb://accounts-mongo-srv:27017/accounts'
             - name: JWT_KEY
               valueFrom: 
                 secretKeyRef: 
@@ -27,12 +27,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-srv
+  name: accounts-srv
 spec:
   selector:
-    app: auth
+    app: accounts
   ports:
-    - name: auth
+    - name: accounts
       protocol: TCP
       port: 5000
       targetPort: 5000

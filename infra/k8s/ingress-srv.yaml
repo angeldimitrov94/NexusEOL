@@ -10,11 +10,53 @@ spec:
     - host: nexus.eol
       http:
         paths:
-          - path: /api/users/?(.*)
+          - path: /api/auth/?(.*)
             pathType: Prefix
             backend:
               service:
                 name: auth-srv
+                port:
+                  number: 5000
+          - path: /api/accounts/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: accounts-srv
+                port:
+                  number: 5000
+          - path: /api/products/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: products-srv
+                port:
+                  number: 5000
+          - path: /api/users/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: users-srv
+                port:
+                  number: 5000
+          - path: /api/tests/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tests-srv
+                port:
+                  number: 5000
+          - path: /api/testattempts/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tests-srv
+                port:
+                  number: 5000
+          - path: /api/testresults/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tests-srv
                 port:
                   number: 5000
           - path: /?(.*)

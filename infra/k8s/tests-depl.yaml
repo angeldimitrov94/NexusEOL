@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
-  name: auth-depl
+  name: tests-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth
+      app: tests
   template:
     metadata:
       labels:
-        app: auth
+        app: tests
     spec:
       containers:
-        - name: auth
-          image: eolnexus/auth
+        - name: tests
+          image: eolnexus/tests
           env: 
             - name: MONGO_URI
-              value: 'mongodb://users-mongo-srv:27017/users'
+              value: 'mongodb://tests-mongo-srv:27017/tests'
             - name: JWT_KEY
               valueFrom: 
                 secretKeyRef: 
@@ -27,12 +27,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-srv
+  name: tests-srv
 spec:
   selector:
-    app: auth
+    app: tests
   ports:
-    - name: auth
+    - name: tests
       protocol: TCP
       port: 5000
       targetPort: 5000
