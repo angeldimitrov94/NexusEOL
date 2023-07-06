@@ -13,13 +13,13 @@ const start = async () => {
 
   try {
     await mongoose.connect(process.env.MONGO_URI, {});
-    console.log("Connected to MongoDb");
+    console.log("Connected to MongoDb - "+process.env.MONGO_URI);
   } catch (err) {
     console.error(err);
   }
 
-  app.listen(3000, () => {
-    console.log("Listening on port 3000");
+  app.listen(5000, () => {
+    console.log("Listening on port 5000");
   });
 };
 

@@ -2,12 +2,13 @@ import express, {Request, Response} from 'express';
 import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
 
-import { Account, BadRequestError, User, UserRole } from '@testsequencer/common';
-import { validateRequest } from '@testsequencer/common';
+import { BadRequestError, UserRole } from '@testsequencer/common';
+import { validateRequest } from '@testsequencer/common-backend/build/middlewares/validate-request';
+import { User } from '@testsequencer/common-backend/build/models/user';
 
 const router = express.Router();
 
-router.post('/api/users/signup', [
+router.post('/api/auth/signup', [
     body('email')
     .isEmail()
     .withMessage('Email must be valid'),
@@ -31,8 +32,10 @@ async (req: Request, res: Response) => {
 
     //Generate JWT
     const userJwt = jwt.sign({
-        id: user.id,
-        email: user.email
+        __id: user.__id,
+        email: user.email,
+        level: user.level,
+        accountId: user.accountId
     }, process.env.JWT_KEY!);
     //Store it on session object
     req.session = {

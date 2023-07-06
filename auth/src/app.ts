@@ -7,7 +7,8 @@ import { currentUserRouter } from './routes/current-user';
 import { signinRouter } from './routes/signin';
 import { signoutRouter } from './routes/signout';
 import { signupRouter } from './routes/signup';
-import { errorHandler, NotFoundError } from '@testsequencer/common';
+import { NotFoundError } from '@testsequencer/common';
+import { errorHandler } from '@testsequencer/common-backend/build/middlewares/error-handler';
 
 const app = express();
 app.set('trust proxy', true);
