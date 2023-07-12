@@ -34,7 +34,8 @@
 import { ProductUtil } from '@/utils/productutils';
 import { EventBus } from '@/utils/eventbus';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
-import { type ProductAttrs } from '@testsequencer/common';
+import { type ProductAttrs, ProductState } from '@testsequencer/common';
+import { UserUtil } from '@/utils/userutils';
 
 export default {
     props: {
@@ -44,8 +45,8 @@ export default {
         this.pageCreated
     },
     computed: {
-        isFormInvalid() {
-            return !this.name || !this.description;
+        isFormInvalid(): boolean {
+            return !this.$data.name || !this.$data.description;
         }
     },
     data() {
@@ -54,14 +55,16 @@ export default {
             description: '',
             active: true,
             $products: new ProductUtil(),
-            $bus: new EventBus()
+            $bus: new EventBus(),
+            $users: new UserUtil()
         }
     },
     created() {
-        const { $products, $bus } = getAllInjectedUtils();
+        const { $products, $bus, $users } = getAllInjectedUtils();
 
         this.$data.$products = $products;
         this.$data.$bus = $bus
+        this.$data.$users = $users;
     },
     methods: {
         async submitForm() {
@@ -71,10 +74,16 @@ export default {
             }
 
             try {
+                const currentCookieUser = await this.$data.$users.getCurrentUser();
+
                 const product = {} as ProductAttrs;
                 product.name = this.name
                 product.description = this.description, 
                 product.active = this.active;
+                product.parentAccountId = currentCookieUser.accountId;
+                product.mostRecentTestAttemptId = "-1";
+                product.state = ProductState.NOT_STARTED;
+
                 const createdProduct = await this.$data.$products.postProduct(product);
 
                 if(createdProduct) {

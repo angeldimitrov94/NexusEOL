@@ -17,7 +17,7 @@ const app_1 = require("../../app");
 it('responds with details about the current user', () => __awaiter(void 0, void 0, void 0, function* () {
     const cookie = yield global.signin();
     const response = yield (0, supertest_1.default)(app_1.app)
-        .get('/api/users/currentuser')
+        .get('/users/currentuser')
         .set('Cookie', cookie)
         .send()
         .expect(200);
@@ -25,7 +25,7 @@ it('responds with details about the current user', () => __awaiter(void 0, void 
 }));
 it('responds with null if not authenticated', () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield (0, supertest_1.default)(app_1.app)
-        .get('/api/users/currentuser')
+        .get('/users/currentuser')
         .send()
         .expect(200);
     expect(response.body.currentUser).toEqual(null);

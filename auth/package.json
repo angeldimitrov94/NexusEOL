@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "npx nodemon src/index.ts",
-    "test": "jest --watchAll --no-cache"
+    "test": "jest --watchAll --no-cache",
+    "start:watch": "nodemon -r ./src/index.ts --legacy-watch",
+    "start:dev": "node -r ./dist/index.js"
   },
   "jest": {
     "preset": "ts-jest",

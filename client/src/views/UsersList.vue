@@ -23,7 +23,7 @@
             </tbody>
         </table>
         <div>
-            <router-link to="/users/manage/create" class="btn btn-primary btn-sm">+ Add new user +</router-link>
+            <router-link to="/portal/users/manage/create" class="btn btn-primary btn-sm">+ Add new user +</router-link>
         </div>
     </div>
 </template>

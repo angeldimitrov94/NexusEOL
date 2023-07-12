@@ -1,0 +1,155 @@
+version: '3.7'
+
+networks:
+  node-network:
+    driver: bridge
+
+volumes:
+  users:
+  products:
+  tests:
+  accounts:
+  # exclude:
+
+services:
+  mongodb-users:
+    image: mongo
+    networks:
+      - node-network
+    volumes:
+      - users:/data/db
+
+  mongodb-products:
+      image: mongo
+      networks:
+        - node-network
+      volumes:
+        - products:/data/db
+
+  mongodb-tests:
+    image: mongo
+    networks:
+      - node-network
+    volumes:
+      - tests:/data/db
+
+  mongodb-accounts:
+    image: mongo
+    networks:
+      - node-network
+    volumes:
+      - accounts:/data/db
+
+  auth:
+    build: 
+      context: ./auth
+      dockerfile: Dockerfile
+    environment:
+      - MONGO_URI=mongodb://mongodb-users:27017/users
+      - JWT_KEY=1234567890
+    depends_on:
+      - mongodb-users
+    networks:
+      - node-network
+    volumes:
+      - users:/data/db
+      # - ./auth/:/app/dev
+      # - exclude:/app/dev/node_modules/
+    restart: always
+
+  users:
+    build: 
+      context: ./users
+      dockerfile: Dockerfile
+    environment:
+      - MONGO_URI=mongodb://mongodb-users:27017/users
+      - JWT_KEY=1234567890
+    depends_on:
+      - mongodb-users
+    networks:
+      - node-network
+    volumes:
+      - users:/data/db
+      # - ./users/:/app/dev
+      # - exclude:/app/dev/node_modules/
+    restart: always
+
+  # client:
+  #   build: 
+  #     context: ./client
+  #   ports:
+  #     - '5173:5173'
+  #   networks:
+  #     - node-network
+  #   restart: always
+
+  products:
+    build: 
+      context: ./products
+      dockerfile: Dockerfile
+    environment:
+      - MONGO_URI=mongodb://mongodb-products:27017/products
+      - JWT_KEY=1234567890
+    depends_on:
+      - mongodb-products
+    networks:
+      - node-network
+    volumes:
+      - products:/data/db
+      # - ./products/:/app/dev
+      # - exclude:/app/dev/node_modules/
+    restart: always
+
+
+  tests:
+    build: 
+      context: ./tests
+      dockerfile: Dockerfile
+    environment:
+      - MONGO_URI=mongodb://mongodb-tests:27017/tests
+      - JWT_KEY=1234567890docker 
+    depends_on:
+      - mongodb-tests
+    networks:
+      - node-network
+    volumes:
+      - tests:/data/db
+      # - ./tests/:/app/dev
+      # - exclude:/app/dev/node_modules/
+    restart: always
+
+  accounts:
+    build: 
+      context: ./accounts
+      dockerfile: Dockerfile
+    environment:
+      - MONGO_URI=mongodb://mongodb-accounts:27017/accounts
+      - JWT_KEY=1234567890
+    depends_on:
+      - mongodb-accounts
+    networks:
+      - node-network
+    volumes:
+      - accounts:/data/db
+      # - ./accounts/:/app/dev
+      # - exclude:/app/dev/node_modules/
+    restart: always
+
+  nginx:
+    build: ./nginx
+    ports:
+    - '80:80'
+    - '443:443'
+    depends_on:
+    - auth
+    - users
+    - products
+    - tests
+    - accounts
+    networks:
+      - node-network
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl/nexuseol.crt:/etc/ssl/certs/nexuseol.crt
+      - ./nginx/ssl/nexuseol.key:/etc/ssl/private/nexuseol.key
+      - ./nginx/dist/:/etc/dist/

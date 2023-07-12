@@ -16,7 +16,7 @@ const supertest_1 = __importDefault(require("supertest"));
 const app_1 = require("../../app");
 it("returns a 201 on successful signup", () => __awaiter(void 0, void 0, void 0, function* () {
     return yield (0, supertest_1.default)(app_1.app)
-        .post("/api/users/signup")
+        .post("users/signup")
         .send({
         email: "test@test.com",
         password: "password",
@@ -25,7 +25,7 @@ it("returns a 201 on successful signup", () => __awaiter(void 0, void 0, void 0,
 }));
 it("returns a 400 with an invalid email", () => __awaiter(void 0, void 0, void 0, function* () {
     return yield (0, supertest_1.default)(app_1.app)
-        .post("/api/users/signup")
+        .post("users/signup")
         .send({
         email: "alskdflaskjfd",
         password: "password",
@@ -34,7 +34,7 @@ it("returns a 400 with an invalid email", () => __awaiter(void 0, void 0, void 0
 }));
 it("returns a 400 with an invalid password", () => __awaiter(void 0, void 0, void 0, function* () {
     return yield (0, supertest_1.default)(app_1.app)
-        .post("/api/users/signup")
+        .post("users/signup")
         .send({
         email: "alskdflaskjfd",
         password: "p",
@@ -43,13 +43,13 @@ it("returns a 400 with an invalid password", () => __awaiter(void 0, void 0, voi
 }));
 it("returns a 400 with missing email and password", () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, supertest_1.default)(app_1.app)
-        .post("/api/users/signup")
+        .post("users/signup")
         .send({
         email: "test@test.com",
     })
         .expect(400);
     yield (0, supertest_1.default)(app_1.app)
-        .post("/api/users/signup")
+        .post("users/signup")
         .send({
         password: "alskjdf",
     })
@@ -57,14 +57,14 @@ it("returns a 400 with missing email and password", () => __awaiter(void 0, void
 }));
 it("disallows duplicate emails", () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, supertest_1.default)(app_1.app)
-        .post("/api/users/signup")
+        .post("users/signup")
         .send({
         email: "test@test.com",
         password: "password",
     })
         .expect(201);
     yield (0, supertest_1.default)(app_1.app)
-        .post("/api/users/signup")
+        .post("users/signup")
         .send({
         email: "test@test.com",
         password: "password",
@@ -73,7 +73,7 @@ it("disallows duplicate emails", () => __awaiter(void 0, void 0, void 0, functio
 }));
 it("sets a cookie after successful signup", () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield (0, supertest_1.default)(app_1.app)
-        .post("/api/users/signup")
+        .post("users/signup")
         .send({
         email: "test@test.com",
         password: "password",

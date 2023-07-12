@@ -16,7 +16,7 @@ const supertest_1 = __importDefault(require("supertest"));
 const app_1 = require("../../app");
 it('fails when a email that does not exist is supplied', () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, supertest_1.default)(app_1.app)
-        .post('/api/users/signin')
+        .post('/users/signin')
         .send({
         email: 'test@test.com',
         password: 'password'
@@ -25,14 +25,14 @@ it('fails when a email that does not exist is supplied', () => __awaiter(void 0,
 }));
 it('fails when an incorrect password is supplied', () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, supertest_1.default)(app_1.app)
-        .post('/api/users/signup')
+        .post('/users/signup')
         .send({
         email: 'test@test.com',
         password: 'password'
     })
         .expect(201);
     yield (0, supertest_1.default)(app_1.app)
-        .post('/api/users/signin')
+        .post('/users/signin')
         .send({
         email: 'test@test.com',
         password: 'aslkdfjalskdfj'
@@ -41,14 +41,14 @@ it('fails when an incorrect password is supplied', () => __awaiter(void 0, void 
 }));
 it('responds with a cookie when given valid credentials', () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, supertest_1.default)(app_1.app)
-        .post('/api/users/signup')
+        .post('/users/signup')
         .send({
         email: 'test@test.com',
         password: 'password'
     })
         .expect(201);
     const response = yield (0, supertest_1.default)(app_1.app)
-        .post('/api/users/signin')
+        .post('/users/signin')
         .send({
         email: 'test@test.com',
         password: 'password'

@@ -4,7 +4,7 @@ import { currentUser, requireAuth, TestResult } from '@testsequencer/common-back
 
 const router = express.Router();
 
-router.post('/api/testresults/create', [currentUser, requireAuth], async (req: Request, res: Response) => {
+router.post('/testresults/create', [currentUser, requireAuth], async (req: Request, res: Response) => {
     if(req.currentUser?.level === UserRole.TECHNICIAN) {
         throw new NotAuthorizedError();
     } 

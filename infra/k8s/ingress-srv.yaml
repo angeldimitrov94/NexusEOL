@@ -7,52 +7,52 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: 'true'
 spec:
   rules:
-    - host: nexus.eol
+    - host: nexuseol.com
       http:
         paths:
-          - path: /api/auth/?(.*)
+          - path: auth/?(.*)
             pathType: Prefix
             backend:
               service:
                 name: auth-srv
                 port:
                   number: 5000
-          - path: /api/accounts/?(.*)
+          - path: accounts/?(.*)
             pathType: Prefix
             backend:
               service:
                 name: accounts-srv
                 port:
                   number: 5000
-          - path: /api/products/?(.*)
+          - path: products/?(.*)
             pathType: Prefix
             backend:
               service:
                 name: products-srv
                 port:
                   number: 5000
-          - path: /api/users/?(.*)
+          - path: users/?(.*)
             pathType: Prefix
             backend:
               service:
                 name: users-srv
                 port:
                   number: 5000
-          - path: /api/tests/?(.*)
+          - path: tests/?(.*)
             pathType: Prefix
             backend:
               service:
                 name: tests-srv
                 port:
                   number: 5000
-          - path: /api/testattempts/?(.*)
+          - path: testattempts/?(.*)
             pathType: Prefix
             backend:
               service:
                 name: tests-srv
                 port:
                   number: 5000
-          - path: /api/testresults/?(.*)
+          - path: testresults/?(.*)
             pathType: Prefix
             backend:
               service:

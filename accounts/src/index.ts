@@ -3,6 +3,10 @@ import mongoose from "mongoose";
 import { app } from "./app";
 import { Account } from "@testsequencer/common-backend";
 import { AccountAttrs } from "@testsequencer/common";
+import fs from 'fs';
+import path from 'path';
+import http from 'http';
+import https from 'https';
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -22,8 +26,19 @@ const start = async () => {
 
   await populateDBWithTestData();
 
-  app.listen(5000, () => {
-    console.log("Listening on port 5000");
+  var privateKey  = fs.readFileSync(path.resolve(__dirname, './ssl/nexuseol.key'), 'utf8');
+  var certificate = fs.readFileSync(path.resolve(__dirname, './ssl/nexuseol.crt'), 'utf8');
+
+  var credentials = {key: privateKey, cert: certificate};
+
+  var httpServer = http.createServer(app);
+  var httpsServer = https.createServer(credentials, app);
+
+  httpServer.listen(8080, () => {
+    console.log("HTTP listening on port 8080");
+  });
+  httpsServer.listen(8443, () => {
+    console.log("HTTPS listening on port 8443");
   });
 };
 

@@ -7,7 +7,7 @@ import CreateUserVue from '../views/CreateUser.vue';
 import UsersListVue from '../views/UsersList.vue';
 import UserEditVue from '../views/UserEdit.vue';
 import DashboardVue from '../views/Dashboard.vue';
-import TestsViewerVue from '../views/TestsViewer.vue';
+import TestsListsVue from '../views/TestsList.vue';
 import TestEditVue from '../views/TestEdit.vue'
 import CreateTestVue from '../views/CreateTest.vue';
 import UserViewerVue from '../views/UserViewer.vue';
@@ -15,26 +15,28 @@ import AccountsListVue from '../views/AccountsList.vue';
 import AccountsViewerVue from '../views/AccountsViewer.vue';
 import AccountEditVue from '../views/AccountEdit.vue';
 import CreateAccountVue from '../views/CreateAccount.vue';
+import PublicLandingVue from '../views/PublicLanding.vue';
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
-    { path: '/', component: DashboardVue },
-        { path: '/products/:id', component: ProductViewerVue, props: true},
-        { path: '/products/manage', component: ProductsListVue},
-        { path: '/products/manage/create', component: CreateProductVue },
-        { path: '/products/manage/:id/edit', name: "ProductEdit", component: ProductEditVue, props: true},
-        { path: '/products/manage/:id/tests', name: "TestsViewer", component: TestsViewerVue, props: true},
-        { path: '/products/manage/:id/tests/create', name: "CreateTest", component: CreateTestVue, props: true},
-        { path: '/products/manage/:productId/tests/:testId/edit', name: "TestEdit", component: TestEditVue, props: true},
-        { path: '/users', component: UsersListVue},
-        { path: '/users/:id', component: UserViewerVue},
-        { path: '/users/manage/:id/edit', name: 'UserEdit' , component: UserEditVue, props: true},
-        { path: '/users/manage/create', component: CreateUserVue},
-        { path: '/accounts', component: AccountsListVue},
-        { path: '/accounts/:id', component: AccountsViewerVue},
-        { path: '/accounts/manage/:id/edit', name: 'AccountEdit' , component: AccountEditVue, props: true},
-        { path: '/accounts/manage/create', component: CreateAccountVue}
+    { path: '/', component: PublicLandingVue },
+    { path: '/portal', component: DashboardVue },
+    { path: '/portal/products/:id', component: ProductViewerVue, props: true},
+    { path: '/portal/products/manage', component: ProductsListVue},
+    { path: '/portal/products/manage/create', component: CreateProductVue },
+    { path: '/portal/products/manage/:id/edit', name: "ProductEdit", component: ProductEditVue, props: true},
+    { path: '/portal/products/manage/:id/tests', name: "TestsViewer", component: TestsListsVue, props: true},
+    { path: '/portal/products/manage/:id/tests/create', name: "CreateTest", component: CreateTestVue, props: true},
+    { path: '/portal/products/manage/:productId/tests/:testId/edit', name: "TestEdit", component: TestEditVue, props: true},
+    { path: '/portal/users', component: UsersListVue},
+    { path: '/portal/users/:id', component: UserViewerVue},
+    { path: '/portal/users/manage/:id/edit', name: 'UserEdit' , component: UserEditVue, props: true},
+    { path: '/portal/users/manage/create', component: CreateUserVue},
+    { path: '/portal/accounts', component: AccountsListVue},
+    { path: '/portal/accounts/:id', component: AccountsViewerVue},
+    { path: '/portal/accounts/manage/:id/edit', name: 'AccountEdit' , component: AccountEditVue, props: true},
+    { path: '/portal/accounts/manage/create', component: CreateAccountVue}
   ]
 })
 

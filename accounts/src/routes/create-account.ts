@@ -4,7 +4,7 @@ import { Account, currentUser, requireAuth } from '@testsequencer/common-backend
 
 const router = express.Router();
 
-router.post('/api/account/create', [currentUser, requireAuth], async (req: Request, res: Response) => {   
+router.post('/account/create', [currentUser, requireAuth], async (req: Request, res: Response) => {   
     if(req.currentUser?.level !== UserRole.SUPERADMIN) {
         throw new NotAuthorizedError();
     }

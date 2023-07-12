@@ -1,5 +1,5 @@
 export default interface CookieUser {
-    name?: string;
+    accountId: string;
     level: string;
     email: string;
 }

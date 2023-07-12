@@ -21,7 +21,7 @@
             </tbody>
         </table>
         <div>
-            <router-link to="/accounts/manage/create" class="btn btn-primary btn-sm">+ Add new account +</router-link>
+            <router-link to="/portal/accounts/manage/create" class="btn btn-primary btn-sm">+ Add new account +</router-link>
         </div>
     </div>
 </template>

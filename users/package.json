@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "npx nodemon src/index.ts",
-    "debug": "JWT_KEY=123 MONGO_URI=mongodb://localhost:27017 && ts-node-dev --poll src/index.ts"
+    "start:watch": "nodemon -r ./src/index.ts --legacy-watch",
+    "start:dev": "node -r ./dist/index.js"
   },
   "keywords": [],
   "author": "",

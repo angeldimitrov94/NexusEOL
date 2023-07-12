@@ -30,3 +30,8 @@ $filepath = $dir + "\users"
 
 Push-Location $filepath
 Start-Process npm -ArgumentList "update","@testsequencer/common", "@testsequencer/common-backend", "typescript@latest", "ts-node-dev@latest" -wait
+
+$filepath = $dir + "\client"
+
+Push-Location $filepath
+Start-Process npm -ArgumentList "update","@testsequencer/common" -wait

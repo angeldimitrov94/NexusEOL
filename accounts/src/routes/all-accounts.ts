@@ -3,7 +3,7 @@ import express, { Request, Response } from 'express';
 
 const router = express.Router();
 
-router.get('/api/accounts', [currentUser, requireAuth], async (req: Request, res: Response) => {
+router.get('accounts', [currentUser, requireAuth], async (req: Request, res: Response) => {
     let page = 0;
     let limit = 50;
     let pageString = req.query.page;

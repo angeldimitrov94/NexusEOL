@@ -18,12 +18,8 @@ function sleep(milliseconds: number) {
 
 const $userUtil = new UserUtil();
 
-await $userUtil.initialize();
-do {
-    sleep(10);
-    console.log(`Sleep 10ms since $userUtil.initialized === ${$userUtil.initialized}`);
-} 
-while ($userUtil.initialized === false)
+$userUtil.initialize();
+console.log($userUtil.initialized);
 
 const $eventBus = new EventBus();
 const $productUtil = new ProductUtil();

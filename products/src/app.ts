@@ -9,6 +9,7 @@ import { modifyProductRouter } from './routes/modify-product';
 import { productByIdRouter } from './routes/product-by-id';
 import { NotFoundError } from '@testsequencer/common';
 import { errorHandler } from '@testsequencer/common-backend/build/middlewares/error-handler';
+import { deleteProductRouter } from './routes/delete-product';
 
 const app = express();
 app.set('trust proxy', true);
@@ -24,6 +25,7 @@ app.use(allProductsRouter);
 app.use(createProductRouter);
 app.use(modifyProductRouter);
 app.use(productByIdRouter);
+app.use(deleteProductRouter);
 
 app.all('*', async (req, res) => {
   throw new NotFoundError();

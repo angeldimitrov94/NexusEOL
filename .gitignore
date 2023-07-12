@@ -2,3 +2,9 @@ node_modules
 testsequencer-common
 testsequencer-common-backend
 .vscode
+*.env
+*.crt
+*.pfx
+*.key
+nexuseol.conf
+dist

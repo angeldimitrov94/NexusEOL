@@ -50,7 +50,7 @@ export default {
 
         this.$data.$bus.$on('user-change', async () => { 
             this.products = await this.$data.$products.getAllProducts();
-            this.$router.push({ path: '/' });
+            this.$router.push({ path: '/portal' });
         });
     },
     methods: {

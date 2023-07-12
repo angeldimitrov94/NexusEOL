@@ -4,7 +4,7 @@
       <li v-for="test in tests" class="nav-item">
         <a class="nav-link" :class="isThisIdActiveClass(test?.__id)" href="#" :key="test?.__id"
           @click.prevent="makeThisIdActiveId(test?.__id)">
-          <img src="page.svg" alt="page icon" />
+          <img src="/page.svg" alt="page icon" />
           {{ test?.name }}
         </a>
       </li>
@@ -20,9 +20,9 @@
           <div class="card-body">
             <h5 class="card-title">Messages</h5>
             <div class="card-text overflow-auto">
-              <ul v-for="{ dateTime, level, text } in currentlySelectedTest?.messages">
+              <!-- <ul v-for="{ dateTime, level, text } in currentlySelectedTest?.messages">
                 <li>{{ dateTime.padEnd(25, ' ') }} - {{ level.padEnd(6, ' ') }} - {{ text }}</li>
-              </ul>
+              </ul> -->
             </div>
           </div>
         </div>
@@ -32,7 +32,7 @@
           <div class="card-body">
             <h5 class="card-title">Actions</h5>
             <div class="card-text">
-              <p>{{ actionText }}</p>
+              <!-- <p>{{ actionText }}</p> -->
               <button type="button" class="btn btn-success disabled">Proceed</button>
               <button type="button" class="btn btn-danger disabled">Abort</button>
             </div>
@@ -110,16 +110,16 @@ export default {
     }
   },
   computed: {
-    actionText() {
-      const currentlySelectedTest = this.currentlySelectedTest;
-      console.log(currentlySelectedTest);
+    // actionText() {
+    //   const currentlySelectedTest = this.currentlySelectedTest;
+    //   console.log(currentlySelectedTest);
       
-      const actionTextValue = currentlySelectedTest === undefined || currentlySelectedTest?.currentActionIndex === -1 ? "No actions for this test" :
-      currentlySelectedTest?.actions[currentlySelectedTest.currentActionIndex]?.message;
-      console.log(actionTextValue);
+    //   const actionTextValue = currentlySelectedTest === undefined || currentlySelectedTest?.currentActionIndex === -1 ? "No actions for this test" :
+    //   currentlySelectedTest?.actions[currentlySelectedTest.currentActionIndex]?.message;
+    //   console.log(actionTextValue);
       
-      return actionTextValue;
-    }
+    //   return actionTextValue;
+    // }
   }
 }
 </script>

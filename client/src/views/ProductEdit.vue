@@ -30,6 +30,9 @@
                 <router-link class="btn btn-primary btn-sm" :to="{ name: 'TestsViewer', params: { id: id } }">View {{
                     product.tests === undefined ? "N/A" : product.tests.length }} tests</router-link>
             </div>
+            <div class="mb-3">
+                <button class="btn btn-warning btn-sm" @click.prevent="deleteProduct">Delete product</button>
+            </div>
         </form>
         <div class="mb-3">
             <button class="btn btn-primary me-2" @click.prevent="submit" :disabled="isFormInvalid">Confirm
@@ -78,7 +81,15 @@ export default {
                 return;
             }
 
-            this.$router.push({ path: '/products/manage' });
+            this.$router.push({ path: '/portal/products/manage' });
+        },
+        async deleteProduct() {
+            if(this.product.__id === undefined) {
+                console.error('Product ID is undefined, returning and not deleting...');
+                return;
+            }
+
+            await this.$data.$products.deleteProduct(this.product.__id);
         }
     },
     computed: {

@@ -57,21 +57,21 @@ export default {
 
             if(this.$data.$users.cachedCookieUser === null) {
                 console.log("attempt signin");
-                const result = await this.$data.$users.signin(this.$data.signinUsername, this.$data.signinPassword);        
+                const result = await this.$data.$users.signin(this.$data.signinUsername, this.$data.signinPassword);    
+                const userAttrResult = result as UserAttrs;    
                 
-                if((result as UserAttrs).name && (result as UserAttrs).level && (result as UserAttrs).email) {
-                    const userAttrs = result as UserAttrs;
+                if(userAttrResult.accountId !== undefined && userAttrResult.level && userAttrResult.email) {
                     success = true;
 
                     const newlySignedInUser: CookieUser = {
-                        name: userAttrs.name,
-                        level: userAttrs.level,
-                        email: userAttrs.email
+                        level: userAttrResult.level,
+                        email: userAttrResult.email,
+                        accountId: userAttrResult.accountId
                     };
 
                     this.$data.$users.cachedCookieUser = newlySignedInUser;
 
-                    this.$data.errorMessage = `Signed in user : ` + JSON.stringify(userAttrs);
+                    this.$data.errorMessage = `Signed in user : ` + JSON.stringify(userAttrResult);
                 }
                 else {
                     this.$data.errorMessage = `Failed to sign in user : ` + JSON.stringify(result);

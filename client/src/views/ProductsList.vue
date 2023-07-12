@@ -12,18 +12,17 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="{ name, __id, description, active, tests } in allProducts" :key="__id">
+                <tr v-for="{ name, __id, description, active } in allProducts" :key="__id">
                     <td>{{ name }}</td>
                     <td>{{ __id }}</td>
                     <td>{{ description }}</td>
                     <td>{{ active ? 'yes' : 'no' }}</td>
-                    <td><router-link class="btn btn-primary btn-sm" :to="{ name: 'ProductEdit', params: { id: __id } }">Edit
-                            Product</router-link></td>
+                    <td><router-link class="btn btn-primary btn-sm" :to="{ name: 'ProductEdit', params: { id: __id } }">Edit Product</router-link></td>
                 </tr>
             </tbody>
         </table>
         <div>
-            <router-link to="/products/manage/create" class="btn btn-primary btn-sm">+ Add new product +</router-link>
+            <router-link to="/portal/products/manage/create" class="btn btn-primary btn-sm">+ Add new product +</router-link>
         </div>
     </div>
 </template>

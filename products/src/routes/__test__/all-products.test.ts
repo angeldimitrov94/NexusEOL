@@ -16,7 +16,7 @@ const product = {
 
 it('returns empty array if not authenticated', async () => {
   const response = await request(app)
-    .get('/api/products')
+    .get('products')
     .send()
     .expect(404);
   
@@ -30,7 +30,7 @@ it('returns empty array if products with account id of user DO NOT exist', async
   const jwtSession = await signin();
 
   const response = await request(app)
-    .get('/api/products')
+    .get('products')
     .set('Cookie', jwtSession)
     .send()
     .expect(200);
@@ -45,7 +45,7 @@ it('returns correct array of products if products with account id of user DO exi
   const jwtSession = await signin();
 
   const response = await request(app)
-    .get('/api/products')
+    .get('products')
     .set('Cookie', jwtSession)
     .send()
     .expect(200);

@@ -4,12 +4,17 @@ import { currentUser, requireAuth, Product } from '@testsequencer/common-backend
 
 const router = express.Router();
 
-router.post('/api/products/create', [currentUser, requireAuth], async (req: Request, res: Response) => {
+router.post('/products/create', [currentUser, requireAuth], async (req: Request, res: Response) => {
     if(req.currentUser?.level === UserRole.TECHNICIAN) {
         throw new NotAuthorizedError();
     } 
 
+    console.log('req.body :');
+    console.log(req.body);
+
     const newProduct = req.body as ProductAttrs;
+
+    console.error(newProduct);
 
     if(req.currentUser?.accountId !== newProduct.parentAccountId){
         return res.status(400).send({"error":"parentAccountId does not match user's account id"});

@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx nodemon src/index.ts",
+    "start:watch": "nodemon -r ./src/index.ts --legacy-watch",
+    "start:dev": "node -r ./dist/index.js",
     "test": "jest",
-    "testClean": "jest --clearCache"
+    "testClean": "jest --clearCache",
+    "start": "npx nodemon src/index.ts"
   },
   "jest": {
     "preset": "ts-jest",

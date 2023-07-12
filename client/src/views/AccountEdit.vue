@@ -70,7 +70,7 @@ export default {
                 return;
             }
 
-            this.$router.push({ path: '/accounts/manage' });
+            this.$router.push({ path: '/portal/accounts/manage' });
         }
     },
     computed: {

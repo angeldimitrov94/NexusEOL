@@ -11,13 +11,14 @@ export class UserUtil {
         this.cachedCookieUser = null;
     }
 
-    async initialize() {
-        this.cachedCookieUser = await this.getCurrentUser();
-        this.initialized = true;
+    initialize() {
+        this.getCurrentUser().then((cookieUser: CookieUser) => {
+            this.initialized = cookieUser !== undefined;
+        });
     }
 
     async getUser(userId: string): Promise<UserAttrs | undefined> {
-        const { data, status } = await axios.get(`https://nexus.eol/api/users/${userId}`, 
+        const { data, status } = await axios.get(`https://api.nexuseol.com/users/${userId}`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -35,7 +36,7 @@ export class UserUtil {
     }
 
     async getAllUsers(): Promise<UserAttrs[]> {
-        const { data, status } = await axios.get(`https://nexus.eol/api/users`, 
+        const { data, status } = await axios.get(`https://api.nexuseol.com/users`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -53,7 +54,7 @@ export class UserUtil {
     }
 
     async postUser(user: UserAttrs): Promise<UserAttrs|undefined> {
-        const { data, status } = await axios.post(`https://nexus.eol/api/users/create`, user, 
+        const { data, status } = await axios.post(`https://api.nexuseol.com/users/create`, user, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -71,7 +72,7 @@ export class UserUtil {
     } 
 
     async patchUser(user: UserAttrs): Promise<UserAttrs|undefined> {
-        const { data, status } = await axios.patch(`https://nexus.eol/api/users/${user.__id}/edit`, user, 
+        const { data, status } = await axios.patch(`https://api.nexuseol.com/users/${user.__id}/edit`, user, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -89,7 +90,7 @@ export class UserUtil {
     } 
 
     async signin(email: string, password: string): Promise<UserAttrs|string|object> {
-        const { data, status } = await axios.post(`https://nexus.eol/api/auth/signin`, {
+        const { data, status } = await axios.post(`https://api.nexuseol.com/auth/signin`, {
             email,
             password
         }, 
@@ -108,7 +109,7 @@ export class UserUtil {
     }
 
     async signout(): Promise<boolean> {
-        const { data, status } = await axios.post(`https://nexus.eol/api/auth/signout`, 
+        const { data, status } = await axios.post(`https://api.nexuseol.com/auth/signout`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -130,7 +131,7 @@ export class UserUtil {
     }
 
     async getCurrentUser(): Promise<CookieUser> {
-        const { data, status } = await axios.get(`https://nexus.eol/api/auth/currentuser`, 
+        const { data, status } = await axios.get(`https://api.nexuseol.com/auth/currentuser`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
