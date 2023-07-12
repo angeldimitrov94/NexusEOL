@@ -4,8 +4,9 @@
 - cloud 
   - ~~Kubernetes web services cluster~~ Docker containers :
     - Nginx reverse proxy + web server
-      - used by superadmins for account creation/administration, user creation/administration
-      - used by admins for user creation/administration, product creation/administration
+      - serves the files built by Vue.Js
+        - used by superadmins for account creation/administration, user creation/administration
+        - used by admins for user creation/administration, product creation/administration
     - web API
       - receiving data from remote nodes
       - fulfilling api requests from front-end
