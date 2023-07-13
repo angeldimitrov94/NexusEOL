@@ -35,6 +35,9 @@ services:
           limits:
             cpus: '0.10'
             memory: 64M
+      depends_on:
+        mongodb-users:
+          condition: service_completed_successfully
 
   mongodb-tests:
     image: mongo
@@ -47,6 +50,9 @@ services:
         limits:
           cpus: '0.10'
           memory: 64M
+    depends_on:
+      mongodb-products:
+        condition: service_completed_successfully
 
   mongodb-accounts:
     image: mongo
@@ -59,6 +65,9 @@ services:
           limits:
             cpus: '0.10'
             memory: 64M
+    depends_on:
+      mongodb-tests:
+        condition: service_completed_successfully
 
   auth:
     build: 
@@ -68,7 +77,8 @@ services:
       - MONGO_URI=mongodb://mongodb-users:27017/users
       - JWT_KEY=1234567890
     depends_on:
-      - mongodb-users
+      mongodb-accounts:
+        condition: service_completed_successfully
     networks:
       - node-network
     volumes:
@@ -90,7 +100,8 @@ services:
       - MONGO_URI=mongodb://mongodb-users:27017/users
       - JWT_KEY=1234567890
     depends_on:
-      - mongodb-users
+      auth:
+        condition: service_completed_successfully
     networks:
       - node-network
     volumes:
@@ -121,7 +132,8 @@ services:
       - MONGO_URI=mongodb://mongodb-products:27017/products
       - JWT_KEY=1234567890
     depends_on:
-      - mongodb-products
+      users:
+        condition: service_completed_successfully
     networks:
       - node-network
     volumes:
@@ -144,7 +156,8 @@ services:
       - MONGO_URI=mongodb://mongodb-tests:27017/tests
       - JWT_KEY=1234567890docker 
     depends_on:
-      - mongodb-tests
+      products:
+        condition: service_completed_successfully
     networks:
       - node-network
     volumes:
@@ -166,7 +179,8 @@ services:
       - MONGO_URI=mongodb://mongodb-accounts:27017/accounts
       - JWT_KEY=1234567890
     depends_on:
-      - mongodb-accounts
+      tests:
+        condition: service_completed_successfully
     networks:
       - node-network
     volumes:
@@ -186,11 +200,8 @@ services:
     - '80:80'
     - '443:443'
     depends_on:
-    - auth
-    - users
-    - products
-    - tests
-    - accounts
+      accounts:
+        condition: service_completed_successfully
     networks:
       - node-network
     volumes:
