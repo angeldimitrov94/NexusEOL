@@ -115,15 +115,6 @@ services:
             cpus: '0.10'
             memory: 128M
 
-  # client:
-  #   build: 
-  #     context: ./client
-  #   ports:
-  #     - '5173:5173'
-  #   networks:
-  #     - node-network
-  #   restart: always
-
   products:
     build: 
       context: ./products
@@ -194,23 +185,41 @@ services:
             cpus: '0.25'
             memory: 128M
 
-  nginx:
-    build: ./nginx
+  client:
+    build: 
+      context: ./client
     ports:
-    - '80:80'
-    - '443:443'
+      - '443:443'
+      - '80:80'
+    networks:
+      - node-network
+    restart: always
     depends_on:
       accounts:
         condition: service_completed_successfully
-    networks:
-      - node-network
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/ssl/nexuseol.crt:/etc/ssl/certs/nexuseol.crt
-      - ./nginx/ssl/nexuseol.key:/etc/ssl/private/nexuseol.key
-      - ./nginx/dist/:/etc/dist/
     deploy:
         resources:
           limits:
             cpus: '0.25'
             memory: 256M
+
+  # nginx:
+  #   build: ./nginx
+  #   ports:
+  #   - '80:80'
+  #   - '443:443'
+  #   depends_on:
+  #     accounts:
+  #       condition: service_completed_successfully
+  #   networks:
+  #     - node-network
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./nginx/ssl/nexuseol.crt:/etc/ssl/certs/nexuseol.crt
+  #     - ./nginx/ssl/nexuseol.key:/etc/ssl/private/nexuseol.key
+  #     - ./nginx/dist/:/etc/dist/
+  #   deploy:
+  #       resources:
+  #         limits:
+  #           cpus: '0.25'
+  #           memory: 256M
