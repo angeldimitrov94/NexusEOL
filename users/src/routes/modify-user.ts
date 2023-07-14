@@ -4,7 +4,7 @@ import { currentUser, requireAuth, User } from '@testsequencer/common-backend';
 
 const router = express.Router();
 
-router.patch('/users/:userid/edit', [requireAuth, currentUser], async (req: Request, res: Response) => {
+router.patch('/api/users/:userid/edit', [requireAuth, currentUser], async (req: Request, res: Response) => {
     console.log('Current user : ');
     console.log(req.currentUser);
     console.log(req.currentUser?.level === UserRole.SUPERADMIN);

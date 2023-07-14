@@ -8,7 +8,7 @@ import { Password } from '@testsequencer/common-backend/build/services/password'
 
 const router = express.Router();
 
-router.post('/auth/signin', 
+router.post('/api/auth/signin', 
 [
     body('email')
     .isEmail()

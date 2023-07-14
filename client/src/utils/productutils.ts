@@ -13,7 +13,7 @@ export class ProductUtil {
             return;
         }
 
-        const { data, status } = await axios.patch(`https://api.nexuseol.com/products/${modifiedProduct.__id}/edit`, {
+        const { data, status } = await axios.patch(`https://www.nexuseol.com/api/products/${modifiedProduct.__id}/edit`, {
             productDoc: modifiedProduct
         });
 
@@ -32,7 +32,7 @@ export class ProductUtil {
             return;
         }
 
-        const { data, status } = await axios.patch(`https://api.nexuseol.com/products/${parentProductId}/tests/${modifiedTest.__id}/edit`, {
+        const { data, status } = await axios.patch(`https://www.nexuseol.com/api/products/${parentProductId}/tests/${modifiedTest.__id}/edit`, {
             testDoc: modifiedTest
         });
 
@@ -58,7 +58,7 @@ export class ProductUtil {
             return;
         }
 
-        const { data, status } = await axios.post('https://api.nexuseol.com/products/create', productAttrs);
+        const { data, status } = await axios.post('https://www.nexuseol.com/api/products/create', productAttrs);
 
         const success = status === 201;
         if(!success) {
@@ -74,7 +74,7 @@ export class ProductUtil {
             return;
         }
 
-        const { data, status } = await axios.post(`https://api.nexuseol.com/products/${productId}/tests/create`, {
+        const { data, status } = await axios.post(`https://www.nexuseol.com/api/products/${productId}/tests/create`, {
             testAttrs
         });
 
@@ -88,7 +88,7 @@ export class ProductUtil {
     }
 
     async deleteTest(testId: string): Promise<string|undefined> {
-        const { data, status } = await axios.delete(`https://api.nexuseol.com/tests/${testId}/delete`);
+        const { data, status } = await axios.delete(`https://www.nexuseol.com/api/tests/${testId}/delete`);
 
         const success = status === 204;
         if(!success) {
@@ -100,7 +100,7 @@ export class ProductUtil {
     }
 
     async deleteProduct(productId: string): Promise<TestAttrs|undefined> {
-        const { data, status } = await axios.delete(`https://api.nexuseol.com/products/${productId}/delete`);
+        const { data, status } = await axios.delete(`https://www.nexuseol.com/api/products/${productId}/delete`);
 
         const success = status === 204;
         if(!success) {
@@ -112,7 +112,7 @@ export class ProductUtil {
     }
 
     async getAllProducts(): Promise<ProductAttrs[]> {
-        const { data, status } = await axios.get(`https://api.nexuseol.com/products`);
+        const { data, status } = await axios.get(`https://www.nexuseol.com/api/products`);
 
         const success = status === 200;
         if(!success) {
@@ -125,7 +125,7 @@ export class ProductUtil {
     }
 
     async getProduct(productId: string): Promise<ProductAttrs | undefined> {
-        const { data, status } = await axios.get(`https://api.nexuseol.com/products/${productId}`);
+        const { data, status } = await axios.get(`https://www.nexuseol.com/api/products/${productId}`);
 
         const success = status === 200;
         if(!success) {
@@ -138,7 +138,7 @@ export class ProductUtil {
     }
 
     async getTest(productId: string, testId: string): Promise<TestAttrs | undefined> {
-        const { data, status } = await axios.get(`https://api.nexuseol.com/products/${productId}/tests/${testId}`);
+        const { data, status } = await axios.get(`https://www.nexuseol.com/api/products/${productId}/tests/${testId}`);
 
         const success = status === 200;
         if(!success) {
@@ -151,7 +151,7 @@ export class ProductUtil {
     }
 
     async getAllTests(productId: string | undefined): Promise<TestAttrs[]> {
-        const { data, status } = await axios.get(`https://api.nexuseol.com/products/${productId}/tests`);
+        const { data, status } = await axios.get(`https://www.nexuseol.com/api/products/${productId}/tests`);
 
         const success = status === 200;
         if(!success) {

@@ -3,7 +3,7 @@ import express, { Request, Response } from 'express';
 
 const router = express.Router();
 
-router.get('/tests/:testid', requireAuth, async (req: Request, res: Response) => {
+router.get('/api/tests/:testid', requireAuth, async (req: Request, res: Response) => {
     const testid = req.params.testid;
 
     //TODO add paging

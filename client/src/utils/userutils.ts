@@ -18,7 +18,7 @@ export class UserUtil {
     }
 
     async getUser(userId: string): Promise<UserAttrs | undefined> {
-        const { data, status } = await axios.get(`https://api.nexuseol.com/users/${userId}`, 
+        const { data, status } = await axios.get(`https://www.nexuseol.com/api/users/${userId}`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -36,7 +36,7 @@ export class UserUtil {
     }
 
     async getAllUsers(): Promise<UserAttrs[]> {
-        const { data, status } = await axios.get(`https://api.nexuseol.com/users`, 
+        const { data, status } = await axios.get(`https://www.nexuseol.com/api/users`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -54,7 +54,7 @@ export class UserUtil {
     }
 
     async postUser(user: UserAttrs): Promise<UserAttrs|undefined> {
-        const { data, status } = await axios.post(`https://api.nexuseol.com/users/create`, user, 
+        const { data, status } = await axios.post(`https://www.nexuseol.com/api/users/create`, user, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -72,7 +72,7 @@ export class UserUtil {
     } 
 
     async patchUser(user: UserAttrs): Promise<UserAttrs|undefined> {
-        const { data, status } = await axios.patch(`https://api.nexuseol.com/users/${user.__id}/edit`, user, 
+        const { data, status } = await axios.patch(`https://www.nexuseol.com/api/users/${user.__id}/edit`, user, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -90,7 +90,7 @@ export class UserUtil {
     } 
 
     async signin(email: string, password: string): Promise<UserAttrs|string|object> {
-        const { data, status } = await axios.post(`https://api.nexuseol.com/auth/signin`, {
+        const { data, status } = await axios.post(`https://www.nexuseol.com/api/auth/signin`, {
             email,
             password
         }, 
@@ -109,7 +109,7 @@ export class UserUtil {
     }
 
     async signout(): Promise<boolean> {
-        const { data, status } = await axios.post(`https://api.nexuseol.com/auth/signout`, 
+        const { data, status } = await axios.post(`https://www.nexuseol.com/api/auth/signout`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -131,7 +131,7 @@ export class UserUtil {
     }
 
     async getCurrentUser(): Promise<CookieUser> {
-        const { data, status } = await axios.get(`https://api.nexuseol.com/auth/currentuser`, 
+        const { data, status } = await axios.get(`https://www.nexuseol.com/api/auth/currentuser`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500

@@ -4,7 +4,7 @@ import { currentUser, requireAuth, Product } from '@testsequencer/common-backend
 
 const router = express.Router();
 
-router.patch('/products/:productid/edit', [currentUser, requireAuth], async (req: Request, res: Response) => {
+router.patch('/api/products/:productid/edit', [currentUser, requireAuth], async (req: Request, res: Response) => {
     if(req.currentUser?.level === UserRole.TECHNICIAN) {
         throw new NotAuthorizedError();
     } 

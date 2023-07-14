@@ -8,7 +8,7 @@ import { User } from '@testsequencer/common-backend/build/models/user';
 
 const router = express.Router();
 
-router.post('/auth/signup', [
+router.post('/api/auth/signup', [
     body('email')
     .isEmail()
     .withMessage('Email must be valid'),

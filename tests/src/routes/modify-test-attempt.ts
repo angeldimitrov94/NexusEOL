@@ -4,7 +4,7 @@ import { currentUser, requireAuth, Test, TestAttempt } from '@testsequencer/comm
 
 const router = express.Router();
 
-router.patch('/testattempts/:testattemptid/edit', [requireAuth, currentUser], async (req: Request, res: Response) => {
+router.patch('/api/testattempts/:testattemptid/edit', [requireAuth, currentUser], async (req: Request, res: Response) => {
     if(req.currentUser?.level === UserRole.TECHNICIAN) {
         throw new NotAuthorizedError();
     } 

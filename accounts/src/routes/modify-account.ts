@@ -4,7 +4,7 @@ import { Account, currentUser, requireAuth } from '@testsequencer/common-backend
 
 const router = express.Router();
 
-router.patch('/accounts/:accountid/edit', [requireAuth, currentUser], async (req: Request, res: Response) => {
+router.patch('/api/accounts/:accountid/edit', [requireAuth, currentUser], async (req: Request, res: Response) => {
     if(req.currentUser?.level !== UserRole.SUPERADMIN) {
         throw new NotAuthorizedError();
     } 

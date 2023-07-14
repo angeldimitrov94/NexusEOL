@@ -4,7 +4,7 @@ import { currentUser, requireAuth, Product } from '@testsequencer/common-backend
 
 const router = express.Router();
 
-router.delete('/products/:productid/delete', [currentUser, requireAuth], async (req: Request, res: Response) => {
+router.delete('/api/products/:productid/delete', [currentUser, requireAuth], async (req: Request, res: Response) => {
     if(req.currentUser?.level !== UserRole.ADMIN && req.currentUser?.level !== UserRole.SUPERADMIN) {
         throw new NotAuthorizedError();
     }

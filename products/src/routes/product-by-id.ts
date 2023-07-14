@@ -3,7 +3,7 @@ import express, { Request, Response } from 'express';
 
 const router = express.Router();
 
-router.get('/products/:productid', [currentUser, requireAuth], async (req: Request, res: Response) => {
+router.get('/api/products/:productid', [currentUser, requireAuth], async (req: Request, res: Response) => {
     const productid = req.params.productid;
 
     //TODO add paging

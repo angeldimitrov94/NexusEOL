@@ -3,7 +3,7 @@ import axios from "axios";
 
 export class AccountUtil {
     async getAllAccounts(): Promise<AccountAttrs[]> {
-        const { data, status } = await axios.get(`https://api.nexuseol.com/accounts`);
+        const { data, status } = await axios.get(`https://www.nexuseol.com/api/accounts`);
 
         const success = status === 200;
         if(!success) {
@@ -16,7 +16,7 @@ export class AccountUtil {
     }
 
     async postNewAccount(newAccount: AccountAttrs): Promise<AccountAttrs|undefined> {
-        const { data, status } = await axios.post(`https://api.nexuseol.com/accounts/create`, 
+        const { data, status } = await axios.post(`https://www.nexuseol.com/api/accounts/create`, 
         newAccount);
 
         const success = status === 201;
@@ -30,7 +30,7 @@ export class AccountUtil {
     }
 
     async getAccount(id: string): Promise<AccountAttrs | undefined> {
-        const { data, status } = await axios.get(`https://api.nexuseol.com/accounts/${id}`);
+        const { data, status } = await axios.get(`https://www.nexuseol.com/api/accounts/${id}`);
 
         const success = status === 200;
         if(!success) {
@@ -43,7 +43,7 @@ export class AccountUtil {
     }
 
     async patchAccount(accountId: string, account: AccountAttrs): Promise<AccountAttrs|undefined> {
-        const { data, status } = await axios.patch(`https://api.nexuseol.com/accounts/${accountId}/edit`, account);
+        const { data, status } = await axios.patch(`https://www.nexuseol.com/api/accounts/${accountId}/edit`, account);
 
         const success = status === 200;
         if(!success) {

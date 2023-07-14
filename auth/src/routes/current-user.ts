@@ -3,7 +3,7 @@ import express from 'express';
 
 const router = express.Router();
 
-router.get('/auth/currentuser', currentUser, (req, res) => {   
+router.get('/api/auth/currentuser', currentUser, (req, res) => {   
     res.send({ currentUser: req.currentUser || null });
 });
 
