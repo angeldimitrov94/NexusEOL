@@ -9,5 +9,5 @@ FROM nginx as production-stage
 RUN mkdir /app
 COPY --from=build-stage /app/dist /app
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY ./ssl/nexuseol.crt /etc/ssl/certs/nexuseol.crt
-COPY ./ssl/nexuseol.key /etc/ssl/private/nexuseol.key
+COPY ./ssl/nexuseol_com.crt /etc/ssl/certs/nexuseol_com.crt
+COPY ./ssl/nexuseol_com.key /etc/ssl/private/nexuseol_com.key

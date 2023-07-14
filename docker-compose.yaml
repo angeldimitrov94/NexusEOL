@@ -22,7 +22,7 @@ services:
       resources:
         limits:
           cpus: '0.10'
-          memory: 64M
+          memory: 128M
 
   mongodb-products:
       image: mongo
@@ -34,10 +34,10 @@ services:
         resources:
           limits:
             cpus: '0.10'
-            memory: 64M
-      depends_on:
-        mongodb-users:
-          condition: service_completed_successfully
+            memory: 128M
+#      depends_on:
+#        mongodb-users:
+#          condition: service_completed_successfully
 
   mongodb-tests:
     image: mongo
@@ -49,10 +49,10 @@ services:
       resources:
         limits:
           cpus: '0.10'
-          memory: 64M
-    depends_on:
-      mongodb-products:
-        condition: service_completed_successfully
+          memory: 128M
+#    depends_on:
+#      mongodb-products:
+#        condition: service_completed_successfully
 
   mongodb-accounts:
     image: mongo
@@ -64,10 +64,10 @@ services:
         resources:
           limits:
             cpus: '0.10'
-            memory: 64M
-    depends_on:
-      mongodb-tests:
-        condition: service_completed_successfully
+            memory: 128M
+#    depends_on:
+#      mongodb-tests:
+#        condition: service_completed_successfully
 
   auth:
     build: 
@@ -77,8 +77,7 @@ services:
       - MONGO_URI=mongodb://mongodb-users:27017/users
       - JWT_KEY=1234567890
     depends_on:
-      mongodb-accounts:
-        condition: service_completed_successfully
+      - mongodb-users
     networks:
       - node-network
     volumes:
@@ -89,8 +88,8 @@ services:
     deploy:
         resources:
           limits:
-            cpus: '0.10'
-            memory: 128M
+            cpus: '0.20'
+            memory: 256M
 
   users:
     build: 
@@ -100,8 +99,7 @@ services:
       - MONGO_URI=mongodb://mongodb-users:27017/users
       - JWT_KEY=1234567890
     depends_on:
-      auth:
-        condition: service_completed_successfully
+      - mongodb-users
     networks:
       - node-network
     volumes:
@@ -112,8 +110,8 @@ services:
     deploy:
         resources:
           limits:
-            cpus: '0.10'
-            memory: 128M
+            cpus: '0.20'
+            memory: 256M
 
   products:
     build: 
@@ -123,8 +121,7 @@ services:
       - MONGO_URI=mongodb://mongodb-products:27017/products
       - JWT_KEY=1234567890
     depends_on:
-      users:
-        condition: service_completed_successfully
+      - mongodb-products
     networks:
       - node-network
     volumes:
@@ -135,8 +132,8 @@ services:
     deploy:
         resources:
           limits:
-            cpus: '0.10'
-            memory: 128M
+            cpus: '0.20'
+            memory: 256M
 
 
   tests:
@@ -147,8 +144,7 @@ services:
       - MONGO_URI=mongodb://mongodb-tests:27017/tests
       - JWT_KEY=1234567890docker 
     depends_on:
-      products:
-        condition: service_completed_successfully
+      - mongodb-tests
     networks:
       - node-network
     volumes:
@@ -159,8 +155,8 @@ services:
     deploy:
         resources:
           limits:
-            cpus: '0.25'
-            memory: 128M
+            cpus: '0.20'
+            memory: 256M
 
   accounts:
     build: 
@@ -170,8 +166,7 @@ services:
       - MONGO_URI=mongodb://mongodb-accounts:27017/accounts
       - JWT_KEY=1234567890
     depends_on:
-      tests:
-        condition: service_completed_successfully
+      - mongodb-accounts
     networks:
       - node-network
     volumes:
@@ -182,8 +177,8 @@ services:
     deploy:
         resources:
           limits:
-            cpus: '0.25'
-            memory: 128M
+            cpus: '0.20'
+            memory: 256M
 
   client:
     build: 
@@ -195,13 +190,20 @@ services:
       - node-network
     restart: always
     depends_on:
-      accounts:
-        condition: service_completed_successfully
+      - accounts
+      - tests
+      - users
+      - products
+      - auth
     deploy:
         resources:
           limits:
-            cpus: '0.25'
+            cpus: '0.20'
             memory: 256M
+    volumes:
+       - ./client/nginx.conf:/etc/nginx/nginx.conf:ro
+       - ./client/ssl/nexuseol_com.crt:/etc/ssl/certs/nexuseol_com.crt
+       - ./client/ssl/nexuseol_com.key:/etc/ssl/private/nexuseol_com.key
 
   # nginx:
   #   build: ./nginx
