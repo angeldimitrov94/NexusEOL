@@ -20,8 +20,8 @@ import PublicLandingVue from '../views/PublicLanding.vue';
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
-    { path: '/', component: PublicLandingVue },
-    { path: '/portal', component: DashboardVue },
+    { path: '/portal', component: PublicLandingVue },
+    { path: '/portal/dashboard', component: DashboardVue },
     { path: '/portal/products/:id', component: ProductViewerVue, props: true},
     { path: '/portal/products/manage', component: ProductsListVue},
     { path: '/portal/products/manage/create', component: CreateProductVue },
