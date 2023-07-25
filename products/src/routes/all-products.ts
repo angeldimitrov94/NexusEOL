@@ -1,3 +1,4 @@
+import { ProductAttrs } from '@testsequencer/common';
 import { Product, requireAuth } from '@testsequencer/common-backend';
 import { currentUser } from '@testsequencer/common-backend/build/middlewares/current-user';
 import express, { Request, Response } from 'express';
@@ -11,9 +12,23 @@ router.get('/api/products', [currentUser, requireAuth], async (req: Request, res
     let limitString = req.query.limit;
     
     //TODO add paging
-    const allProducts = await Product.find({parentAccountId: req.currentUser?.accountId});
+    const allProductDocs = await Product.find({parentAccountId: req.currentUser?.accountId});
+    const allProductAttrs = allProductDocs.map(doc => { 
+        const productAttr: ProductAttrs = {
+            name: doc.name,
+            description: doc.description,
+            active: doc.active,
+            mostRecentTestAttemptId: doc.mostRecentTestAttemptId,
+            state: doc.state,
+            tests: doc.tests,
+            parentAccountId: doc.parentAccountId,
+            id: doc.id
+        }
+        console.log(productAttr);
+        return productAttr;
+    });
     
-    res.status(200).send(allProducts);
+    res.status(200).send(allProductAttrs);
 });
 
 export { router as allProductsRouter };

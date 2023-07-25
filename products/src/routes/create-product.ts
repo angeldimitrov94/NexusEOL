@@ -21,7 +21,7 @@ router.post('/api/products/create', [currentUser, requireAuth], async (req: Requ
     }
 
     try {
-        const existingProduct = await Product.findOne({ id: newProduct.id });
+        const existingProduct = await Product.findOne({ name: newProduct.name });
         if(existingProduct) {
             return res.status(400).send({"error":"Product already exists"});
         }
