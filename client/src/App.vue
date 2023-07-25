@@ -15,7 +15,7 @@ export default {
 
 <style>
   body {
-    background-image: url('./layered-waves-haikei.svg');
+    background-image: url('/layered-waves-haikei.svg');
     background-position: center;
     background-repeat: repeat;
   }

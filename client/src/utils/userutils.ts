@@ -3,12 +3,24 @@ import { type UserAttrs } from "@testsequencer/common";
 import axios from "axios";
 
 export class UserUtil {
-    cachedCookieUser: CookieUser|null; 
     initialized: boolean;
+    readonly nexusEolDomain: string = "www.nexuseol.com";
+    usersApiRoute: string = "/api/users/";
+    authApiRoute: string = "/api/auth/";
+    readonly usersBaseUrl: string;
+    readonly authBaseUrl: string;
 
-    constructor() {
+    constructor(devFlag: boolean) {
         this.initialized = false;
-        this.cachedCookieUser = null;
+
+        if(devFlag === true) {
+            this.usersBaseUrl = `https://localhost${this.usersApiRoute}`;
+            this.authBaseUrl = `https://localhost${this.authApiRoute}`;
+        }
+        else {
+            this.usersBaseUrl = `https://${this.nexusEolDomain}${this.usersApiRoute}`;
+            this.authBaseUrl = `https://${this.nexusEolDomain}${this.authApiRoute}`;
+        }
     }
 
     initialize() {
@@ -18,7 +30,7 @@ export class UserUtil {
     }
 
     async getUser(userId: string): Promise<UserAttrs | undefined> {
-        const { data, status } = await axios.get(`https://www.nexuseol.com/api/users/${userId}`, 
+        const { data, status } = await axios.get(`${this.usersBaseUrl}${userId}`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -36,7 +48,7 @@ export class UserUtil {
     }
 
     async getAllUsers(): Promise<UserAttrs[]> {
-        const { data, status } = await axios.get(`https://www.nexuseol.com/api/users`, 
+        const { data, status } = await axios.get(this.usersBaseUrl, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -54,7 +66,7 @@ export class UserUtil {
     }
 
     async postUser(user: UserAttrs): Promise<UserAttrs|undefined> {
-        const { data, status } = await axios.post(`https://www.nexuseol.com/api/users/create`, user, 
+        const { data, status } = await axios.post(`${this.usersBaseUrl}create`, user, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -72,7 +84,7 @@ export class UserUtil {
     } 
 
     async patchUser(user: UserAttrs): Promise<UserAttrs|undefined> {
-        const { data, status } = await axios.patch(`https://www.nexuseol.com/api/users/${user.__id}/edit`, user, 
+        const { data, status } = await axios.patch(`${this.usersBaseUrl}${user.id}/edit`, user, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -90,7 +102,7 @@ export class UserUtil {
     } 
 
     async signin(email: string, password: string): Promise<UserAttrs|string|object> {
-        const { data, status } = await axios.post(`https://www.nexuseol.com/api/auth/signin`, {
+        const { data, status } = await axios.post(`${this.authBaseUrl}signin`, {
             email,
             password
         }, 
@@ -109,7 +121,7 @@ export class UserUtil {
     }
 
     async signout(): Promise<boolean> {
-        const { data, status } = await axios.post(`https://www.nexuseol.com/api/auth/signout`, 
+        const { data, status } = await axios.post(`${this.authBaseUrl}signout`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -127,18 +139,28 @@ export class UserUtil {
     }
 
     async isUserCurrentlySignedIn(): Promise<boolean> {
-        return this.cachedCookieUser !== null;
-    }
-
-    async getCurrentUser(): Promise<CookieUser> {
-        const { data, status } = await axios.get(`https://www.nexuseol.com/api/auth/currentuser`, 
+        const { data, status } = await axios.get(`${this.authBaseUrl}signedin`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
             }
         });
+        
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
+        }
 
-        console.log('data.currentUser : '+data?.currentUser);
+        return data.signedIn as boolean;
+    }
+
+    async getCurrentUser(): Promise<CookieUser> {
+        const { data, status } = await axios.get(`${this.authBaseUrl}currentuser`, 
+        {
+            validateStatus: function (status: number) {
+                return status < 500; // Resolve only if the status code is less than 500
+            }
+        });
         
         const success = status === 200;
         if(!success) {

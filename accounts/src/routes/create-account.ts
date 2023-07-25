@@ -11,7 +11,7 @@ router.post('/api/accounts/create', [currentUser, requireAuth], async (req: Requ
 
     const newAccount = req.body as AccountAttrs;
 
-    const existingAccount = await Account.findOne({ __id: newAccount.__id });
+    const existingAccount = await Account.findOne({ id: newAccount.id });
     if(existingAccount) {
         return res.status(400).send({"error":"Account already exists"});
     }

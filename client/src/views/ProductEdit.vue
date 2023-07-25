@@ -12,7 +12,7 @@
                 <label for="" class="form-label">
                     ID (disabled for editing, auto-assigned upon creation of product)
                 </label>
-                <input type="text" class="form-control" disabled v-model="product.__id" />
+                <input type="text" class="form-control" disabled v-model="product.id" />
             </div>
             <div class="mb-3">
                 <label for="" class="form-label">
@@ -69,7 +69,7 @@ export default {
     data() {
         return {
             product: {} as ProductAttrs,
-            $products: new ProductUtil()
+            $products: {} as ProductUtil
         }
     },
     methods: {
@@ -84,12 +84,12 @@ export default {
             this.$router.push({ path: '/portal/products/manage' });
         },
         async deleteProduct() {
-            if(this.product.__id === undefined) {
+            if(this.product.id === undefined) {
                 console.error('Product ID is undefined, returning and not deleting...');
                 return;
             }
 
-            await this.$data.$products.deleteProduct(this.product.__id);
+            await this.$data.$products.deleteProduct(this.product.id);
         }
     },
     computed: {

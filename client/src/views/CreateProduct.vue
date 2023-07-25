@@ -54,9 +54,9 @@ export default {
             name: '',
             description: '',
             active: true,
-            $products: new ProductUtil(),
+            $products: {} as ProductUtil,
             $bus: new EventBus(),
-            $users: new UserUtil()
+            $users: {} as UserUtil
         }
     },
     created() {
@@ -88,7 +88,7 @@ export default {
 
                 if(createdProduct) {
                     this.$data.$bus.$emit('product-created', {
-                        id: product.__id,
+                        id: product.id,
                     });
 
                     alert(`New product created!\r\n${JSON.stringify(product)}`);

@@ -32,7 +32,7 @@ async (req: Request, res: Response) => {
 
     //Generate JWT
     const userJwt = jwt.sign({
-        __id: user.__id,
+        id: user.id,
         email: user.email,
         level: user.level,
         accountId: user.accountId

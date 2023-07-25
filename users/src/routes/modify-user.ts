@@ -20,7 +20,7 @@ router.patch('/api/users/:userid/edit', [requireAuth, currentUser], async (req: 
     console.log('updated user : ');
     console.log(updatedUser);
 
-    const updatedUserResult = await User.updateOne({ __id: userid }, updatedUser);
+    const updatedUserResult = await User.updateOne({ id: userid }, updatedUser);
     
     res.status(200).send(updatedUserResult);
 });

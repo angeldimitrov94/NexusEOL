@@ -9,27 +9,27 @@
                 >{{ currentUserAccountName }}
             </router-link>
             <NavbarLink 
-            v-for="{name, __id} in activeProducts"
-            :key="__id"
+            v-for="{name, id} in activeProducts"
+            :key="id"
             :name="name" 
-            :id="__id"
+            :id="id"
             ></NavbarLink>
             <router-link 
-            v-if="userIsAdmin()"
+            v-if="userIsAdmin(currentUser)"
             to="/portal/products/manage"
             class="nav-item"
             aria-current="page"
             active-class="active"
             >Manage Products</router-link>
             <router-link
-            v-if="userIsSuperadmin()" 
+            v-if="userIsSuperadmin(currentUser)" 
             to="/portal/users"
             class="nav-item"
             aria-current="page"
             active-class="active"
             >Manage Users</router-link>
             <router-link 
-            v-if="userIsSuperadmin()"
+            v-if="userIsSuperadmin(currentUser)"
             to="/portal/accounts"
             class="nav-item"
             aria-current="page"
@@ -58,11 +58,13 @@ export default defineComponent({
     data() {
         return {
             activeProducts: [] as ProductAttrs[],
-            $users: new UserUtil(),
-            $products: new ProductUtil(),
+            $users: {} as UserUtil,
+            $products: {} as ProductUtil,
             $bus: new EventBus(),
-            $accounts: new AccountUtil(),
-            currentUserAccountName: ""
+            $accounts: {} as AccountUtil,
+            currentUserAccountName: "",
+            currentUser: {} as CookieUser,
+            signedIn: false
         };
     },
     async created() {
@@ -72,16 +74,22 @@ export default defineComponent({
         this.$data.$products = $products;
         this.$data.$bus = $bus;
         this.$data.$accounts = $accounts;
+        this.$data.signedIn = await $users.isUserCurrentlySignedIn();
 
-        if(this.$data.$users.cachedCookieUser !== undefined) {
+        if(this.$data.signedIn) {
+            this.$data.currentUser = await this.$data.$users.getCurrentUser();
             const allProducts = await this.$data.$products.getAllProducts();
             this.activeProducts = allProducts?.filter(p => p.active);
         }
         
         this.$data.$bus.$on('user-change', async () => { 
-            const allProducts = await this.$data.$products.getAllProducts();
-            this.activeProducts = allProducts?.filter(p => p.active);
-            this.$router.push({ path: '/portal' });
+            this.$data.signedIn = await $users.isUserCurrentlySignedIn();
+            if(this.$data.signedIn) {
+                this.$data.currentUser = await this.$data.$users.getCurrentUser();
+                const allProducts = await this.$data.$products.getAllProducts();
+                this.activeProducts = allProducts?.filter(p => p.active);
+                this.$router.push({ path: '/portal/dashboard' });
+            }
         });
 
         this.$data.$bus.$on('product-created', async () => {
@@ -89,19 +97,19 @@ export default defineComponent({
             this.activeProducts = allProducts?.filter(p => p.active);
         })
 
-        const currentUserAccountId = this.$data.$users.cachedCookieUser?.accountId;
+        const currentUserAccountId = this.$data.currentUser?.accountId;
 
-        if(currentUserAccountId !== undefined) {
+        if(this.$data.signedIn) {
             const currentUserAccount = await this.$data.$accounts.getAccount(currentUserAccountId);
             this.$data.currentUserAccountName = currentUserAccount?.name === undefined ? "N/A" : currentUserAccount?.name;
         }
     },
     methods: {
-        userIsAdmin() {
-            return this.$data.$users.cachedCookieUser?.level === 'superadmin' || this.$data.$users.cachedCookieUser?.level === 'admin';
+        userIsAdmin(currentUser: CookieUser) {
+            return currentUser?.level === 'superadmin' || currentUser?.level === 'admin';
         },
-        userIsSuperadmin() {
-            return this.$data.$users.cachedCookieUser?.level === 'superadmin';
+        userIsSuperadmin(currentUser: CookieUser) {
+            return currentUser?.level === 'superadmin';
         }
     },
     components: { NavbarLink, UserBadge }

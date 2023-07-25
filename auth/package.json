@@ -20,7 +20,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@testsequencer/common": "^2.0.13",
+    "@testsequencer/common": "^2.0.26",
     "@testsequencer/common-backend": "^1.0.0",
     "@types/cookie-session": "^2.0.44",
     "@types/cors": "^2.8.13",

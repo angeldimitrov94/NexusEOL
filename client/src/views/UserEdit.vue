@@ -68,7 +68,7 @@ export default {
             isAdmin: false,
             isBIUser: false,
             isTechnician: false,
-            $users: new UserUtil()
+            $users: {} as UserUtil
         }
     },
     async created() {

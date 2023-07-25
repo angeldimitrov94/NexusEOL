@@ -12,7 +12,7 @@
                 <label for="" class="form-label">
                     ID (disabled for editing, auto-assigned upon creation of account)
                 </label>
-                <input type="text" class="form-control" disabled v-model="account.__id" />
+                <input type="text" class="form-control" disabled v-model="account.id" />
             </div>
             <div class="mb-3">
                 <div class="form-check">

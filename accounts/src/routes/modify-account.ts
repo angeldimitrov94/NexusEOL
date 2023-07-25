@@ -13,7 +13,7 @@ router.patch('/api/accounts/:accountid/edit', [requireAuth, currentUser], async 
 
     const updatedAccount = req.body as AccountAttrs;
 
-    const updatedAccountResult = await Account.updateOne({ __id: accountid }, updatedAccount);
+    const updatedAccountResult = await Account.updateOne({ id: accountid }, updatedAccount);
     
     res.status(200).send(updatedAccountResult);
 });

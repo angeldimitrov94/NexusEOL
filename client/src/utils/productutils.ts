@@ -3,7 +3,22 @@ import { UserUtil } from './userutils';
 import axios from 'axios';
 
 export class ProductUtil {
-    userUtil: UserUtil = new UserUtil();
+    readonly nexusEolDomain: string = "www.nexuseol.com";
+    usersApiRoute: string = "/api/products";
+    readonly baseUrl: string;
+
+    constructor(devFlag: boolean) {
+        this.userUtil = new UserUtil(devFlag)
+
+        if(devFlag === true) {
+            this.baseUrl = `https://localhost${this.usersApiRoute}`;
+        }
+        else {
+            this.baseUrl = `https://${this.nexusEolDomain}${this.usersApiRoute}`;
+        }
+    }
+
+    userUtil: UserUtil;
     currentProductId = "";
     currentTestId = "";
 
@@ -13,7 +28,7 @@ export class ProductUtil {
             return;
         }
 
-        const { data, status } = await axios.patch(`https://www.nexuseol.com/api/products/${modifiedProduct.__id}/edit`, {
+        const { data, status } = await axios.patch(`${this.baseUrl}/${modifiedProduct.id}/edit`, {
             productDoc: modifiedProduct
         });
 
@@ -32,7 +47,7 @@ export class ProductUtil {
             return;
         }
 
-        const { data, status } = await axios.patch(`https://www.nexuseol.com/api/products/${parentProductId}/tests/${modifiedTest.__id}/edit`, {
+        const { data, status } = await axios.patch(`${this.baseUrl}/${parentProductId}/tests/${modifiedTest.id}/edit`, {
             testDoc: modifiedTest
         });
 
@@ -51,14 +66,14 @@ export class ProductUtil {
             return;
         }
 
-        const currentUser = this.userUtil.cachedCookieUser;
+        const currentUser = await this.userUtil.getCurrentUser();
 
         if(currentUser === undefined) {
             console.error('Current user is undefined. Not creating product.');
             return;
         }
 
-        const { data, status } = await axios.post('https://www.nexuseol.com/api/products/create', productAttrs);
+        const { data, status } = await axios.post(`${this.baseUrl}/create`, productAttrs);
 
         const success = status === 201;
         if(!success) {
@@ -74,7 +89,7 @@ export class ProductUtil {
             return;
         }
 
-        const { data, status } = await axios.post(`https://www.nexuseol.com/api/products/${productId}/tests/create`, {
+        const { data, status } = await axios.post(`${this.baseUrl}/${productId}/tests/create`, {
             testAttrs
         });
 
@@ -100,7 +115,7 @@ export class ProductUtil {
     }
 
     async deleteProduct(productId: string): Promise<TestAttrs|undefined> {
-        const { data, status } = await axios.delete(`https://www.nexuseol.com/api/products/${productId}/delete`);
+        const { data, status } = await axios.delete(`${this.baseUrl}/${productId}/delete`);
 
         const success = status === 204;
         if(!success) {
@@ -112,7 +127,7 @@ export class ProductUtil {
     }
 
     async getAllProducts(): Promise<ProductAttrs[]> {
-        const { data, status } = await axios.get(`https://www.nexuseol.com/api/products`);
+        const { data, status } = await axios.get(this.baseUrl);
 
         const success = status === 200;
         if(!success) {
@@ -125,7 +140,7 @@ export class ProductUtil {
     }
 
     async getProduct(productId: string): Promise<ProductAttrs | undefined> {
-        const { data, status } = await axios.get(`https://www.nexuseol.com/api/products/${productId}`);
+        const { data, status } = await axios.get(`${this.baseUrl}/${productId}`);
 
         const success = status === 200;
         if(!success) {
@@ -138,7 +153,7 @@ export class ProductUtil {
     }
 
     async getTest(productId: string, testId: string): Promise<TestAttrs | undefined> {
-        const { data, status } = await axios.get(`https://www.nexuseol.com/api/products/${productId}/tests/${testId}`);
+        const { data, status } = await axios.get(`${this.baseUrl}/${productId}/tests/${testId}`);
 
         const success = status === 200;
         if(!success) {
@@ -151,7 +166,7 @@ export class ProductUtil {
     }
 
     async getAllTests(productId: string | undefined): Promise<TestAttrs[]> {
-        const { data, status } = await axios.get(`https://www.nexuseol.com/api/products/${productId}/tests`);
+        const { data, status } = await axios.get(`${this.baseUrl}/${productId}/tests`);
 
         const success = status === 200;
         if(!success) {

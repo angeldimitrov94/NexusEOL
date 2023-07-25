@@ -7,7 +7,7 @@ router.get('/api/products/:productid', [currentUser, requireAuth], async (req: R
     const productid = req.params.productid;
 
     //TODO add paging
-    const product = await Product.find({__id : productid, parentAccountId: req.currentUser?.accountId});
+    const product = await Product.find({id : productid, parentAccountId: req.currentUser?.accountId});
     
     res.status(200).send(product);
 });

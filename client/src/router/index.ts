@@ -1,27 +1,27 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-import ProductViewerVue from '../views/ProductViewer.vue';
-import CreateProductVue from '../views/CreateProduct.vue';
-import ProductsListVue from '../views/ProductsList.vue';
-import ProductEditVue from '../views/ProductEdit.vue';
-import CreateUserVue from '../views/CreateUser.vue';
-import UsersListVue from '../views/UsersList.vue';
-import UserEditVue from '../views/UserEdit.vue';
-import DashboardVue from '../views/Dashboard.vue';
-import TestsListsVue from '../views/TestsList.vue';
-import TestEditVue from '../views/TestEdit.vue'
-import CreateTestVue from '../views/CreateTest.vue';
-import UserViewerVue from '../views/UserViewer.vue';
-import AccountsListVue from '../views/AccountsList.vue';
-import AccountsViewerVue from '../views/AccountsViewer.vue';
-import AccountEditVue from '../views/AccountEdit.vue';
-import CreateAccountVue from '../views/CreateAccount.vue';
-import PublicLandingVue from '../views/PublicLanding.vue';
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
+import ProductViewerVue from '@/views/ProductViewer.vue';
+import CreateProductVue from '@/views/CreateProduct.vue';
+import ProductsListVue from '@/views/ProductsList.vue';
+import ProductEditVue from '@/views/ProductEdit.vue';
+import CreateUserVue from '@/views/CreateUser.vue';
+import UsersListVue from '@/views/UsersList.vue';
+import UserEditVue from '@/views/UserEdit.vue';
+import DashboardVue from '@/views/Dashboard.vue';
+import TestsListsVue from '@/views/TestsList.vue';
+import TestEditVue from '@/views/TestEdit.vue'
+import CreateTestVue from '@/views/CreateTest.vue';
+import UserViewerVue from '@/views/UserViewer.vue';
+import AccountsListVue from '@/views/AccountsList.vue';
+import AccountsViewerVue from '@/views/AccountsViewer.vue';
+import AccountEditVue from '@/views/AccountEdit.vue';
+import CreateAccountVue from '@/views/CreateAccount.vue';
+import PublicLandingVue from '@/views/PublicLanding.vue';
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes: [
-    { path: '/', component: PublicLandingVue },
-    { path: '/portal', component: DashboardVue },
+    { path: '/portal', component: PublicLandingVue },
+    { path: '/portal/dashboard', component: DashboardVue },
     { path: '/portal/products/:id', component: ProductViewerVue, props: true},
     { path: '/portal/products/manage', component: ProductsListVue},
     { path: '/portal/products/manage/create', component: CreateProductVue },

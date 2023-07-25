@@ -49,7 +49,7 @@ global.signin = async () => {
 
   //Generate JWT
   const userJwt = jwt.sign({
-    __id: existingUser.__id,
+    id: existingUser.id,
     email: existingUser.email,
     level: existingUser.level,
     accountId: existingUser.accountId

@@ -5,8 +5,11 @@ import fs from 'fs';
 import path from 'path';
 import http from 'http';
 import https from 'https';
+import { envParser } from "@testsequencer/common";
 
 const start = async () => {
+  await envParser(path.join(__dirname, '..'));
+
   if (!process.env.JWT_KEY) {
     throw new Error("JWT_KEY must be defined");
   }
@@ -22,9 +25,17 @@ const start = async () => {
   } catch (err) {
     console.error(err);
   }
+  
+  let devFlag: boolean = false;
 
-  var privateKey  = fs.readFileSync(path.resolve(__dirname, './ssl/nexuseol.key'), 'utf8');
-  var certificate = fs.readFileSync(path.resolve(__dirname, './ssl/nexuseol.crt'), 'utf8');
+  if(process.env.DEV) {
+    devFlag = process.env.DEV === "1";
+  }
+
+  const sslPath = devFlag ? './ssl/nexuseol_com_test' : './ssl/nexuseol_com';
+
+  var privateKey  = fs.readFileSync(path.resolve(__dirname, sslPath+".key"), 'utf8');
+  var certificate = fs.readFileSync(path.resolve(__dirname, sslPath+".crt"), 'utf8');
 
   var credentials = {key: privateKey, cert: certificate};
 

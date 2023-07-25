@@ -7,7 +7,7 @@ router.get('/api/accounts/:accountid', requireAuth, async (req: Request, res: Re
     const accountid = req.params.accountid;
 
     //TODO add paging
-    const account = await Account.find({__id : accountid});
+    const account = await Account.find({id : accountid});
     
     res.status(200).send(account);
 });

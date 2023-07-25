@@ -9,6 +9,7 @@ import { signoutRouter } from './routes/signout';
 import { signupRouter } from './routes/signup';
 import { NotFoundError } from '@testsequencer/common';
 import { errorHandler } from '@testsequencer/common-backend/build/middlewares/error-handler';
+import { signedInRouter } from './routes/is-signed-in';
 
 const app = express();
 app.set('trust proxy', true);
@@ -24,8 +25,10 @@ app.use(currentUserRouter);
 app.use(signinRouter);
 app.use(signoutRouter);
 app.use(signupRouter);
+app.use(signedInRouter);
 
 app.all('*', async (req, res) => {
+  console.error(`no route found for : ${req.url}`);
   throw new NotFoundError();
 });
 

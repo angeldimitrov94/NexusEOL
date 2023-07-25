@@ -7,7 +7,7 @@
         </div>
         <div class="container-fluid" v-if="isSignedIn === true">
             <div class="row">
-                <TestListAndDetails :product-id="product?.__id"></TestListAndDetails>
+                <TestListAndDetails :product-id="product?.id"></TestListAndDetails>
             </div>
         </div>
     </div>
@@ -44,8 +44,8 @@ export default {
         return {
             product: {} as ProductAttrs,
             $bus: new EventBus(),
-            $products: new ProductUtil(),
-            $users: new UserUtil(),
+            $products: {} as ProductUtil,
+            $users: {} as UserUtil,
             isSignedIn: false
         };
     },

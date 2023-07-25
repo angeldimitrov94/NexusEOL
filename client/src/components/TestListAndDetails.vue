@@ -2,8 +2,8 @@
   <div class="col-md-2 col-sm-3">
     <ul class="nav flex-md-column">
       <li v-for="test in tests" class="nav-item">
-        <a class="nav-link" :class="isThisIdActiveClass(test?.__id)" href="#" :key="test?.__id"
-          @click.prevent="makeThisIdActiveId(test?.__id)">
+        <a class="nav-link" :class="isThisIdActiveClass(test?.id)" href="#" :key="test?.id"
+          @click.prevent="makeThisIdActiveId(test?.id)">
           <img src="/page.svg" alt="page icon" />
           {{ test?.name }}
         </a>
@@ -73,7 +73,7 @@ export default {
   watch: {
     currentlySelectedTestId(newTestId: string, oldTestId) {
 
-      const selectedTest = this.tests?.find(test => test.__id == newTestId);
+      const selectedTest = this.tests?.find(test => test.id == newTestId);
 
       if(!selectedTest) {
         console.error(`Invalid test id [${newTestId}] passed in, could not find a test with that id.`);
@@ -97,7 +97,7 @@ export default {
     setCurrentlySelectedTest(id: string) {
       if(!id) return;
 
-      const selectedTest = this.tests?.find(test => test.__id == id);
+      const selectedTest = this.tests?.find(test => test.id == id);
 
       if(!selectedTest) {
         console.error(`Invalid test id [${id}] passed in, could not find a test with that id. Tests : `);

@@ -12,13 +12,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="{ name, __id, accountId, level } in allUsers" :key="__id">
+                <tr v-for="{ name, id, accountId, level } in allUsers" :key="id">
                     <td>{{ name }}</td>
-                    <td>{{ __id }}</td>
+                    <td>{{ id }}</td>
                     <td>{{ level }}</td>
                     <td>{{ accountId }}</td>
                     <td><router-link class="btn btn-primary btn-sm"
-                            :to="{ name: 'UserEdit', params: { id: __id } }">Edit</router-link></td>
+                            :to="{ name: 'UserEdit', params: { id: id } }">Edit</router-link></td>
                 </tr>
             </tbody>
         </table>
@@ -36,7 +36,7 @@ export default {
     data() {
         return {
             allUsers: [] as UserAttrs[],
-            $users: new UserUtil(),
+            $users: {} as UserUtil,
         }
     },
     async created() {

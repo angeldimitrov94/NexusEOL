@@ -12,7 +12,7 @@
                             <progress max="100" :value="progressValue(product)"></progress>
                         </div>
                         <div class="row">
-                            <router-link :to="`/products/${product.__id}`" class="card-text btn btn-primary btn-sm">Go to...</router-link>
+                            <router-link :to="`/portal/products/${product.id}`" class="card-text btn btn-primary btn-sm">Go to...</router-link>
                         </div>
                     </div>
                 </div>
@@ -27,14 +27,16 @@ import { ProductUtil } from '@/utils/productutils';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
 import { ProductState, type ProductAttrs } from '@testsequencer/common';
 import { UserUtil } from '@/utils/userutils';
+import type CookieUser from '@/models/cookie-user';
 
 export default {
     data() {
         return {
             products: [] as ProductAttrs[],
-            $products: new ProductUtil(),
+            $products: {} as ProductUtil,
             $bus: new EventBus(),
-            $users: new UserUtil()
+            $users: {} as UserUtil,
+            signedIn: false
         }
     },
     async created() {
@@ -43,14 +45,19 @@ export default {
         this.$data.$products = $products;
         this.$data.$bus = $bus;
         this.$data.$users = $users;
+        this.$data.signedIn = await $users.isUserCurrentlySignedIn();
 
-        if(this.$data.$users.cachedCookieUser !== undefined) {
+        if(this.$data.signedIn) {
             this.products = await this.$data.$products.getAllProducts();
         }
 
         this.$data.$bus.$on('user-change', async () => { 
+            this.$data.signedIn = await $users.isUserCurrentlySignedIn();
             this.products = await this.$data.$products.getAllProducts();
-            this.$router.push({ path: '/portal' });
+
+            if(!this.$data.signedIn) {
+                this.$router.push({ path: '/portal' });
+            }
         });
     },
     methods: {

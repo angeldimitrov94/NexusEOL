@@ -30,7 +30,7 @@ async (req: Request, res: Response) => {
         throw new BadRequestError(`Invalid credentials! User with email [${email}] does not exist.`);
     }    
     
-    console.log(existingUser.password);
+    console.log(existingUser);
     console.log(password);
 
     const passwordsMatch = await Password.compare(existingUser.password, password);
@@ -40,7 +40,7 @@ async (req: Request, res: Response) => {
 
     //Generate JWT
     const userJwt = jwt.sign({
-        __id: existingUser.__id,
+        id: existingUser.id,
         email: existingUser.email,
         level: existingUser.level,
         accountId: existingUser.accountId

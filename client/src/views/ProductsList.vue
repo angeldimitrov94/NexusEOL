@@ -12,12 +12,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="{ name, __id, description, active } in allProducts" :key="__id">
+                <tr v-for="{ name, id, description, active } in allProducts" :key="id">
                     <td>{{ name }}</td>
-                    <td>{{ __id }}</td>
+                    <td>{{ id }}</td>
                     <td>{{ description }}</td>
                     <td>{{ active ? 'yes' : 'no' }}</td>
-                    <td><router-link class="btn btn-primary btn-sm" :to="{ name: 'ProductEdit', params: { id: __id } }">Edit Product</router-link></td>
+                    <td><router-link class="btn btn-primary btn-sm" :to="{ name: 'ProductEdit', params: { id: id } }">Edit Product</router-link></td>
                 </tr>
             </tbody>
         </table>
@@ -38,7 +38,7 @@ export default {
         return {
             allProducts: [] as ProductAttrs[],
             $bus: new EventBus(),
-            $products: new ProductUtil()
+            $products: {} as ProductUtil
         }
     },
     async created() {

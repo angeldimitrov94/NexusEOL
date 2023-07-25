@@ -43,3 +43,26 @@
         </div>
     </main>
 </template>
+<script lang="ts">
+import { getAllInjectedUtils } from '@/utils/injector-utils';
+import { UserUtil } from '@/utils/userutils';
+
+export default {
+    data() {
+        return {
+            $users: {} as UserUtil,
+            signedIn: false
+        }
+    },
+    async created() {
+        const { $users } = getAllInjectedUtils();
+
+        this.$data.$users = $users;
+        this.$data.signedIn = await $users.isUserCurrentlySignedIn();
+
+        if(this.$data.signedIn) {
+            this.$router.push({ path: '/portal/dashboard' });
+        }
+    }
+}
+</script>

@@ -1,0 +1,87 @@
+version: '3.7'
+
+networks:
+  node-network:
+    driver: bridge
+
+services:
+  mongodb:
+    image: mongo
+    ports:
+      - '27017:27017'
+    networks:
+      - node-network
+    volumes:
+      - ./db-dev:/data/db:rw
+
+  auth:
+    build: 
+      context: ./auth
+      dockerfile: Dockerfile
+    depends_on:
+      - mongodb
+    networks:
+      - node-network
+    restart: always
+
+  users:
+    build: 
+      context: ./users
+      dockerfile: Dockerfile
+    depends_on:
+      - mongodb
+    networks:
+      - node-network
+    restart: always
+
+  products:
+    build: 
+      context: ./products
+      dockerfile: Dockerfile
+    depends_on:
+      - mongodb
+    networks:
+      - node-network
+    restart: always
+
+
+  tests:
+    build: 
+      context: ./tests
+      dockerfile: Dockerfile
+    depends_on:
+      - mongodb
+    networks:
+      - node-network
+    restart: always
+
+  accounts:
+    build: 
+      context: ./accounts
+      dockerfile: Dockerfile
+    depends_on:
+      - mongodb
+    networks:
+      - node-network
+    restart: always
+
+  client:
+    build: 
+      context: ./client
+      dockerfile: Dockerfile-dev
+    ports:
+      - '443:443'
+      - '80:80'
+    networks:
+      - node-network
+    restart: always
+    depends_on:
+      - accounts
+      - tests
+      - users
+      - products
+      - auth
+    volumes:
+       - ./client/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+       - ./client/ssl/nexuseol_com_test.crt:/etc/ssl/certs/nexuseol_com_test.crt
+       - ./client/ssl/nexuseol_com_test.key:/etc/ssl/private/nexuseol_com_test.key

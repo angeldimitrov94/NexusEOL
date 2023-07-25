@@ -12,7 +12,7 @@
                 <label for="" class="form-label">
                     ID (disabled for editing, auto-assigned upon creation of product)
                 </label>
-                <input type="text" class="form-control" disabled v-model="test.__id" />
+                <input type="text" class="form-control" disabled v-model="test.id" />
             </div>
             <div class="mb-3">
                 <label for="" class="form-label">
@@ -56,7 +56,7 @@ export default {
     data() {
         return {
             test: {} as TestAttrs,
-            $products: new ProductUtil(),
+            $products: {} as ProductUtil,
         }
     },
     methods: {

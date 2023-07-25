@@ -12,7 +12,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="{ name, __id: testId, description, active } in tests" :key="testId">
+                <tr v-for="{ name, id: testId, description, active } in tests" :key="testId">
                     <td>{{ name }}</td>
                     <td>{{ testId }}</td>
                     <td>{{ description }}</td>

@@ -2,8 +2,21 @@ import type { AccountAttrs } from "@testsequencer/common";
 import axios from "axios";
 
 export class AccountUtil {
+    readonly nexusEolDomain: string = "www.nexuseol.com";
+    usersApiRoute: string = "/api/accounts/";
+    readonly baseUrl: string;
+
+    constructor(devFlag: boolean) {
+        if(devFlag === true) {
+            this.baseUrl = `https://localhost${this.usersApiRoute}`;
+        }
+        else {
+            this.baseUrl = `https://${this.nexusEolDomain}${this.usersApiRoute}`;
+        }
+    }
+
     async getAllAccounts(): Promise<AccountAttrs[]> {
-        const { data, status } = await axios.get(`https://www.nexuseol.com/api/accounts`);
+        const { data, status } = await axios.get(this.baseUrl);
 
         const success = status === 200;
         if(!success) {
@@ -16,7 +29,7 @@ export class AccountUtil {
     }
 
     async postNewAccount(newAccount: AccountAttrs): Promise<AccountAttrs|undefined> {
-        const { data, status } = await axios.post(`https://www.nexuseol.com/api/accounts/create`, 
+        const { data, status } = await axios.post(`${this.baseUrl}create`, 
         newAccount);
 
         const success = status === 201;
@@ -30,7 +43,7 @@ export class AccountUtil {
     }
 
     async getAccount(id: string): Promise<AccountAttrs | undefined> {
-        const { data, status } = await axios.get(`https://www.nexuseol.com/api/accounts/${id}`);
+        const { data, status } = await axios.get(`${this.baseUrl}${id}`);
 
         const success = status === 200;
         if(!success) {
@@ -43,7 +56,7 @@ export class AccountUtil {
     }
 
     async patchAccount(accountId: string, account: AccountAttrs): Promise<AccountAttrs|undefined> {
-        const { data, status } = await axios.patch(`https://www.nexuseol.com/api/accounts/${accountId}/edit`, account);
+        const { data, status } = await axios.patch(`${this.baseUrl}${accountId}/edit`, account);
 
         const success = status === 200;
         if(!success) {

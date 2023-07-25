@@ -12,7 +12,7 @@ router.delete('/api/tests/:testid/delete', [currentUser, requireAuth], async (re
     const testid = req.params.testid;
 
     try {
-        await Test.deleteOne({ __id: testid });
+        await Test.deleteOne({ id: testid });
         
         res.status(204);
     } catch (error) {

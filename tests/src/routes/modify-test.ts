@@ -18,7 +18,7 @@ router.patch('/api/tests/:testid/edit', [currentUser, requireAuth], async (req: 
             return res.status(400).send({"error":"parentAccountId does not match user's account id"});
         }
 
-        const updatedTestResult = await Test.updateOne({ __id: testid }, updatedTest);
+        const updatedTestResult = await Test.updateOne({ id: testid }, updatedTest);
         
         res.status(200).send(updatedTestResult);
     } catch (error) {

@@ -1,0 +1,14 @@
+FROM node:latest as build-stage
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY ./ .
+ENV VITE_DEV 1
+RUN npm run build-dev
+
+FROM nginx as production-stage
+RUN mkdir /app
+COPY --from=build-stage /app/dist /app
+COPY nginx.dev.conf /etc/nginx/nginx.conf
+COPY ./ssl/nexuseol_com_test.crt /etc/ssl/certs/nexuseol_com_test.crt
+COPY ./ssl/nexuseol_com_test.key /etc/ssl/private/nexuseol_com_test.key

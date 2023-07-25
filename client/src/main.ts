@@ -8,23 +8,22 @@ import { AccountUtil } from './utils/accountutils';
 import router from './router'
 import axios from 'axios';
 
-function sleep(milliseconds: number) {
-    const date = Date.now();
-    let currentDate = null;
-    do {
-        currentDate = Date.now();
-    } while (currentDate - date < milliseconds);
+let devFlag: boolean = false;
+console.log(import.meta.env);
+if(import.meta.env.VITE_DEV) {
+    devFlag = import.meta.env.VITE_DEV === undefined ? false : import.meta.env.VITE_DEV === "1" ? true : false;
+    console.log(`devFlag : ${devFlag}`);
 }
 
-const $userUtil = new UserUtil();
+const $userUtil = new UserUtil(devFlag);
 
 $userUtil.initialize();
 console.log($userUtil.initialized);
 
 const $eventBus = new EventBus();
-const $productUtil = new ProductUtil();
+const $productUtil = new ProductUtil(devFlag);
 $productUtil.userUtil = $userUtil;
-const $accountUtil = new AccountUtil();
+const $accountUtil = new AccountUtil(devFlag);
 
 const app = createApp(AppVue)
     .use(router);

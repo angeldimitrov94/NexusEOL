@@ -49,13 +49,16 @@ export default {
 
         this.$data.$bus.$on('user-change', this.userChangeRefresh);
         this.$data.isSignedIn = await this.$data.$users.isUserCurrentlySignedIn();
-        this.$data.signInOutTitle = this.getSignInOutTitle();
+        if(this.$data.isSignedIn) {
+            const currentUser = await this.$data.$users.getCurrentUser();
+            this.$data.signInOutTitle = this.getSignInOutTitle(currentUser);
+        }
     },
     methods: {
         async attemptSigninout() {
             let success = false;
 
-            if(this.$data.$users.cachedCookieUser === null) {
+            if(!this.$data.isSignedIn) {
                 console.log("attempt signin");
                 const result = await this.$data.$users.signin(this.$data.signinUsername, this.$data.signinPassword);    
                 const userAttrResult = result as UserAttrs;    
@@ -69,8 +72,6 @@ export default {
                         accountId: userAttrResult.accountId
                     };
 
-                    this.$data.$users.cachedCookieUser = newlySignedInUser;
-
                     this.$data.errorMessage = `Signed in user : ` + JSON.stringify(userAttrResult);
                 }
                 else {
@@ -81,10 +82,6 @@ export default {
                 console.log("attempt signout");
                 success = await this.$data.$users.signout();
 
-                if(success) {
-                    this.$data.$users.cachedCookieUser = null;
-                }
-
                 this.$data.errorMessage = `Signed out user`;
             }
             else {
@@ -92,24 +89,26 @@ export default {
                 this.$data.errorMessage = `Neither logged in nor logged out user!`;
             }
 
-            this.$data.isSignedIn = await this.$data.$users.isUserCurrentlySignedIn();
-
             if(success === true) {
                 this.$data.$bus.$emit('user-change', {});
             }
-
-            this.$data.signinUsername = "";
-            this.$data.signinPassword = "";
-
-            this.$data.signInOutTitle = this.getSignInOutTitle();
             
             alert(this.$data.errorMessage);
         },
         async userChangeRefresh() {
             this.$data.isSignedIn = await this.$data.$users.isUserCurrentlySignedIn();
+            this.$data.signinUsername = "";
+            this.$data.signinPassword = "";
+            if(this.$data.isSignedIn) {
+                const currentUser = await this.$data.$users.getCurrentUser();
+                this.$data.signInOutTitle = this.getSignInOutTitle(currentUser);
+            }
+            else {
+                this.$data.signInOutTitle = this.getSignInOutTitle({} as CookieUser);
+            }
         },
-        getSignInOutTitle() {
-            if(this.$data.$users.cachedCookieUser) return `${this.$data.$users.cachedCookieUser?.email} (${this.$data.$users.cachedCookieUser?.level}) out`;
+        getSignInOutTitle(currentUser: CookieUser) {
+            if(currentUser !== undefined) return `${currentUser?.email} (${currentUser?.level}) out`;
             else return 'in';
         }
     }

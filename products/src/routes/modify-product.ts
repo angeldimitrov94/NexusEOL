@@ -17,7 +17,7 @@ router.patch('/api/products/:productid/edit', [currentUser, requireAuth], async 
         return res.status(400).send({"error":"parentAccountId does not match user's account id"});
     }
 
-    const updatedProductResult = await Product.updateOne({ __id: productid }, updatedProduct);
+    const updatedProductResult = await Product.updateOne({ id: productid }, updatedProduct);
     
     res.status(200).send(updatedProductResult);
 });

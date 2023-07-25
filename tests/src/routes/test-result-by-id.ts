@@ -7,7 +7,7 @@ router.get('/api/testresults/:testresultid', requireAuth, async (req: Request, r
     const testresultid = req.params.testresultid;
 
     //TODO add paging
-    const testResult = await TestResult.find({__id : testresultid, parentAccountId: req.currentUser?.accountId});
+    const testResult = await TestResult.find({id : testresultid, parentAccountId: req.currentUser?.accountId});
     
     res.status(200).send(testResult);
 });

@@ -7,7 +7,7 @@ router.get('/api/users/:userid', requireAuth, async (req: Request, res: Response
     const userId = req.params.userid;
 
     //TODO add paging
-    const user = await User.find({__id : userId});
+    const user = await User.find({id : userId});
     
     res.status(200).send(user);
 });

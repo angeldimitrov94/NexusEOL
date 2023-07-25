@@ -13,7 +13,7 @@ router.post('/api/users/create', [currentUser, requireAuth], async (req: Request
 
     const newUser = req.body as UserAttrs;
 
-    const existingUser = await User.findOne({ __id: newUser.__id });
+    const existingUser = await User.findOne({ id: newUser.id});
     if(existingUser) {
         return res.status(400).send({"error":"User already exists"});
     }

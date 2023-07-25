@@ -43,7 +43,7 @@ export default {
             name: "",
             description: "",
             active: true,
-            $products: new ProductUtil(),
+            $products: {} as ProductUtil,
             $bus: new EventBus()
         }
     },
@@ -64,7 +64,7 @@ export default {
 
                 if(result) {
                     this.$data.$bus.$emit('test-created', {
-                        id: newTest.__id,
+                        id: newTest.id,
                     });
 
                     alert(`New test created!\r\n${JSON.stringify(newTest)}`);

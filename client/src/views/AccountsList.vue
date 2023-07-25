@@ -11,11 +11,11 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="{ name, __id, active } in allAccounts" :key="__id">
+                <tr v-for="{ name, id, active } in allAccounts" :key="id">
                     <td>{{ name }}</td>
-                    <td>{{ __id }}</td>
+                    <td>{{ id }}</td>
                     <td>{{ active ? 'yes' : 'no' }}</td>
-                    <td><router-link class="btn btn-primary btn-sm" :to="{ name: 'AccountEdit', params: { id: __id } }">Edit
+                    <td><router-link class="btn btn-primary btn-sm" :to="{ name: 'AccountEdit', params: { id: id } }">Edit
                         Account</router-link></td>
                 </tr>
             </tbody>

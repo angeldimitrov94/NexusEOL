@@ -16,7 +16,7 @@ router.post('/api/tests/create', [currentUser, requireAuth], async (req: Request
     }
 
     try {
-        const existingTest = await Test.findOne({ __id: newTest.__id });
+        const existingTest = await Test.findOne({ id: newTest.id });
         if(existingTest) {
             return res.status(400).send({"error":"Test already exists"});
         }

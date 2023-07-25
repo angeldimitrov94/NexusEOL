@@ -1,6 +1,6 @@
 <template>
     <router-link 
-    :to="`/products/${id}`"
+    :to="`/portal/products/${id}`"
     class="nav-item" 
     aria-current="page" 
     :title="`This link goes to the ${name} page`"

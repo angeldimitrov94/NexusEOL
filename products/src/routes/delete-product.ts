@@ -12,7 +12,7 @@ router.delete('/api/products/:productid/delete', [currentUser, requireAuth], asy
     const productid = req.params.productid;
 
     try {
-        await Product.deleteOne({ __id: productid });
+        await Product.deleteOne({ id: productid });
         
         res.status(204);
     } catch (error) {

@@ -10,6 +10,7 @@
   ],
   "compilerOptions": {
     "strict": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "types": ["node"]
   }
 }
