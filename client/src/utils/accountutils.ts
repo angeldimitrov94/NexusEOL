@@ -3,7 +3,7 @@ import axios from "axios";
 
 export class AccountUtil {
     readonly nexusEolDomain: string = "www.nexuseol.com";
-    usersApiRoute: string = "/api/accounts/";
+    usersApiRoute: string = "/api/accounts";
     readonly baseUrl: string;
 
     constructor(devFlag: boolean) {
@@ -29,7 +29,7 @@ export class AccountUtil {
     }
 
     async postNewAccount(newAccount: AccountAttrs): Promise<AccountAttrs|undefined> {
-        const { data, status } = await axios.post(`${this.baseUrl}create`, 
+        const { data, status } = await axios.post(`${this.baseUrl}/create`, 
         newAccount);
 
         const success = status === 201;
@@ -43,7 +43,7 @@ export class AccountUtil {
     }
 
     async getAccount(id: string): Promise<AccountAttrs | undefined> {
-        const { data, status } = await axios.get(`${this.baseUrl}${id}`);
+        const { data, status } = await axios.get(`${this.baseUrl}/${id}`);
 
         const success = status === 200;
         if(!success) {
@@ -56,7 +56,7 @@ export class AccountUtil {
     }
 
     async patchAccount(accountId: string, account: AccountAttrs): Promise<AccountAttrs|undefined> {
-        const { data, status } = await axios.patch(`${this.baseUrl}${accountId}/edit`, account);
+        const { data, status } = await axios.patch(`${this.baseUrl}/${accountId}/edit`, account);
 
         const success = status === 200;
         if(!success) {

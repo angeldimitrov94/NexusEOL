@@ -104,10 +104,10 @@ export default {
                 this.$data.signInOutTitle = this.getSignInOutTitle(currentUser);
             }
             else {
-                this.$data.signInOutTitle = this.getSignInOutTitle({} as CookieUser);
+                this.$data.signInOutTitle = this.getSignInOutTitle(undefined);
             }
         },
-        getSignInOutTitle(currentUser: CookieUser) {
+        getSignInOutTitle(currentUser: CookieUser | undefined) {
             if(currentUser !== undefined) return `${currentUser?.email} (${currentUser?.level}) out`;
             else return 'in';
         }

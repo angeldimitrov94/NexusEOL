@@ -60,7 +60,7 @@ export default {
                 const newTest = {} as TestAttrs;
                 newTest.name = this.name;
                 newTest.description = this.description;
-                const result = await this.$data.$products.postTest(this.id, newTest);
+                const result = await this.$data.$products.postTest(newTest);
 
                 if(result) {
                     this.$data.$bus.$emit('test-created', {

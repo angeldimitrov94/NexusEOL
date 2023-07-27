@@ -5,8 +5,8 @@ import axios from "axios";
 export class UserUtil {
     initialized: boolean;
     readonly nexusEolDomain: string = "www.nexuseol.com";
-    usersApiRoute: string = "/api/users/";
-    authApiRoute: string = "/api/auth/";
+    usersApiRoute: string = "/api/users";
+    authApiRoute: string = "/api/auth";
     readonly usersBaseUrl: string;
     readonly authBaseUrl: string;
 
@@ -30,7 +30,7 @@ export class UserUtil {
     }
 
     async getUser(userId: string): Promise<UserAttrs | undefined> {
-        const { data, status } = await axios.get(`${this.usersBaseUrl}${userId}`, 
+        const { data, status } = await axios.get(`${this.usersBaseUrl}/${userId}`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -66,7 +66,7 @@ export class UserUtil {
     }
 
     async postUser(user: UserAttrs): Promise<UserAttrs|undefined> {
-        const { data, status } = await axios.post(`${this.usersBaseUrl}create`, user, 
+        const { data, status } = await axios.post(`${this.usersBaseUrl}/create`, user, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -84,7 +84,7 @@ export class UserUtil {
     } 
 
     async patchUser(user: UserAttrs): Promise<UserAttrs|undefined> {
-        const { data, status } = await axios.patch(`${this.usersBaseUrl}${user.id}/edit`, user, 
+        const { data, status } = await axios.patch(`${this.usersBaseUrl}/${user.id}/edit`, user, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -102,7 +102,7 @@ export class UserUtil {
     } 
 
     async signin(email: string, password: string): Promise<UserAttrs|string|object> {
-        const { data, status } = await axios.post(`${this.authBaseUrl}signin`, {
+        const { data, status } = await axios.post(`${this.authBaseUrl}/signin`, {
             email,
             password
         }, 
@@ -121,7 +121,7 @@ export class UserUtil {
     }
 
     async signout(): Promise<boolean> {
-        const { data, status } = await axios.post(`${this.authBaseUrl}signout`, 
+        const { data, status } = await axios.post(`${this.authBaseUrl}/signout`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -139,7 +139,7 @@ export class UserUtil {
     }
 
     async isUserCurrentlySignedIn(): Promise<boolean> {
-        const { data, status } = await axios.get(`${this.authBaseUrl}signedin`, 
+        const { data, status } = await axios.get(`${this.authBaseUrl}/signedin`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500
@@ -155,7 +155,7 @@ export class UserUtil {
     }
 
     async getCurrentUser(): Promise<CookieUser> {
-        const { data, status } = await axios.get(`${this.authBaseUrl}currentuser`, 
+        const { data, status } = await axios.get(`${this.authBaseUrl}/currentuser`, 
         {
             validateStatus: function (status: number) {
                 return status < 500; // Resolve only if the status code is less than 500

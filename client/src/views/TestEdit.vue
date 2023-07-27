@@ -47,7 +47,7 @@ export default {
 
         this.$data.$products = $products;
 
-        const testWithId = await this.$data.$products.getTest(this.productId, this.testId);
+        const testWithId = await this.$data.$products.getTest(this.testId);
 
         if(testWithId !== undefined) {
             this.test = testWithId;
@@ -61,7 +61,7 @@ export default {
     },
     methods: {
         async submit() {
-            const updateResult = await this.$data.$products.patchTest(this.productId, this.test);
+            const updateResult = await this.$data.$products.patchTest(this.test);
 
             if (updateResult === null) {
                 alert('Failed to update test.');

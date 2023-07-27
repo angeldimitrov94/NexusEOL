@@ -38,7 +38,7 @@ export default {
             this.setProduct(this.id);
         });
 
-        this.$data.isSignedIn = await this.$users.isUserCurrentlySignedIn();
+        this.$data.isSignedIn = await this.$data.$users.isUserCurrentlySignedIn();
     },
     data() {
         return {
@@ -59,11 +59,8 @@ export default {
             const currentUserProductByID = await this.$data.$products.getProduct(id);
 
             if(currentUserProductByID) {
-                this.product = currentUserProductByID;
+                this.$data.product = currentUserProductByID;
             }
-        },
-        async isSignedIn(): Promise<boolean> {
-            return await this.$users.isUserCurrentlySignedIn();
         }
     },
     components: { TestListAndDetails }

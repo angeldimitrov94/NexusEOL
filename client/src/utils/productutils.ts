@@ -4,17 +4,21 @@ import axios from 'axios';
 
 export class ProductUtil {
     readonly nexusEolDomain: string = "www.nexuseol.com";
-    usersApiRoute: string = "/api/products";
-    readonly baseUrl: string;
+    productsApiRoute: string = "/api/products";
+    testsApiRoute: string = "/api/tests";
+    readonly baseProductUrl: string;
+    readonly baseTestsUrl: string;
 
     constructor(devFlag: boolean) {
         this.userUtil = new UserUtil(devFlag)
 
         if(devFlag === true) {
-            this.baseUrl = `https://localhost${this.usersApiRoute}`;
+            this.baseProductUrl = `https://localhost${this.productsApiRoute}`;
+            this.baseTestsUrl = `https://localhost${this.testsApiRoute}`;
         }
         else {
-            this.baseUrl = `https://${this.nexusEolDomain}${this.usersApiRoute}`;
+            this.baseProductUrl = `https://${this.nexusEolDomain}${this.productsApiRoute}`;
+            this.baseTestsUrl = `https://${this.nexusEolDomain}${this.testsApiRoute}`;
         }
     }
 
@@ -28,7 +32,7 @@ export class ProductUtil {
             return;
         }
 
-        const { data, status } = await axios.patch(`${this.baseUrl}/${modifiedProduct.id}/edit`, {
+        const { data, status } = await axios.patch(`${this.baseProductUrl}/${modifiedProduct.id}/edit`, {
             productDoc: modifiedProduct
         });
 
@@ -41,13 +45,13 @@ export class ProductUtil {
         return data as ProductAttrs;
     }
 
-    async patchTest(parentProductId: string, modifiedTest: TestAttrs): Promise<TestAttrs|undefined> {
+    async patchTest(modifiedTest: TestAttrs): Promise<TestAttrs|undefined> {
         if(modifiedTest === null || modifiedTest === undefined) {
             console.error('Invalid modified test passed in. Not modifying test.');
             return;
         }
 
-        const { data, status } = await axios.patch(`${this.baseUrl}/${parentProductId}/tests/${modifiedTest.id}/edit`, {
+        const { data, status } = await axios.patch(`${this.baseTestsUrl}/${modifiedTest.id}/edit`, {
             testDoc: modifiedTest
         });
 
@@ -73,7 +77,7 @@ export class ProductUtil {
             return;
         }
 
-        const { data, status } = await axios.post(`${this.baseUrl}/create`, productAttrs);
+        const { data, status } = await axios.post(`${this.baseProductUrl}/create`, productAttrs);
 
         const success = status === 201;
         if(!success) {
@@ -83,13 +87,13 @@ export class ProductUtil {
         return data as ProductAttrs;
     }
 
-    async postTest(productId: string, testAttrs: TestAttrs): Promise<TestAttrs|undefined> {
+    async postTest(testAttrs: TestAttrs): Promise<TestAttrs|undefined> {
         if(testAttrs === null || testAttrs === undefined) {
             console.error('Invalid new test passed in. Not creating test.');
             return;
         }
 
-        const { data, status } = await axios.post(`${this.baseUrl}/${productId}/tests/create`, {
+        const { data, status } = await axios.post(`${this.baseTestsUrl}/create`, {
             testAttrs
         });
 
@@ -103,7 +107,7 @@ export class ProductUtil {
     }
 
     async deleteTest(testId: string): Promise<string|undefined> {
-        const { data, status } = await axios.delete(`https://www.nexuseol.com/api/tests/${testId}/delete`);
+        const { data, status } = await axios.delete(`${this.baseTestsUrl}/${testId}/delete`);
 
         const success = status === 204;
         if(!success) {
@@ -115,7 +119,7 @@ export class ProductUtil {
     }
 
     async deleteProduct(productId: string): Promise<TestAttrs|undefined> {
-        const { data, status } = await axios.delete(`${this.baseUrl}/${productId}/delete`);
+        const { data, status } = await axios.delete(`${this.baseProductUrl}/${productId}/delete`);
 
         const success = status === 204;
         if(!success) {
@@ -127,7 +131,7 @@ export class ProductUtil {
     }
 
     async getAllProducts(): Promise<ProductAttrs[]> {
-        const { data, status } = await axios.get(this.baseUrl);
+        const { data, status } = await axios.get(this.baseProductUrl);
 
         const success = status === 200;
         if(!success) {
@@ -140,7 +144,7 @@ export class ProductUtil {
     }
 
     async getProduct(productId: string): Promise<ProductAttrs | undefined> {
-        const { data, status } = await axios.get(`${this.baseUrl}/${productId}`);
+        const { data, status } = await axios.get(`${this.baseProductUrl}/${productId}`);
 
         const success = status === 200;
         if(!success) {
@@ -152,8 +156,8 @@ export class ProductUtil {
         }
     }
 
-    async getTest(productId: string, testId: string): Promise<TestAttrs | undefined> {
-        const { data, status } = await axios.get(`${this.baseUrl}/${productId}/tests/${testId}`);
+    async getTest(testId: string): Promise<TestAttrs | undefined> {
+        const { data, status } = await axios.get(`${this.baseTestsUrl}/${testId}`);
 
         const success = status === 200;
         if(!success) {
@@ -165,8 +169,8 @@ export class ProductUtil {
         }
     }
 
-    async getAllTests(productId: string | undefined): Promise<TestAttrs[]> {
-        const { data, status } = await axios.get(`${this.baseUrl}/${productId}/tests`);
+    async getAllTests(): Promise<TestAttrs[]> {
+        const { data, status } = await axios.get(`${this.baseTestsUrl}`);
 
         const success = status === 200;
         if(!success) {

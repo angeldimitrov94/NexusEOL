@@ -59,7 +59,7 @@ export default {
     const { $products } = getAllInjectedUtils();
 
     this.$data.$products = $products;
-    this.$data.tests = await $products.getAllTests(this.productId);
+    this.$data.tests = await $products.getAllTests();
     this.setCurrentlySelectedTest(this.$data.currentlySelectedTestId);
   },
   data() {

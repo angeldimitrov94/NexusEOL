@@ -51,7 +51,7 @@ export default {
         this.$data.$products = $products;
 
         const productWithId = await this.$data.$products.getProduct(this.id);
-        this.$data.tests = await $products.getAllTests(this.id);
+        this.$data.tests = await $products.getAllTests();
 
         if(productWithId !== undefined) {
             this.product = productWithId;

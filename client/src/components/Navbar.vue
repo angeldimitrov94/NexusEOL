@@ -2,34 +2,35 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <router-link 
-                to="/"
+                to="/portal/dashboard"
                 class="nav-brand"
                 aria-current="page"
                 active-class="active"
                 >{{ currentUserAccountName }}
             </router-link>
             <NavbarLink 
+            v-if="signedIn"
             v-for="{name, id} in activeProducts"
             :key="id"
             :name="name" 
             :id="id"
             ></NavbarLink>
             <router-link 
-            v-if="userIsAdmin(currentUser)"
+            v-if="signedIn && userIsAdmin(currentUser)"
             to="/portal/products/manage"
             class="nav-item"
             aria-current="page"
             active-class="active"
             >Manage Products</router-link>
             <router-link
-            v-if="userIsSuperadmin(currentUser)" 
+            v-if="signedIn && userIsSuperadmin(currentUser)" 
             to="/portal/users"
             class="nav-item"
             aria-current="page"
             active-class="active"
             >Manage Users</router-link>
             <router-link 
-            v-if="userIsSuperadmin(currentUser)"
+            v-if="signedIn && userIsSuperadmin(currentUser)"
             to="/portal/accounts"
             class="nav-item"
             aria-current="page"
@@ -62,7 +63,7 @@ export default defineComponent({
             $products: {} as ProductUtil,
             $bus: new EventBus(),
             $accounts: {} as AccountUtil,
-            currentUserAccountName: "",
+            currentUserAccountName: "N/A",
             currentUser: {} as CookieUser,
             signedIn: false
         };
@@ -80,6 +81,9 @@ export default defineComponent({
             this.$data.currentUser = await this.$data.$users.getCurrentUser();
             const allProducts = await this.$data.$products.getAllProducts();
             this.activeProducts = allProducts?.filter(p => p.active);
+            const currentUserAccountId = this.$data.currentUser?.accountId;
+            const currentUserAccount = await this.$data.$accounts.getAccount(currentUserAccountId);
+            this.$data.currentUserAccountName = currentUserAccount?.name === undefined ? "N/A" : currentUserAccount?.name;
         }
         
         this.$data.$bus.$on('user-change', async () => { 
@@ -88,7 +92,9 @@ export default defineComponent({
                 this.$data.currentUser = await this.$data.$users.getCurrentUser();
                 const allProducts = await this.$data.$products.getAllProducts();
                 this.activeProducts = allProducts?.filter(p => p.active);
-                this.$router.push({ path: '/portal/dashboard' });
+                const currentUserAccountId = this.$data.currentUser?.accountId;
+                const currentUserAccount = await this.$data.$accounts.getAccount(currentUserAccountId);
+                this.$data.currentUserAccountName = currentUserAccount?.name === undefined ? "N/A" : currentUserAccount?.name;
             }
         });
 
@@ -96,13 +102,6 @@ export default defineComponent({
             const allProducts = await this.$data.$products.getAllProducts();
             this.activeProducts = allProducts?.filter(p => p.active);
         })
-
-        const currentUserAccountId = this.$data.currentUser?.accountId;
-
-        if(this.$data.signedIn) {
-            const currentUserAccount = await this.$data.$accounts.getAccount(currentUserAccountId);
-            this.$data.currentUserAccountName = currentUserAccount?.name === undefined ? "N/A" : currentUserAccount?.name;
-        }
     },
     methods: {
         userIsAdmin(currentUser: CookieUser) {
