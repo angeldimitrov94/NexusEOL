@@ -1,10 +1,10 @@
 import express, { Request, Response } from 'express';
 import { AccountAttrs, NotAuthorizedError, UserRole } from '@testsequencer/common';
-import { Account, currentUser, requireAuth } from '@testsequencer/common-backend';
+import { Account, currentUser, requireAuth, requireSuperAdminUser } from '@testsequencer/common-backend';
 
 const router = express.Router();
 
-router.patch('/api/accounts/:accountid/edit', [requireAuth, currentUser], async (req: Request, res: Response) => {
+router.patch('/api/accounts/:accountid/edit', [requireAuth, currentUser, requireSuperAdminUser], async (req: Request, res: Response) => {
     if(req.currentUser?.level !== UserRole.SUPERADMIN) {
         throw new NotAuthorizedError();
     } 

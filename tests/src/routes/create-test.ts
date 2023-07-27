@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { NotAuthorizedError, TestAttrs, UserRole } from '@testsequencer/common';
 import { currentUser, requireAuth, Test } from '@testsequencer/common-backend';
+import { create } from 'ts-node';
 
 const router = express.Router();
 
@@ -22,6 +23,7 @@ router.post('/api/tests/create', [currentUser, requireAuth], async (req: Request
         }
 
         const createdTest = await Test.create(newTest);
+        createdTest.save();
         
         res.status(201).send(createdTest);
     } catch (error) {

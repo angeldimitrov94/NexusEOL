@@ -27,7 +27,8 @@ router.post('/api/products/create', [currentUser, requireAuth], async (req: Requ
         }
 
         const createdProduct = await Product.create(newProduct);
-        
+        createdProduct.save();
+
         res.status(201).send(createdProduct);
     } catch (error) {
         res.status(500).send({"error":error});   

@@ -24,7 +24,6 @@ router.get('/api/products', [currentUser, requireAuth], async (req: Request, res
             parentAccountId: doc.parentAccountId,
             id: doc.id
         }
-        console.log(productAttr);
         return productAttr;
     });
     

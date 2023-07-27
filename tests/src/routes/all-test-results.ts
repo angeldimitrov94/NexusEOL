@@ -1,3 +1,4 @@
+import { TestResultAttrs } from '@testsequencer/common';
 import { TestResult, requireAuth } from '@testsequencer/common-backend';
 import { currentUser } from '@testsequencer/common-backend/build/middlewares/current-user';
 import express, { Request, Response } from 'express';
@@ -11,9 +12,20 @@ router.get('/api/testresults', [currentUser, requireAuth], async (req: Request, 
     let limitString = req.query.limit;
 
     //TODO add paging
-    const allTestResults = await TestResult.find({ parentAccountId: req.currentUser?.accountId });
+    const allTestResultDocs = await TestResult.find({parentAccountId: req.currentUser?.accountId});
+    const allTestResultAttrs = allTestResultDocs.map(doc => { 
+        const testAttr: TestResultAttrs = {
+            parentAccountId: doc.parentAccountId,
+            id: doc.id,
+            parentProductId: doc.parentProductId,
+            parentTestAttemptId: doc.parentTestAttemptId,
+            parentTestId: doc.parentTestId,
+            results: doc.results
+        }
+        return testAttr;
+    });
     
-    res.status(200).send(allTestResults);
+    res.status(200).send(allTestResultAttrs);
 });
 
 export { router as allTestResultsRouter };

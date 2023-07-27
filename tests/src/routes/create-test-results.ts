@@ -22,7 +22,8 @@ router.post('/api/testresults/create', [currentUser, requireAuth], async (req: R
         }
 
         const createdTestResult = await TestResult.create(newTestResult);
-        
+        createdTestResult.save();
+
         res.status(201).send(createdTestResult);
     } catch (error) {
         res.status(500).send({"error":error});   

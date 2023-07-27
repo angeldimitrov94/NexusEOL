@@ -1,10 +1,10 @@
 import express, { Request, Response } from 'express';
 import { AccountAttrs, NotAuthorizedError, UserRole } from '@testsequencer/common';
-import { Account, currentUser, requireAuth } from '@testsequencer/common-backend';
+import { Account, currentUser, requireAuth, requireSuperAdminUser } from '@testsequencer/common-backend';
 
 const router = express.Router();
 
-router.post('/api/accounts/create', [currentUser, requireAuth], async (req: Request, res: Response) => {   
+router.post('/api/accounts/create', [currentUser, requireAuth, requireSuperAdminUser], async (req: Request, res: Response) => {   
     if(req.currentUser?.level !== UserRole.SUPERADMIN) {
         throw new NotAuthorizedError();
     }
@@ -17,6 +17,7 @@ router.post('/api/accounts/create', [currentUser, requireAuth], async (req: Requ
     }
 
     const createdAccount = await Account.create(newAccount);
+    createdAccount.save();
     
     res.status(201).send(createdAccount);
 });
