@@ -11,7 +11,7 @@ router.get('/api/accounts', [currentUser, requireAuth, requireSuperAdminUser], a
     let limitString = req.query.limit;
 
     //TODO add paging
-    const allAccountDocs = await Account.find({_id: req.currentUser?.accountId});
+    const allAccountDocs = await Account.find();
     const allAccountAttrs = allAccountDocs.map(doc => { 
         const accountAttr: AccountAttrs = {
             name: doc.name,
