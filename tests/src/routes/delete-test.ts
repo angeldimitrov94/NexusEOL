@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { NotAuthorizedError, UserRole } from '@testsequencer/common';
-import { currentUser, requireAuth, Test } from '@testsequencer/common-backend';
+import { createMongoObjectIdObject, currentUser, requireAuth, Test } from '@testsequencer/common-backend';
 
 const router = express.Router();
 
@@ -12,9 +12,9 @@ router.delete('/api/tests/:testid/delete', [currentUser, requireAuth], async (re
     const testid = req.params.testid;
 
     try {
-        await Test.deleteOne({ id: testid });
+        await Test.deleteOne({ _id: createMongoObjectIdObject(testid) });
         
-        res.status(204);
+        res.status(204).send({});
     } catch (error) {
         res.status(500).send({"error":error});   
     }

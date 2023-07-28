@@ -16,11 +16,6 @@ router.post('/api/testresults/create', [currentUser, requireAuth], async (req: R
     }
 
     try {
-        const existingTestResult = await TestResult.findOne({ id: newTestResult.id });
-        if(existingTestResult) {
-            return res.status(400).send({"error":"Test result already exists"});
-        }
-
         const createdTestResult = await TestResult.create(newTestResult);
         createdTestResult.save();
 
