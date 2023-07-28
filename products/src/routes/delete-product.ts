@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { NotAuthorizedError, UserRole } from '@testsequencer/common';
-import { currentUser, requireAuth, Product } from '@testsequencer/common-backend';
+import { currentUser, requireAuth, Product, createMongoObjectIdObject } from '@testsequencer/common-backend';
 
 const router = express.Router();
 
@@ -12,9 +12,9 @@ router.delete('/api/products/:productid/delete', [currentUser, requireAuth], asy
     const productid = req.params.productid;
 
     try {
-        await Product.deleteOne({ id: productid });
+        await Product.deleteOne({ _id: createMongoObjectIdObject(productid) });
         
-        res.status(204);
+        res.status(204).send({});
     } catch (error) {
         res.status(500).send({"error":error});   
     }
