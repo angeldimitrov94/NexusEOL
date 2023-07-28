@@ -1,10 +1,15 @@
-import { TestResultAttrs, NotFoundError, UserAttrs } from '@testsequencer/common';
-import { TestResult, User, createMongoObjectIdObject, requireAuth, requireSuperAdminUser } from '@testsequencer/common-backend';
+import { NotFoundError, UserAttrs } from '@testsequencer/common';
+import { User, createMongoObjectIdObject, currentUser, requireAdminUser, requireAuth, resourceBelongsToUsersAccount } from '@testsequencer/common-backend';
 import express, { Request, Response } from 'express';
 
 const router = express.Router();
 
-router.get('/api/users/:userid', [requireAuth, requireSuperAdminUser], async (req: Request, res: Response) => {
+router.get('/api/users/:userid', [
+    currentUser, 
+    requireAuth, 
+    requireAdminUser, 
+    resourceBelongsToUsersAccount
+], async (req: Request, res: Response) => {
     const userId = req.params.userid;
 
     const objectId = createMongoObjectIdObject(userId);

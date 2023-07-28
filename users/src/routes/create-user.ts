@@ -1,21 +1,19 @@
 import express, { Request, Response } from 'express';
-import { NotAuthorizedError, UserAttrs, UserRole } from '@testsequencer/common';
-import { currentUser, requireAuth, requireSuperAdminUser, User } from '@testsequencer/common-backend';
+import { UserAttrs } from '@testsequencer/common';
+import { currentUser, requireAdminUser, requireAuth, User } from '@testsequencer/common-backend';
 
 const router = express.Router();
 
-router.post('/api/users/create', [currentUser, requireAuth, requireSuperAdminUser], async (req: Request, res: Response) => {
-    console.log(req.currentUser);
-    
-    if(req.currentUser?.level !== UserRole.SUPERADMIN) {
-        throw new NotAuthorizedError();
-    } 
-
+router.post('/api/users/create', [
+    currentUser, 
+    requireAuth, 
+    requireAdminUser
+], async (req: Request, res: Response) => {
     const newUser = req.body as UserAttrs;
 
-    const existingUser = await User.findOne({ id: newUser.id});
+    const existingUser = await User.findOne({ email: newUser.email});
     if(existingUser) {
-        return res.status(400).send({"error":"User already exists"});
+        return res.status(400).send({"error":"User with this email already exists"});
     }
 
     const createdUser = await User.create(newUser);

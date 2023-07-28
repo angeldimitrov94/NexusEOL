@@ -1,10 +1,15 @@
 import express, { Request, Response } from 'express';
 import { NotAuthorizedError, UserAttrs, UserRole } from '@testsequencer/common';
-import { currentUser, requireAuth, requireSuperAdminUser, User } from '@testsequencer/common-backend';
+import { currentUser, requireAdminUser, requireAuth, resourceBelongsToUsersAccount, User } from '@testsequencer/common-backend';
 
 const router = express.Router();
 
-router.patch('/api/users/:userid/edit', [requireAuth, currentUser, requireSuperAdminUser], async (req: Request, res: Response) => {
+router.patch('/api/users/:userid/edit', [
+    currentUser, 
+    requireAuth, 
+    requireAdminUser, 
+    resourceBelongsToUsersAccount
+], async (req: Request, res: Response) => {
     console.log('Current user : ');
     console.log(req.currentUser);
     console.log(req.currentUser?.level === UserRole.SUPERADMIN);
