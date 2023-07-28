@@ -58,8 +58,8 @@ export default {
 
             try {
                 const newTest = {} as TestAttrs;
-                newTest.name = this.name;
-                newTest.description = this.description;
+                newTest.name = this.name.trim();
+                newTest.description = this.description.trim();
                 const result = await this.$data.$products.postTest(newTest);
 
                 if(result) {

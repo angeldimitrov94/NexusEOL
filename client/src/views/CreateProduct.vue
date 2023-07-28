@@ -23,7 +23,7 @@
                 </div>
                 <div class="mb-3">
                     <button class="btn btn-primary" @click.prevent="submitForm" :disabled="isFormInvalid">Create
-                        Page</button>
+                        Product</button>
                 </div>
             </form>
         </div>
@@ -77,10 +77,10 @@ export default {
                 const currentCookieUser = await this.$data.$users.getCurrentUser();
 
                 const product = {} as ProductAttrs;
-                product.name = this.name
-                product.description = this.description, 
+                product.name = this.name.trim();
+                product.description = this.description.trim();
                 product.active = this.active;
-                product.parentAccountId = currentCookieUser.accountId;
+                product.parentAccountId = currentCookieUser.accountId.trim();
                 product.mostRecentTestAttemptId = "-1";
                 product.state = ProductState.NOT_STARTED;
 
