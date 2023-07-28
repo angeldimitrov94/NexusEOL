@@ -43,7 +43,8 @@ async (req: Request, res: Response) => {
         id: existingUser.id,
         email: existingUser.email,
         level: existingUser.level,
-        accountId: existingUser.accountId
+        accountId: existingUser.accountId,
+        exp: Math.floor(Date.now() / 1000) + (30 * 60) //expire after 30 minutes from issuance
     }, process.env.JWT_KEY!);
     //Store it on session object
     req.session = {
