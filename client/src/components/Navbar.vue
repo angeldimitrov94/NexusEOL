@@ -36,7 +36,7 @@
             aria-current="page"
             active-class="active"
             >Manage Accounts</router-link>
-            <form class="d-flex">
+            <form class="d-flex gap-3">
                 <UserBadge></UserBadge>
             </form>
         </div>
@@ -63,7 +63,7 @@ export default defineComponent({
             $products: {} as ProductUtil,
             $bus: new EventBus(),
             $accounts: {} as AccountUtil,
-            currentUserAccountName: "N/A",
+            currentUserAccountName: "",
             currentUser: {} as CookieUser,
             signedIn: false
         };
@@ -83,7 +83,9 @@ export default defineComponent({
             this.activeProducts = allProducts?.filter(p => p.active);
             const currentUserAccountId = this.$data.currentUser?.accountId;
             const currentUserAccount = await this.$data.$accounts.getAccount(currentUserAccountId);
-            this.$data.currentUserAccountName = currentUserAccount?.name === undefined ? "N/A" : currentUserAccount?.name;
+            this.$data.currentUserAccountName = currentUserAccount?.name === undefined ? "" : currentUserAccount?.name;
+        } else {
+            this.$data.currentUserAccountName = "";
         }
         
         this.$data.$bus.$on('user-change', async () => { 
@@ -94,7 +96,9 @@ export default defineComponent({
                 this.activeProducts = allProducts?.filter(p => p.active);
                 const currentUserAccountId = this.$data.currentUser?.accountId;
                 const currentUserAccount = await this.$data.$accounts.getAccount(currentUserAccountId);
-                this.$data.currentUserAccountName = currentUserAccount?.name === undefined ? "N/A" : currentUserAccount?.name;
+                this.$data.currentUserAccountName = currentUserAccount?.name === undefined ? "" : currentUserAccount?.name;
+            } else {
+                this.$data.currentUserAccountName = "";
             }
         });
 

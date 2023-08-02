@@ -14,6 +14,7 @@
     <div class="vstack gap-3">
       <div class="p-2">
         <h1>{{ currentlySelectedTest?.name }}</h1>
+        <h4><i>{{ currentlySelectedTest?.description }}</i></h4>
       </div>
       <div class="p-2">
         <div class="card">

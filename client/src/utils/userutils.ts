@@ -149,6 +149,7 @@ export class UserUtil {
         const success = status === 200;
         if(!success) {
             console.error(data);
+            return false;
         }
 
         return data.signedIn as boolean;
@@ -171,4 +172,22 @@ export class UserUtil {
 
         return currentUser;
     }
+
+    async resetPassword(email: string, currentPassword: string, newPassword: string): Promise<boolean> {
+        const { data, status } = await axios.post(`${this.authBaseUrl}/resetpassword`, {email, currentPassword, newPassword}, 
+        {
+            validateStatus: function (status: number) {
+                return status < 500; // Resolve only if the status code is less than 500
+            }
+        });
+
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
+            return false;
+        }
+        else {
+            return true;
+        }
+    } 
 }

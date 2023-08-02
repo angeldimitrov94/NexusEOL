@@ -28,10 +28,7 @@ async (req: Request, res: Response) => {
     const existingUser = await User.findOne({ email });
     if(!existingUser) {
         throw new BadRequestError(`Invalid credentials! User with email [${email}] does not exist.`);
-    }    
-    
-    console.log(existingUser);
-    console.log(password);
+    }
 
     const passwordsMatch = await Password.compare(existingUser.password, password);
     if(!passwordsMatch) {

@@ -68,4 +68,8 @@ a.nav-link {
 a.nav-link.active {
   color: white;
   text-decoration: underline;
+}
+
+.borderedimg {
+  border: 5px solid white;
 }</style>
