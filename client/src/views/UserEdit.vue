@@ -2,12 +2,19 @@
     <div class="m-3">
         <h4>Edit user</h4>
         <div class="container text-center">
-            <div class="row">
+            <!--Email-->
+            <div class="mb-3">
+                <label for="" class="form-label">
+                    Email
+                </label>
+                <textarea type="email" class="form-control" rows="5" v-model="email"></textarea>
+            </div>
+            <div class="mb-3">
                 <label class="form-label">
                     User level
                 </label>
             </div>
-            <div class="row">
+            <div class="mb-3">
                 <div class="col">
                     <label class="form-check-label" for="gridCheck1">Superadmin</label>
                 </div>
@@ -15,7 +22,7 @@
                     <input class="form-check-input" type="checkbox" v-model="isSuperadmin">
                 </div>
             </div>
-            <div class="row">
+            <div class="mb-3">
                 <div class="col">
                     <label class="form-check-label" for="gridCheck1">Admin</label>
                 </div>
@@ -23,7 +30,7 @@
                     <input class="form-check-input" type="checkbox" v-model="isAdmin">
                 </div>
             </div>
-            <div class="row">
+            <div class="mb-3">
                 <div class="col">
                     <label class="form-check-label" for="gridCheck1">BIUser</label>
                 </div>
@@ -31,7 +38,7 @@
                     <input class="form-check-input" type="checkbox" v-model="isBIUser">
                 </div>
             </div>
-            <div class="row">
+            <div class="mb-3">
                 <div class="col">
                     <label class="form-check-label" for="gridCheck1">Technician</label>
                 </div>
@@ -39,15 +46,7 @@
                     <input class="form-check-input" type="checkbox" v-model="isTechnician">
                 </div>
             </div>
-            <!-- <div class="row">
-                <div class="col">
-                    <label for="" class="form-label">Is User Active</label>
-                </div>
-                <div class="col">
-                    <input class="form-check-input" type="checkbox" v-model="isActive">
-                </div>
-            </div> -->
-            <div class="row"><button class="btn btn-primary me-2" @click.prevent="submit">Confirm changes</button></div>
+            <button class="btn btn-primary me-2" @click.prevent="submit" :disabled="isFormInvalid()">Confirm changes</button>
         </div>
     </div>
 </template>
@@ -56,7 +55,7 @@ import { getAllInjectedUtils } from '@/utils/injector-utils';
 import { UserUtil } from '@/utils/userutils';
 import { UserRole, type UserAttrs } from '@testsequencer/common';
 export default {
-    props: { 
+    props: {
         id: { type: String, default: "" },
     },
     data() {
@@ -68,7 +67,8 @@ export default {
             isAdmin: false,
             isBIUser: false,
             isTechnician: false,
-            $users: {} as UserUtil
+            $users: {} as UserUtil,
+            email: ""
         }
     },
     async created() {
@@ -78,12 +78,13 @@ export default {
 
         const userWithId = await this.$data.$users.getUser(this.id);
 
-        if(userWithId !== undefined) {
+        if (userWithId !== undefined) {
             this.user = userWithId;
         }
 
         this.isActive = true;
         this.level = this.user.level;
+        this.email = this.user.email;
 
         switch (this.user.level) {
             case UserRole.TECHNICIAN:
@@ -103,41 +104,60 @@ export default {
         }
     },
     methods: {
-        submit() {
+        async submit() {
+            const updatedUser = {
+                id: this.$data.user.id,
+                name: this.$data.user.name,
+                email: this.$data.email,
+                level: this.$data.level,
+                accountId: this.$data.user.accountId,
+                password: this.$data.user.password
+            } as UserAttrs;
 
+            const updatedUserResult = await this.$data.$users.patchUser(updatedUser);
+
+            if(updatedUserResult) {
+                alert("User updated successfully.");
+                this.$router.push("/portal/users");
+            } else {
+                alert("User update failed.");
+            }
+        },
+        isFormInvalid() {
+            return this.$data.email === "";
         }
     },
     watch: {
         isSuperadmin() {
-            if(this.isSuperadmin == true) {
-                this.level = UserRole.SUPERADMIN;
-                this.isAdmin = false;
-                this.isBIUser = false;
-                this.isTechnician = false;
+            if (this.$data.isSuperadmin == true) {
+                this.$data.level = UserRole.SUPERADMIN;
+                this.$data.isAdmin = false;
+                this.$data.isBIUser = false;
+                this.$data.isTechnician = false;
             }
         },
         isAdmin() {
-            if(this.isAdmin){
-                this.level = UserRole.ADMIN;
-                this.isSuperadmin = false;
-                this.isBIUser = false;
-                this.isTechnician = false;
+            if (this.$data.isAdmin) {
+                this.$data.level = UserRole.ADMIN;
+                this.$data.isSuperadmin = false;
+                this.$data.isBIUser = false;
+                this.$data.isTechnician = false;
             }
         },
         isBIUser() {
-            if(this.isBIUser) {
-                this.level = UserRole.BIUSER;
-                this.isAdmin = false;
-                this.isSuperadmin = false;
-                this.isTechnician = false;
+            if (this.$data.isBIUser) {
+                this.$data.level = UserRole.BIUSER;
+                this.$data.isAdmin = false;
+                this.$data.isSuperadmin = false;
+                this.$data.isTechnician = false;
             }
         },
         isTechnician() {
-            if(this.isTechnician) {
-                this.level = UserRole.TECHNICIAN;
-                this.isAdmin = false;
-                this.isBIUser = false;
-                this.isSuperadmin = false;
+            if (this.$data.isTechnician) {
+                this.$data.level = UserRole.TECHNICIAN;
+                this.$data.isAdmin = false;
+                this.$data.isBIUser = false;
+                this.$data.isSuperadmin = false;
             }
         },
     }
