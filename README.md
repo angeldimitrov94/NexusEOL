@@ -78,6 +78,26 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+Dashboard view : 
+
+[![NexusEOL Screen Shot - dashboard][NexusEOL-screenshot-dashboard]](https://www.nexuseol.com)
+
+Product detail view : 
+
+[![NexusEOL Screen Shot - product][NexusEOL-screenshot-product]](https://www.nexuseol.com)
+
+Manage products view : 
+
+[![NexusEOL Screen Shot - manage products][NexusEOL-screenshot-manage-products]](https://www.nexuseol.com)
+
+Manage users view : 
+
+[![NexusEOL Screen Shot - manage users][NexusEOL-screenshot-manage-users]](https://www.nexuseol.com)
+
+Manage accounts view : 
+
+[![NexusEOL Screen Shot - manage accounts][NexusEOL-screenshot-manage-accounts]](https://www.nexuseol.com)
+
 Manufacturing processes sometimes suffer from being woefully disconnected. The amount of data available can offer tremendous value, IF it is captured. The platform is specifically tailored to make it easy for manufacturing testing teams to send their data to a centralized location where various stake-holders can access it from the web, as opposed to various random bits of data being stored away on scattered machines across multiple networks and with varying formats.</br>
 </br>
 Manufacturing software teams can suffer from being under-resourced and over-tasked. Especially with teams focused on testing assembly integrity of high-complexity electro-mechanical assemblies, the team is spread thin between understanding and characterizing the mechanical and electrical characteristics of the product, and managing the business requirements placed on them by management. This conflict causes internally-designed tools to be fragile, inflexible and dated...</br>
@@ -231,3 +251,8 @@ Project Link: [https://github.com/angeldimitrov94/NexusEOL](https://github.com/a
 [cookie-parser-url]: https://www.npmjs.com/package/cookie-parser
 [vue-router-url]: https://router.vuejs.org/
 [mongoose-url]: https://mongoosejs.com/
+[NexusEOL-screenshot-dashboard]: images/dashboard.png
+[NexusEOL-screenshot-product]: images/product.png
+[NexusEOL-screenshot-manage-products]: images/manage_products.png
+[NexusEOL-screenshot-manage-users]: images/manage_users.png
+[NexusEOL-screenshot-manage-accounts]: images/manage_accounts.png
