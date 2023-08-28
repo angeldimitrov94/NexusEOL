@@ -251,8 +251,8 @@ Project Link: [https://github.com/angeldimitrov94/NexusEOL](https://github.com/a
 [cookie-parser-url]: https://www.npmjs.com/package/cookie-parser
 [vue-router-url]: https://router.vuejs.org/
 [mongoose-url]: https://mongoosejs.com/
-[NexusEOL-screenshot-dashboard]: images/dashboard.png
-[NexusEOL-screenshot-product]: images/product.png
-[NexusEOL-screenshot-manage-products]: images/manage_products.png
-[NexusEOL-screenshot-manage-users]: images/manage_users.png
-[NexusEOL-screenshot-manage-accounts]: images/manage_accounts.png
+[NexusEOL-screenshot-dashboard]: images/dashboard.PNG
+[NexusEOL-screenshot-product]: images/product.PNG
+[NexusEOL-screenshot-manage-products]: images/manage_products.PNG
+[NexusEOL-screenshot-manage-users]: images/manage_users.PNG
+[NexusEOL-screenshot-manage-accounts]: images/manage_accounts.PNG
