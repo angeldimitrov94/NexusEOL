@@ -190,4 +190,22 @@ export class UserUtil {
             return true;
         }
     } 
+
+    async deleteUser(userId: string): Promise<boolean> {
+        const { data, status } = await axios.delete(`${this.usersBaseUrl}/${userId}/delete`, 
+        {
+            validateStatus: function (status: number) {
+                return status < 500; // Resolve only if the status code is less than 500
+            }
+        });
+
+        const success = status === 200;
+        if(!success) {
+            console.error(data);
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
 }

@@ -19,20 +19,25 @@ export default {
     this.$data.$bus = $bus;
     this.$data.$users = $users;
 
-    this.$data.$bus.$on('user-change', async () => {
-      const signedIn = await this.$data.$users.isUserCurrentlySignedIn();
-      if (signedIn) {
-        this.$router.push({ path: '/portal/dashboard' });
-      } else {
-        this.$router.push({ path: '/portal' });
-      }
-    });
+    await this.userCheck();
+
+    this.$data.$bus.$on('user-change', this.userCheck);
   },
   data() {
     return {
       $bus: new EventBus(),
       $users: {} as UserUtil,
     };
+  },
+  methods: {
+    async userCheck() {
+      const signedIn = await this.$data.$users.isUserCurrentlySignedIn();
+      if (signedIn) {
+        this.$router.push({ path: '/portal/dashboard' });
+      } else {
+        this.$router.push({ path: '/portal' });
+      }
+    }
   }
 }
 </script>
@@ -72,4 +77,8 @@ a.nav-link.active {
 
 .borderedimg {
   border: 5px solid white;
+}
+
+.white-font {
+  color: white;
 }</style>

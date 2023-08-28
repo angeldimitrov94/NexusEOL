@@ -3,7 +3,7 @@
     <ul class="nav flex-md-column">
       <li v-for="test in tests" class="nav-item">
         <a class="nav-link" :class="isThisIdActiveClass(test?.id)" href="#" :key="test?.id"
-          @click.prevent="makeThisIdActiveId(test?.id)">
+          @click="makeThisIdActiveId(test?.id)">
           <img src="/page.svg" alt="page icon" />
           {{ test?.name }}
         </a>
@@ -109,18 +109,6 @@ export default {
 
       this.currentlySelectedTest = selectedTest;
     }
-  },
-  computed: {
-    // actionText() {
-    //   const currentlySelectedTest = this.currentlySelectedTest;
-    //   console.log(currentlySelectedTest);
-      
-    //   const actionTextValue = currentlySelectedTest === undefined || currentlySelectedTest?.currentActionIndex === -1 ? "No actions for this test" :
-    //   currentlySelectedTest?.actions[currentlySelectedTest.currentActionIndex]?.message;
-    //   console.log(actionTextValue);
-      
-    //   return actionTextValue;
-    // }
   }
 }
 </script>

@@ -1,14 +1,18 @@
 <template>
     <div class="m-3">
         <h4>Edit user</h4>
-        <div class="container text-center">
+        <form action="">
             <!--Email-->
             <div class="mb-3">
-                <label for="" class="form-label">
-                    Email
-                </label>
-                <textarea type="email" class="form-control" rows="5" v-model="email"></textarea>
+                <label for="name" class="form-label">User name</label>
+                <input id="name" type="text" class="form-control" v-model="user.name" disabled="true"/>
             </div>
+            <!--Email-->
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input id="email" type="email" pattern=".+@[A-Za-z0-9]+\.[A-Za-z0-9]{2,5}" class="form-control" v-model="user.email"/>
+            </div>
+            <!--User Level-->
             <div class="mb-3">
                 <label class="form-label">
                     User level
@@ -46,8 +50,9 @@
                     <input class="form-check-input" type="checkbox" v-model="isTechnician">
                 </div>
             </div>
-            <button class="btn btn-primary me-2" @click.prevent="submit" :disabled="isFormInvalid()">Confirm changes</button>
-        </div>
+            <button class="btn btn-warning me-2" @click.prevent="deleteUser()">Delete User</button>
+            <button class="btn btn-primary me-2" @click.prevent="submit()" :disabled="isFormInvalid()">Confirm changes</button>
+        </form>
     </div>
 </template>
 <script lang="ts">
@@ -62,13 +67,11 @@ export default {
         return {
             user: {} as UserAttrs,
             isActive: false,
-            level: "",
             isSuperadmin: false,
             isAdmin: false,
             isBIUser: false,
             isTechnician: false,
             $users: {} as UserUtil,
-            email: ""
         }
     },
     async created() {
@@ -78,13 +81,13 @@ export default {
 
         const userWithId = await this.$data.$users.getUser(this.id);
 
-        if (userWithId !== undefined) {
+        console.log(userWithId);
+
+        if (userWithId) {
             this.user = userWithId;
         }
 
         this.isActive = true;
-        this.level = this.user.level;
-        this.email = this.user.email;
 
         switch (this.user.level) {
             case UserRole.TECHNICIAN:
@@ -108,8 +111,8 @@ export default {
             const updatedUser = {
                 id: this.$data.user.id,
                 name: this.$data.user.name,
-                email: this.$data.email,
-                level: this.$data.level,
+                email: this.$data.user.email,
+                level: this.$data.user.level,
                 accountId: this.$data.user.accountId,
                 password: this.$data.user.password
             } as UserAttrs;
@@ -124,13 +127,27 @@ export default {
             }
         },
         isFormInvalid() {
-            return this.$data.email === "";
+            return this.$data.user.email === "";
+        },
+        async deleteUser() {
+            if(this.$data.user.id) {
+                const deletedUserResult = await this.$data.$users.deleteUser(this.$data.user.id);
+
+                if(deletedUserResult) {
+                    alert("User deleted successfully.");
+                    this.$router.push("/portal/users");
+                } else {
+                    alert("User deletion failed.");
+                }
+            } else {
+                alert("User deletion failed - no user id specified.");
+            }
         }
     },
     watch: {
         isSuperadmin() {
             if (this.$data.isSuperadmin == true) {
-                this.$data.level = UserRole.SUPERADMIN;
+                this.$data.user.level = UserRole.SUPERADMIN;
                 this.$data.isAdmin = false;
                 this.$data.isBIUser = false;
                 this.$data.isTechnician = false;
@@ -138,7 +155,7 @@ export default {
         },
         isAdmin() {
             if (this.$data.isAdmin) {
-                this.$data.level = UserRole.ADMIN;
+                this.$data.user.level = UserRole.ADMIN;
                 this.$data.isSuperadmin = false;
                 this.$data.isBIUser = false;
                 this.$data.isTechnician = false;
@@ -146,7 +163,7 @@ export default {
         },
         isBIUser() {
             if (this.$data.isBIUser) {
-                this.$data.level = UserRole.BIUSER;
+                this.$data.user.level = UserRole.BIUSER;
                 this.$data.isAdmin = false;
                 this.$data.isSuperadmin = false;
                 this.$data.isTechnician = false;
@@ -154,7 +171,7 @@ export default {
         },
         isTechnician() {
             if (this.$data.isTechnician) {
-                this.$data.level = UserRole.TECHNICIAN;
+                this.$data.user.level = UserRole.TECHNICIAN;
                 this.$data.isAdmin = false;
                 this.$data.isBIUser = false;
                 this.$data.isSuperadmin = false;

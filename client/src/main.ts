@@ -1,6 +1,8 @@
 import { createApp } from 'vue';
 import AppVue from './App.vue';
 import '../node_modules/bootstrap/dist/css/bootstrap.css';
+import '../node_modules/@popperjs/core/dist/umd/popper.min.js'
+import '../node_modules/bootstrap/dist/js/bootstrap.min.js'
 import { EventBus } from './utils/eventbus';
 import { UserUtil } from './utils/userutils';
 import { ProductUtil } from './utils/productutils';

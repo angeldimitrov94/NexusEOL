@@ -1,4 +1,5 @@
 <template>
+    <h2 v-if="products === undefined || products.length === 0">No products are defined, contact your account administrator for assistance.</h2>
     <div class="row row-cols-2 row-cols-md-2 g-4 m-3">
         <div class="col" v-for="product in products">
             <div class="card" :class="getStyleNameFromState(product)">
@@ -45,22 +46,19 @@ export default {
         this.$data.$products = $products;
         this.$data.$bus = $bus;
         this.$data.$users = $users;
-        this.$data.signedIn = await $users.isUserCurrentlySignedIn();
+        await this.userAndProductsRefresh();
 
-        if(this.$data.signedIn) {
-            this.products = await this.$data.$products.getAllProducts();
-        }
-
-        this.$data.$bus.$on('user-change', async () => { 
-            this.$data.signedIn = await $users.isUserCurrentlySignedIn();
+        this.$data.$bus.$on('user-change', this.userAndProductsRefresh);
+    },
+    methods: {
+        async userAndProductsRefresh() {
+            this.$data.signedIn = await this.$data.$users.isUserCurrentlySignedIn();
             this.products = await this.$data.$products.getAllProducts();
 
             if(!this.$data.signedIn) {
                 this.$router.push({ path: '/portal' });
             }
-        });
-    },
-    methods: {
+        },
         getStyleNameFromState(product: ProductAttrs) {
             if(product == null) {
                 return "nullProductTest";

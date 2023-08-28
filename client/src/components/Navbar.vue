@@ -2,37 +2,54 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <router-link 
-                to="/portal/dashboard"
-                class="nav-brand"
+                to="/portal"
+                class="btn btn-secondary"
                 aria-current="page"
                 active-class="active"
-                >{{ currentUserAccountName }}
-            </router-link>
-            <NavbarLink 
-            v-if="signedIn"
-            v-for="{name, id} in activeProducts"
-            :key="id"
-            :name="name" 
-            :id="id"
-            ></NavbarLink>
+                >Home</router-link>
             <router-link 
-            v-if="signedIn && userIsAdmin(currentUser)"
-            to="/portal/products/manage"
-            class="nav-item"
-            aria-current="page"
-            active-class="active"
-            >Manage Products</router-link>
+                v-if="signedIn"
+                to="/portal/dashboard"
+                class="btn btn-secondary"
+                aria-current="page"
+                active-class="active"
+                >Dashboard</router-link>
+            <div class="dropdown" v-if="signedIn">
+                <button class="btn btn-secondary dropdown-toggle" 
+                type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" 
+                aria-expanded="false" :disabled="productsCount === 0">
+                    Products ({{ productsCount }})
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <NavbarLink 
+                        v-for="{name, id} in activeProducts"
+                        :key="id"
+                        :name="name" 
+                        :id="id"
+                        :dropdownitem="true"
+                    ></NavbarLink>
+                    <li v-if="userIsAdmin(currentUser)"><hr class="dropdown-divider"></li>
+                    <li v-if="userIsAdmin(currentUser)">
+                        <router-link 
+                            to="/portal/products/manage"
+                            aria-current="page"
+                            active-class="active"
+                            class="dropdown-item"
+                            >Manage Products</router-link>
+                    </li>
+                </ul>
+            </div>
             <router-link
-            v-if="signedIn && userIsSuperadmin(currentUser)" 
+            v-if="signedIn && userIsAdmin(currentUser)" 
             to="/portal/users"
-            class="nav-item"
+            class="btn btn-secondary"
             aria-current="page"
             active-class="active"
             >Manage Users</router-link>
             <router-link 
             v-if="signedIn && userIsSuperadmin(currentUser)"
             to="/portal/accounts"
-            class="nav-item"
+            class="btn btn-secondary"
             aria-current="page"
             active-class="active"
             >Manage Accounts</router-link>
@@ -51,7 +68,7 @@ import { ProductUtil } from '@/utils/productutils';
 import { defineComponent } from 'vue';
 import { EventBus } from '@/utils/eventbus';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
-import type {  ProductAttrs } from '@testsequencer/common';
+import {  UserRole, type ProductAttrs } from '@testsequencer/common';
 import type CookieUser from '@/models/cookie-user';
 import { AccountUtil } from '@/utils/accountutils';
 
@@ -65,7 +82,8 @@ export default defineComponent({
             $accounts: {} as AccountUtil,
             currentUserAccountName: "",
             currentUser: {} as CookieUser,
-            signedIn: false
+            signedIn: false,
+            productsCount: 0
         };
     },
     async created() {
@@ -75,21 +93,22 @@ export default defineComponent({
         this.$data.$products = $products;
         this.$data.$bus = $bus;
         this.$data.$accounts = $accounts;
-        this.$data.signedIn = await $users.isUserCurrentlySignedIn();
+        await this.userRefresh();
+        await this.productRefresh();
 
-        if(this.$data.signedIn) {
-            this.$data.currentUser = await this.$data.$users.getCurrentUser();
-            const allProducts = await this.$data.$products.getAllProducts();
-            this.activeProducts = allProducts?.filter(p => p.active);
-            const currentUserAccountId = this.$data.currentUser?.accountId;
-            const currentUserAccount = await this.$data.$accounts.getAccount(currentUserAccountId);
-            this.$data.currentUserAccountName = currentUserAccount?.name === undefined ? "" : currentUserAccount?.name;
-        } else {
-            this.$data.currentUserAccountName = "";
-        }
-        
-        this.$data.$bus.$on('user-change', async () => { 
-            this.$data.signedIn = await $users.isUserCurrentlySignedIn();
+        this.$data.$bus.$on('user-change', this.userRefresh);
+        this.$data.$bus.$on('product-created', this.productRefresh)
+    },
+    methods: {
+        userIsAdmin(currentUser: CookieUser) {
+            return currentUser?.level === UserRole.SUPERADMIN || currentUser?.level === UserRole.ADMIN;
+        },
+        userIsSuperadmin(currentUser: CookieUser) {
+            return currentUser?.level === UserRole.SUPERADMIN;
+        },
+        async userRefresh() {
+            this.$data.signedIn = await this.$data.$users.isUserCurrentlySignedIn();
+
             if(this.$data.signedIn) {
                 this.$data.currentUser = await this.$data.$users.getCurrentUser();
                 const allProducts = await this.$data.$products.getAllProducts();
@@ -100,19 +119,11 @@ export default defineComponent({
             } else {
                 this.$data.currentUserAccountName = "";
             }
-        });
-
-        this.$data.$bus.$on('product-created', async () => {
+        },
+        async productRefresh() {
             const allProducts = await this.$data.$products.getAllProducts();
             this.activeProducts = allProducts?.filter(p => p.active);
-        })
-    },
-    methods: {
-        userIsAdmin(currentUser: CookieUser) {
-            return currentUser?.level === 'superadmin' || currentUser?.level === 'admin';
-        },
-        userIsSuperadmin(currentUser: CookieUser) {
-            return currentUser?.level === 'superadmin';
+            this.productsCount = this.activeProducts.length;
         }
     },
     components: { NavbarLink, UserBadge }

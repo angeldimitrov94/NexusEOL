@@ -1,11 +1,15 @@
 <template>
     <div class="m-3">
-        <div class="container-fluid" v-if="isSignedIn == false">
+        <div class="container-fluid text-center" v-if="isSignedIn == false">
             <div class="row">
                 <h1>Please log in.</h1>
             </div>
         </div>
         <div class="container-fluid" v-if="isSignedIn === true">
+            <div class="row text-center white-font">
+                <h1>{{ product?.name }} - {{ product?.state }}</h1>
+                <h4><i>{{ product?.description }}</i></h4>
+            </div>
             <div class="row">
                 <TestListAndDetails :product-id="product?.id"></TestListAndDetails>
             </div>

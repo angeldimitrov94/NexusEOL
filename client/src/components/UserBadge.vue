@@ -17,7 +17,7 @@
             autocomplete="password"/>
         </div>
     </form>
-    <button type="button" class="btn btn-secondary" @click.prevent="attemptSigninout()">
+    <button type="button" class="btn btn-secondary" @click="attemptSigninout()">
     Sign {{signInOutTitle}}
     </button>
 </template>
@@ -59,30 +59,18 @@ export default {
             let success = false;
 
             if(!this.$data.isSignedIn) {
-                console.log("attempt signin");
                 const result = await this.$data.$users.signin(this.$data.signinUsername, this.$data.signinPassword);    
                 const userAttrResult = result as UserAttrs;    
                 
                 if(userAttrResult.accountId !== undefined && userAttrResult.level && userAttrResult.email) {
                     success = true;
-
-                    const newlySignedInUser: CookieUser = {
-                        level: userAttrResult.level,
-                        email: userAttrResult.email,
-                        accountId: userAttrResult.accountId
-                    };
-
-                    this.$data.errorMessage = `Signed in user : ` + JSON.stringify(userAttrResult);
                 }
                 else {
                     this.$data.errorMessage = `Failed to sign in user : ` + JSON.stringify(result);
                 }
             }
             else if(this.$data.isSignedIn === true){
-                console.log("attempt signout");
                 success = await this.$data.$users.signout();
-
-                this.$data.errorMessage = `Signed out user`;
             }
             else {
                 console.error('Neither logged in nor logged out user!');
@@ -93,7 +81,9 @@ export default {
                 this.$data.$bus.$emit('user-change', {});
             }
             
-            alert(this.$data.errorMessage);
+            if(this.$data.errorMessage !== "") {
+                alert(this.$data.errorMessage);
+            }
         },
         async userChangeRefresh() {
             this.$data.isSignedIn = await this.$data.$users.isUserCurrentlySignedIn();

@@ -1,16 +1,16 @@
 <template>
-    <router-link 
+    <li><router-link 
     :to="`/portal/products/${id}`"
-    class="nav-item" 
     aria-current="page" 
     :title="`This link goes to the ${name} page`"
     active-class="active"
-    >{{ name }}</router-link>
+    :class="`${dropdownitem ? 'dropdown-item' : ''}`"
+    >{{ name }}</router-link></li>
 </template>
 
 <script lang="ts">
 export default {
     name: 'NavbarLink',
-    props: ['name', 'id']
+    props: ['name', 'id', 'dropdownitem']
 }
 </script>

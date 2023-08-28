@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <button class="btn btn-primary" @click.prevent="submitForm" :disabled="isFormInvalid">Create
+                    <button class="btn btn-primary" @click="submitForm()" :disabled="isFormInvalid">Create
                         Account</button>
                 </div>
             </form>

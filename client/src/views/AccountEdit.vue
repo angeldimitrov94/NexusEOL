@@ -22,7 +22,7 @@
             </div>
         </form>
         <div class="mb-3">
-            <button class="btn btn-primary me-2" @click.prevent="submit" :disabled="isFormInvalid">Confirm
+            <button class="btn btn-primary me-2" @click.prevent="submit()" :disabled="isFormInvalid">Confirm
                 changes</button>
         </div>
     </div>

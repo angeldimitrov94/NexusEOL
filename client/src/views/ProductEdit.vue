@@ -31,11 +31,11 @@
                     product.tests === undefined ? "N/A" : product.tests.length }} tests</router-link>
             </div>
             <div class="mb-3">
-                <button class="btn btn-warning btn-sm" @click.prevent="deleteProduct">Delete product</button>
+                <button class="btn btn-warning btn-sm" @click="deleteProduct()">Delete product</button>
             </div>
         </form>
         <div class="mb-3">
-            <button class="btn btn-primary me-2" @click.prevent="submit" :disabled="isFormInvalid">Confirm
+            <button class="btn btn-primary me-2" @click="submit()" :disabled="isFormInvalid">Confirm
                 changes</button>
         </div>
     </div>
@@ -89,7 +89,10 @@ export default {
                 return;
             }
 
+            confirm(`Are you sure you want to delete this product [${this.product.id}]?`);
+
             await this.$data.$products.deleteProduct(this.product.id);
+            this.$router.push({ path: '/portal/products/manage' });
         }
     },
     computed: {

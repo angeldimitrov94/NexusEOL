@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <button class="btn btn-primary" @click.prevent="submitForm" :disabled="isFormInvalid">Create
+                    <button class="btn btn-primary" @click="submitForm" :disabled="isFormInvalid">Create
                         Product</button>
                 </div>
             </form>
@@ -67,7 +67,7 @@ export default {
         this.$data.$users = $users;
     },
     methods: {
-        async submitForm() {
+        async submitForm(event: Event) {
             if (!this.name || !this.description) {
                 alert('Missing data!');
                 return;

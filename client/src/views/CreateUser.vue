@@ -5,17 +5,17 @@
             <form action="">
                 <!--Name-->
                 <div class="mb-3">
-                    <label for="" class="form-label">
+                    <label for="username" class="form-label">
                         User name
                     </label>
-                    <input type="text" class="form-control" v-model="name" />
+                    <input type="text" id="username" class="form-control" v-model="name" />
                 </div>
                 <!--Email-->
                 <div class="mb-3">
-                    <label for="" class="form-label">
+                    <label for="email" class="form-label">
                         Email
                     </label>
-                    <textarea type="email" class="form-control" rows="5" v-model="email"></textarea>
+                    <textarea type="email" id="email" class="form-control" v-model="email"></textarea>
                 </div>
                 <!--User Level-->
                 <div class="mb-3">
@@ -57,20 +57,37 @@
                 </div>
                 <!--Account ID-->
                 <div class="mb-3">
-                    <label for="" class="form-label">
+                    <label for="account" class="form-label">
+                        Account
+                    </label>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="accountDropdownButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ activeAccountName }}
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="accountDropdownButton">
+                            <li v-for="{name, id} in allAccounts">
+                                <a class="dropdown-item" href="#" 
+                                @click.prevent="selectAccount(id, name)" 
+                                :class="{ active: id === activeId }">{{name}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- <label for="accountId" class="form-label">
                         Account ID
                     </label>
-                    <input type="text" class="form-control" v-model="accountId" />
+                    <input type="text" id="accountId" class="form-control" v-model="accountId" /> -->
                 </div>
                 <!--Password-->
                 <div class="mb-3">
-                    <label for="" class="form-label">
+                    <label for="password" class="form-label">
                         Password
                     </label>
-                    <input type="password" class="form-control" v-model="initialPassword" />
+                    <input type="password" id="accountId" class="form-control" v-model="initialPassword" />
                 </div>
                 <div class="mb-3">
-                    <button class="btn btn-primary" @click.prevent="submitForm" :disabled="isFormInvalid()">Create
+                    <button class="btn btn-primary" 
+                    @click.prevent="submitForm()" 
+                    :disabled="isFormInvalid()">Create
                         User</button>
                 </div>
             </form>
@@ -78,9 +95,10 @@
     </div>
 </template>
 <script lang="ts">
+import type { AccountUtil } from '@/utils/accountutils';
 import { getAllInjectedUtils } from '@/utils/injector-utils';
 import { UserUtil } from '@/utils/userutils';
-import { UserRole, type UserAttrs } from '@testsequencer/common';
+import { UserRole, type UserAttrs, type AccountAttrs } from '@testsequencer/common';
 export default {
     data() {
         return {
@@ -93,13 +111,20 @@ export default {
             accountId: "",
             initialPassword: "",
             $users: {} as UserUtil,
-            level: UserRole.TECHNICIAN
+            $accounts: {} as AccountUtil,
+            level: UserRole.TECHNICIAN,
+            allAccounts: [] as AccountAttrs[],
+            activeId: "",
+            activeAccountName: "Choose an account to associate this user to"
         }
     },
     async created() {
-        const { $users } = getAllInjectedUtils();
+        const { $users, $accounts } = getAllInjectedUtils();
 
         this.$data.$users = $users;
+        this.$data.$accounts = $accounts;
+
+        this.$data.allAccounts = await this.$data.$accounts.getAllAccounts();
     },
     methods: {
         async submitForm() {
@@ -122,6 +147,11 @@ export default {
         },
         isFormInvalid(): boolean {
             return this.$data.name === "" || this.$data.email === "" || this.$data.accountId === "" || this.$data.initialPassword === "";
+        },
+        selectAccount(id: string|undefined, name: string|undefined) {
+            this.$data.accountId = id ?? '';
+            this.$data.activeId = id ?? '';
+            this.$data.activeAccountName = name ?? 'Choose an account to associate this user to';
         }
     },
     watch: {

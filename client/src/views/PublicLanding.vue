@@ -12,7 +12,7 @@
                     <p class="lead">Create an account, add your products, populate your products' tests and begin sending and viewing your data. Administrators can add their colleagues as technicians, administrators, or business intelligence viewers, allowing for fine-grained levels of access to data and functionalities.</p>
                 </div>
                 <div class="col-md-5">
-                    <img src="/convenient.png" title="Ease of use" width="500">
+                    <img src="/convenient.png" title="Ease of use" width="100%">
                 </div>
             </div>
 
@@ -24,7 +24,7 @@
                     <p class="lead">The possibilities are endless with how you can improve and integrate your manufacturing process with Nexus EOL - printing documents, triggering shipments, making WMS updates...</p>
                 </div>
                 <div class="col-md-5 order-md-1">
-                    <img src="/user-interface.png" title="Integration" width="500">
+                    <img src="/user-interface.png" title="Integration" width="100%">
                 </div>
             </div>
 
@@ -36,7 +36,7 @@
                     <p class="lead">Built from the ground up to enable analytics, Nexus EOL aggregates all of your account's data and makes that data readily available to you for access. Test data is archived to 'cold storage' in the cloud when it reaches 1 week old, where it can be accessed for analytical purposes in a non-real-time fashion.</p>
                 </div>
                 <div class="col-md-5">
-                    <img src="/big-data.png" title="Big Data" width="500">
+                    <img src="/big-data.png" title="Big Data" width="100%">
                 </div>
             </div>
 
@@ -54,11 +54,11 @@
             <hr class="featurette-divider">
 
             <div class="row featurette">
-                <div class="col-md-10">
-                    <img src="/product.png" title="Nexus EOL portal product/test details screen" width="100%" class="borderedimg">
-                </div>
-                <div class="col-md-2">
+                <div class="col-md-2 order-md-2">
                     <h2>Product and test detail</h2>
+                </div>
+                <div class="col-md-10 order-md-1">
+                    <img src="/product.png" title="Nexus EOL portal product/test details screen" width="100%" class="borderedimg">
                 </div>
             </div>
             <hr class="featurette-divider">
@@ -75,36 +75,13 @@
             <hr class="featurette-divider">
 
             <div class="row featurette">
-                <div class="col-md-10">
-                    <img src="/manage_users.png" title="Nexus EOL portal product management screen" width="100%" class="borderedimg">
-                </div>
-                <div class="col-md-2">
+                <div class="col-md-2 order-md-2">
                     <h2>Manage users</h2>
+                </div>
+                <div class="col-md-10 order-md-1">
+                    <img src="/manage_users.png" title="Nexus EOL portal product management screen" width="100%" class="borderedimg">
                 </div>
             </div>
         </div>
     </main>
 </template>
-<script lang="ts">
-import { getAllInjectedUtils } from '@/utils/injector-utils';
-import { UserUtil } from '@/utils/userutils';
-
-export default {
-    data() {
-        return {
-            $users: {} as UserUtil,
-            signedIn: false
-        }
-    },
-    async created() {
-        const { $users } = getAllInjectedUtils();
-
-        this.$data.$users = $users;
-        this.$data.signedIn = await $users.isUserCurrentlySignedIn();
-
-        if(this.$data.signedIn) {
-            this.$router.push({ path: '/portal/dashboard' });
-        }
-    }
-}
-</script>
