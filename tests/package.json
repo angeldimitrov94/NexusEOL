@@ -6,7 +6,19 @@
   "scripts": {
     "start": "npx nodemon src/index.ts",
     "start:watch": "nodemon -r ./src/index.ts --legacy-watch",
-    "start:dev": "node -r ./dist/index.js"
+    "start:dev": "node -r ./dist/index.js",
+    "test": "jest --detectOpenHandles --silent",
+    "test_verbose": "jest --no-cache --detectOpenHandles",
+    "clear_jest": "jest --clearCache",
+    "test_clear": "npm run clear_jest && npm run test",
+    "test_clear_verbose": "npm run clear_jest && npm run test_verbose"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "./src/test/setup.ts"
+    ]
   },
   "keywords": [],
   "author": "",

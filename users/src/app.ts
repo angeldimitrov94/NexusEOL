@@ -9,6 +9,7 @@ import { modifyUserRouter } from './routes/modify-user';
 import { userByIdRouter } from './routes/user-by-id';
 import { NotFoundError } from '@testsequencer/common';
 import { errorHandler } from '@testsequencer/common-backend/build/middlewares/error-handler';
+import { deleteUserRouter } from './routes/delete-user';
 
 const app = express();
 app.set('trust proxy', true);
@@ -24,6 +25,7 @@ app.use(allUsersRouter);
 app.use(createUserRouter);
 app.use(modifyUserRouter);
 app.use(userByIdRouter);
+app.use(deleteUserRouter);
 
 app.all('*', async (req, res) => {
   throw new NotFoundError();

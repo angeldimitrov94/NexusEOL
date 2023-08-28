@@ -1,17 +1,16 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import jwt from 'jsonwebtoken';
-import { UserAttrs, UserRole } from "@testsequencer/common";
+import { UserRole } from "@testsequencer/common";
+import jwt from "jsonwebtoken";
 
 declare global {
-  function signin(): Promise<string[]>;
-  const userName = "test@test.com";
-  const userLevel = UserRole.TECHNICIAN;
-  const userEmail = "test@test.com";
-  const userAccountId = "123";
+  function signin(userRole: UserRole): Promise<string>;
+  function getAccountId(): string;
+  function newRandomAccountId(): void;
 }
 
 let mongo: any;
+let accountId = new mongoose.Types.ObjectId().toHexString();
 
 beforeAll(async () => {
   process.env.JWT_KEY = "asdfasdf";
@@ -38,22 +37,31 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
-global.signin = async () => {
-  const existingUser: UserAttrs = {
-    name: "test@test.com",
-    level: UserRole.TECHNICIAN,
-    password: "123456",
-    email: "test@test.com",
-    accountId: "123"
+global.signin = async (userRole: UserRole) => {
+  //build a jwt payload (UserAttr object)
+  const payload = {
+    id: new mongoose.Types.ObjectId().toHexString(),
+    email: "test@email.com",
+    level: userRole,
+    accountId: accountId,
+    exp: Math.floor(Date.now() / 1000) + (30 * 60) //expire after 30 minutes from issuance
   };
-
-  //Generate JWT
-  const userJwt = jwt.sign({
-    id: existingUser.id,
-    email: existingUser.email,
-    level: existingUser.level,
-    accountId: existingUser.accountId
-  }, process.env.JWT_KEY!);
-
-  return [`jwt=${userJwt}`];
+  //create the jwt
+  const token = jwt.sign(payload, process.env.JWT_KEY!);
+  //build session object {jwt:MY_JWT}
+  const session = { jwt: token };
+  //turn session into JSON
+  const sessionJSON = JSON.stringify(session);
+  //take JSON and encode as base64
+  const base64 = Buffer.from(sessionJSON).toString('base64');
+  //return string thats the cookie with the encoded data
+  return `session=${base64}`;
 };
+
+global.getAccountId = () => {
+  return accountId;
+};
+
+global.newRandomAccountId = () => {
+  accountId = new mongoose.Types.ObjectId().toHexString();
+}

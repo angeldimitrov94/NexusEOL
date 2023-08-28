@@ -1,16 +1,17 @@
 import { NotFoundError, TestAttrs } from '@testsequencer/common';
-import { Test, createMongoObjectIdObject, requireAuth } from '@testsequencer/common-backend';
+import { Test, createMongoObjectIdObject, currentUser, requireAuth } from '@testsequencer/common-backend';
 import express, { Request, Response } from 'express';
 
 const router = express.Router();
 
-router.get('/api/tests/:testid', requireAuth, async (req: Request, res: Response) => {
+router.get('/api/tests/:testid', [currentUser, requireAuth], async (req: Request, res: Response) => {
     const testid = req.params.testid;
 
     const objectId = createMongoObjectIdObject(testid);
     if(objectId !== null) {
         const testDoc = await Test.find({_id : objectId});
-        let testAttr: TestAttrs|undefined = undefined;
+        let testAttr: TestAttrs|undefined = undefined;        
+
         if(testDoc && testDoc.length > 0) {
             testAttr = {
                 id: testDoc[0]?.id,

@@ -10,11 +10,28 @@ router.delete('/api/products/:productid/delete', [currentUser, requireAuth], asy
     }
 
     const productid = req.params.productid;
+    const mongodbObjectId = createMongoObjectIdObject(productid);
+
+    if(!mongodbObjectId) {
+        return res.status(400).send({"error":"productid is not valid mongodb object id"});
+    }
 
     try {
-        await Product.deleteOne({ _id: createMongoObjectIdObject(productid) });
-        
-        res.status(204).send({});
+        const count = await Product.count({ _id: mongodbObjectId });
+
+        if(count === 0) {
+            return res.status(404).send({"error":"product does not exist"});
+        }
+
+        const result = await Product.deleteOne({ _id: mongodbObjectId });
+ 
+        if(!result.acknowledged) {
+            throw new Error("product delete request was not acknowledged");
+        } else if(result.acknowledged && result.deletedCount === 0) {
+            throw new Error("product failed to be deleted");
+        } else {
+            res.status(204).send();
+        }
     } catch (error) {
         res.status(500).send({"error":error});   
     }

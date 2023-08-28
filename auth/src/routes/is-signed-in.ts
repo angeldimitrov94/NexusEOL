@@ -4,7 +4,7 @@ import express from 'express';
 const router = express.Router();
 
 router.get('/api/auth/signedin', currentUser, (req, res) => {   
-    res.send({ signedIn: req.currentUser !== null && req.currentUser !== undefined });
+    res.status(200).send();
 });
 
 export { router as signedInRouter };

@@ -10,11 +10,28 @@ router.delete('/api/tests/:testid/delete', [currentUser, requireAuth], async (re
     } 
 
     const testid = req.params.testid;
+    const mongodbObjectId = createMongoObjectIdObject(testid);
+
+    if(!mongodbObjectId) {
+        return res.status(400).send({"error":"testid is not valid mongodb object id"});
+    }
 
     try {
-        await Test.deleteOne({ _id: createMongoObjectIdObject(testid) });
+        const count = await Test.count({ _id: mongodbObjectId });
+
+        if(count === 0) {
+            return res.status(404).send({"error":"test does not exist"});
+        }
         
-        res.status(204).send({});
+        const result = await Test.deleteOne({ _id: mongodbObjectId });
+ 
+        if(!result.acknowledged) {
+            throw new Error("test delete request was not acknowledged");
+        } else if(result.acknowledged && result.deletedCount === 0) {
+            throw new Error("test failed to be deleted");
+        } else {
+            res.status(204).send();
+        }
     } catch (error) {
         res.status(500).send({"error":error});   
     }

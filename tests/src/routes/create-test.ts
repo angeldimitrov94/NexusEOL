@@ -6,7 +6,7 @@ import { create } from 'ts-node';
 const router = express.Router();
 
 router.post('/api/tests/create', [currentUser, requireAuth], async (req: Request, res: Response) => {
-    if(req.currentUser?.level === UserRole.TECHNICIAN) {
+    if(req.currentUser?.level === UserRole.TECHNICIAN || req.currentUser?.level === UserRole.BIUSER) {
         throw new NotAuthorizedError();
     } 
 
@@ -24,8 +24,17 @@ router.post('/api/tests/create', [currentUser, requireAuth], async (req: Request
 
         const createdTest = await Test.create(newTest);
         createdTest.save();
+
+        const createTestAttr: TestAttrs = {
+            name: createdTest.name,
+            description: createdTest.description,
+            active: createdTest.active,
+            parentProductId: createdTest.parentProductId,
+            parentAccountId: createdTest.parentAccountId,
+            id: createdTest.id,
+        };
         
-        res.status(201).send(createdTest);
+        res.status(201).send(createTestAttr);
     } catch (error) {
         res.status(500).send({"error":error});   
     }

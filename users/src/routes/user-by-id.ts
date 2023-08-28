@@ -1,4 +1,4 @@
-import { NotFoundError, UserAttrs } from '@testsequencer/common';
+import { NotFoundError, UserAttrs, UserRole } from '@testsequencer/common';
 import { User, createMongoObjectIdObject, currentUser, requireAdminUser, requireAuth, resourceBelongsToUsersAccount } from '@testsequencer/common-backend';
 import express, { Request, Response } from 'express';
 
@@ -7,8 +7,7 @@ const router = express.Router();
 router.get('/api/users/:userid', [
     currentUser, 
     requireAuth, 
-    requireAdminUser, 
-    resourceBelongsToUsersAccount
+    requireAdminUser
 ], async (req: Request, res: Response) => {
     const userId = req.params.userid;
 
@@ -25,8 +24,12 @@ router.get('/api/users/:userid', [
                 password: userDoc[0]?.password,
                 accountId: userDoc[0]?.accountId
             };
-    
-            res.status(200).send(userAttr);
+
+            if(req.currentUser?.level === UserRole.SUPERADMIN || (req.currentUser?.level === UserRole.ADMIN && userAttr.accountId === req.currentUser?.accountId)) {
+                res.status(200).send(userAttr);
+            } else {
+                res.status(401).send({error: "User does not belong to this user's account or user performing query is not admin or super-admin."});
+            }
         }
         else {
             throw new NotFoundError();

@@ -18,8 +18,14 @@ router.post('/api/accounts/create', [currentUser, requireAuth, requireSuperAdmin
 
     const createdAccount = await Account.create(newAccount);
     createdAccount.save();
+    const createAccountAttrs = {
+        name: createdAccount?.name,
+        active: createdAccount?.active,
+        products: createdAccount?.products,
+        id: createdAccount?.id
+    };    
     
-    res.status(201).send(createdAccount);
+    res.status(201).send(createAccountAttrs);
 });
 
 export { router as createAccountRouter };
