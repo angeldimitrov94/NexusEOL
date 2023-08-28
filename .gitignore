@@ -8,6 +8,4 @@ testsequencer-common-backend
 *.key
 nexuseol.conf
 dist
-!nexuseol_com_test.crt
-!nexuseol_com_test.key
 db*
