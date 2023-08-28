@@ -225,7 +225,7 @@ Project Link: [https://github.com/angeldimitrov94/NexusEOL](https://github.com/a
 [license-shield]: https://img.shields.io/github/license/angeldimitrov94/NexusEOL.svg?style=for-the-badge
 [license-url]: https://github.com/angeldimitrov94/NexusEOL/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin.com/in/angel-dimitrov
+[linkedin-url]: https://linkedin.com/in/angel-dimitrov
 [product-screenshot]: images/screenshot.png
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
 [Vue-url]: https://vuejs.org/
